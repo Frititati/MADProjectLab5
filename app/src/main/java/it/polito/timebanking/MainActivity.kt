@@ -9,11 +9,10 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
@@ -30,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.ActivityMainBinding
+import it.polito.timebanking.model.chat.ChatViewModel
 import it.polito.timebanking.model.profile.UserProfileData
 
 
@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private val vm by viewModels<ChatViewModel>()
     private val defaultAge = 18
     private val firestoreUser = FirebaseAuth.getInstance().currentUser
     private val defaultProfilePath = "gs://madproject-3381c.appspot.com/user.png"
@@ -86,7 +87,10 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                             UserProfileData(
                                 "Your fullname",
                                 "Your nickname",
-                                getSharedPreferences("group21.lab4.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email"),
+                                getSharedPreferences(
+                                    "group21.lab4.PREFERENCES",
+                                    MODE_PRIVATE
+                                ).getString("email", "unknown email"),
                                 defaultAge,
                                 "Your location",
                                 listOf(),
@@ -104,9 +108,9 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     updateIMG("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser.uid}.png")
                     FirebaseFirestore.getInstance().collection("users").document(firestoreUser.uid)
                         .get().addOnSuccessListener {
-                        updateEmail(it.get("email").toString())
-                        updateFName(it.get("fullName").toString())
-                    }
+                            updateEmail(it.get("email").toString())
+                            updateFName(it.get("fullName").toString())
+                        }
                 }
             }
 
@@ -116,6 +120,16 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
             }
             Configuration.UI_MODE_NIGHT_NO -> {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenLight)
+            }
+        }
+
+        vm.getChat().observe(this) {
+            it.forEach { chat ->
+                Log.d("test", "Chat : ${chat.first}")
+                vm.getMessages(chat.first).observe(this) { m ->
+                    m.forEach { mess -> Log.d("test", "Message ${mess.message}") }
+
+                }
             }
         }
     }

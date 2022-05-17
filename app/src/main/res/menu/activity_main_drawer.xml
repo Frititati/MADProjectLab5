@@ -16,5 +16,9 @@
             android:id="@+id/showProfileFragment"
             android:icon="@android:drawable/ic_dialog_info"
             android:title="@string/menu_profile" />
+        <item
+            android:id="@+id/chatFragment"
+            android:icon="@drawable/ic_chat"
+            android:title="@string/myChat" />
     </group>
 </menu>
