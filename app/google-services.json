@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "725588390853",
+    "project_id": "madproject-3381c",
+    "storage_bucket": "madproject-3381c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725588390853:android:14af41e2032be1400a51ac",
+        "android_client_info": {
+          "package_name": "it.polito.timebanking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "725588390853-71fscc93mg5l5f2og4k4befhq9qnq05g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.polito.timebanking",
+            "certificate_hash": "1fa3b73045b6253bc98588455548422a3216abd9"
+          }
+        },
+        {
+          "client_id": "725588390853-r6vjbmnnf5aj4j4vj25qj3n4pmmve1o2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMnGMdcBF6bmAXxD74cWZx9dar-iOPevI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "725588390853-r6vjbmnnf5aj4j4vj25qj3n4pmmve1o2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

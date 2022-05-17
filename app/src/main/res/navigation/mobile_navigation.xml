@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/skillListFragment">
+
+    <fragment
+        android:id="@+id/timeslotPersonalListFragment"
+        android:name="it.polito.timebanking.ui.personal_timeslot.timeslot_list.TimeSlotListFragment"
+        android:label="@string/timeslot_list"
+        tools:layout="@layout/fragment_timeslot_list">
+        <action
+            android:id="@+id/home_to_detail"
+            app:destination="@id/timeslotDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/home_to_edit"
+            app:destination="@id/timeslotEditFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/back_to_skills_list"
+            app:destination="@id/skillListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/timeslotDetailsFragment"
+        android:name="it.polito.timebanking.ui.personal_timeslot.detail.TimeslotDetailFragment"
+        android:label="@string/timeslot_details"
+        tools:layout="@layout/fragment_timeslot_detail">
+        <action
+            android:id="@+id/detail_to_edit"
+            app:destination="@id/timeslotEditFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/timeslotEditFragment"
+        android:name="it.polito.timebanking.ui.personal_timeslot.edit.TimeslotEditFragment"
+        android:label="@string/timeslot_edit"
+        tools:layout="@layout/fragment_timeslot_edit" >
+        <action
+            android:id="@+id/edit_to_list"
+            app:destination="@id/timeslotPersonalListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpToInclusive="true"
+            app:popUpTo="@+id/timeslotPersonalListFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/showProfileFragment"
+        android:name="it.polito.timebanking.ui.user_profile.ShowProfileFragment"
+        android:label="@string/your_profile"
+        tools:layout="@layout/fragment_show_profile">
+        <action
+            android:id="@+id/show_to_edit"
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="it.polito.timebanking.ui.user_profile.EditProfileFragment"
+        android:label="@string/edit_your_profile" >
+        <action
+            android:id="@+id/edit_profile_to_edit_skill"
+            app:destination="@id/editProfileSkillFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/skillListFragment"
+        android:name="it.polito.timebanking.ui.all_timeslot.SkillListFragment"
+        android:label="@string/skill_list"
+        tools:layout="@layout/fragment_skill_list" >
+        <action
+            android:id="@+id/skill_to_timeslot"
+            app:destination="@id/skillTimeSlotFragment"
+            app:enterAnim="@android:animator/fade_in"
+            app:exitAnim="@android:animator/fade_out"
+            app:popEnterAnim="@android:animator/fade_in"
+            app:popExitAnim="@android:animator/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/skillTimeSlotFragment"
+        android:name="it.polito.timebanking.ui.all_timeslot.SkillTimeSlotFragment"
+        android:label="@string/skill_with_timeslot"
+        tools:layout="@layout/fragment_skill_time_slot" >
+        <action
+            android:id="@+id/timeslot_to_details"
+            app:destination="@id/advertismentDetailFragment"
+            app:enterAnim="@android:animator/fade_in"
+            app:exitAnim="@android:animator/fade_out"
+            app:popEnterAnim="@android:animator/fade_in"
+            app:popExitAnim="@android:animator/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileSkillFragment"
+        android:name="it.polito.timebanking.ui.user_profile.EditProfileSkillFragment"
+        android:label="Select or add your personal skills"
+        tools:layout="@layout/fragment_edit_profile_skill" />
+    <fragment
+        android:id="@+id/advertismentDetailFragment"
+        android:name="it.polito.timebanking.ui.all_timeslot.AdvertisementDetailFragment"
+        android:label="@string/advertisement"
+        tools:layout="@layout/fragment_advertisement_detail" />
+
+</navigation>

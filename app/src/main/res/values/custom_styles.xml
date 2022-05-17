@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+    <style name ="Circular">
+        <item name = "cornerSize">50%</item>
+    </style>
+
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">@color/Light_Blue</item>
+        <item name="android:backgroundTint">@color/Blue_Ribbon</item>
+    </style>
+
+</resources>

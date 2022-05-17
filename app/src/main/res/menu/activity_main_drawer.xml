@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/skillListFragment"
+            android:icon="@android:drawable/btn_star"
+            android:title="@string/all_skills" />
+        <item
+            android:id="@+id/timeslotPersonalListFragment"
+            android:icon="@android:drawable/ic_menu_today"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/showProfileFragment"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/menu_profile" />
+    </group>
+</menu>
