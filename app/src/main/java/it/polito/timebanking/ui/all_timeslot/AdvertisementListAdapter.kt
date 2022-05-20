@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.all_timeslot
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotListViewHolder>(),
+class AdvertisementListAdapter : RecyclerView.Adapter<AdvertisementListAdapter.TimeslotListViewHolder>(),
     Filterable {
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
     private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
@@ -25,7 +24,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeslotListViewHolder {
         return TimeslotListViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.timeslot_list_skill_widget, parent, false)
+                .inflate(R.layout.widget_advertisement, parent, false)
         )
     }
 

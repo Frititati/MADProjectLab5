@@ -135,7 +135,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/all_skills"
                     android:backgroundTint="@android:color/holo_blue_bright"
-                    android:contentDescription="@string/add_skill"
                     tools:ignore="ImageContrastCheck,ImageContrastCheck" />
                 </LinearLayout>
         </androidx.core.widget.NestedScrollView>

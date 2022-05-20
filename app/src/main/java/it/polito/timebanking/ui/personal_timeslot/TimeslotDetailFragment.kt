@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.personal_timeslot.detail
+package it.polito.timebanking.ui.personal_timeslot
 
 import android.os.Bundle
 import android.view.*

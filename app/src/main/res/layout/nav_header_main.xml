@@ -11,8 +11,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:paddingBottom="@dimen/activity_vertical_margin">
 
     <Button
         android:id="@+id/buttonLogout"
@@ -28,7 +27,6 @@
         android:id="@+id/userImageOnDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/user"
         app:shapeAppearanceOverlay="@style/Circular"/>
@@ -39,12 +37,13 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/full_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textColor="@color/Milk_White"/>
 
     <TextView
         android:id="@+id/userEmailOnDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/email_address" />
+        android:text="@string/email_address"
+        android:textColor="@color/Milk_White"/>
 
 </LinearLayout>

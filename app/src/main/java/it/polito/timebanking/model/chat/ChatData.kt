@@ -3,13 +3,17 @@ package it.polito.timebanking.model.chat
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class ChatData(
-    var userList: List<String>?,
-    var messages: List<MessageData>?,
+    var users: Pair<String, String>?,
+    var lastMessage: Long?
 )
 
-fun DocumentSnapshot.toChatData(): ChatData{
+fun DocumentSnapshot.toChatData(): ChatData {
     return ChatData(
-        this.get("users") as List<String>?,
-        this.get("messages") as List<MessageData>?
-        )
+        pair(this.get("users") as List<String>?),
+        this.get("lastMessage") as Long?
+    )
+}
+
+fun pair(input: List<String>?): Pair<String, String> {
+    return Pair(input!![0], input[1])
 }

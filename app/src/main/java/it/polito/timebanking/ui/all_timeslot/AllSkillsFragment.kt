@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -18,13 +16,11 @@ import it.polito.timebanking.databinding.FragmentSkillListBinding
 import it.polito.timebanking.model.timeslot.SkillData
 import it.polito.timebanking.model.timeslot.toSkillData
 
-
-class SkillListFragment : Fragment() {
+class AllSkillsFragment : Fragment() {
 
     private var _binding: FragmentSkillListBinding? = null
     private val binding get() = _binding!!
-    private var skillListAdapter = SkillListAdapter()
-    private var counter = 0
+    private var skillListAdapter = AllSkillsAdapter()
     private var _firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +32,12 @@ class SkillListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentSkillListBinding.inflate(inflater, container, false)
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val dialog = AlertDialog.Builder(context,R.style.AlertDialogStyle)
-                    val dialogView = layoutInflater.inflate(R.layout.dialog_exit, null)
+                    val dialog = AlertDialog.Builder(context)
+                    val dialogView = layoutInflater.inflate(R.layout.dialog_generic, null)
                     dialog.setTitle("Are you sure you want to quit?")
                     dialog.setView(dialogView)
                     dialog.setPositiveButton("Yes") { _, _ ->
@@ -90,5 +85,4 @@ class SkillListFragment : Fragment() {
                 skillListAdapter.setSkills(map)
             }
     }
-
 }

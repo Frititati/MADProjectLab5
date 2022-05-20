@@ -1,12 +1,8 @@
 package it.polito.timebanking
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.widget.Button
@@ -37,7 +33,6 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val vm by viewModels<ChatViewModel>()
     private val defaultAge = 18
     private val firestoreUser = FirebaseAuth.getInstance().currentUser
     private val defaultProfilePath = "gs://madproject-3381c.appspot.com/user.png"
@@ -53,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.timeslotPersonalListFragment, R.id.showProfileFragment, R.id.skillListFragment
+                R.id.timeslotListFragment, R.id.showProfileFragment, R.id.skillListFragment,R.id.allChatsFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -114,6 +109,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 }
             }
 
+      /*
         when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenDark)
@@ -122,16 +118,13 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenLight)
             }
         }
+       */
+        window.statusBarColor = ContextCompat.getColor(this, R.color.Ocean_Blue)
 
-        vm.getChat().observe(this) {
-            it.forEach { chat ->
-                Log.d("test", "Chat : ${chat.first}")
-                vm.getMessages(chat.first).observe(this) { m ->
-                    m.forEach { mess -> Log.d("test", "Message ${mess.message}") }
+    }
 
-                }
-            }
-        }
+    override fun onFragmentInteraction(title: String?) {
+        supportActionBar!!.title = title
     }
 
     override fun updateEmail(email: String) {
@@ -160,12 +153,12 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.main, menu)
-        if (this.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        /*if (this.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             val item = menu.getItem(0)
             val s = SpannableString("Edit")
             s.setSpan(ForegroundColorSpan(Color.WHITE), 0, s.length, 0)
             item.title = s
-        }
+        }*/
         return true
     }
 

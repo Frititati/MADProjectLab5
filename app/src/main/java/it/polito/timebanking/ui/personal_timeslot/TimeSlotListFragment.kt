@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.personal_timeslot.timeslot_list
+package it.polito.timebanking.ui.personal_timeslot
 
 import android.os.Bundle
 import android.view.LayoutInflater

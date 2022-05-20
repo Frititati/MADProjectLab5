@@ -1,14 +1,12 @@
-package it.polito.timebanking.ui.personal_timeslot.edit
+package it.polito.timebanking.ui.personal_timeslot
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -79,23 +77,22 @@ class TimeslotEditFragment : Fragment() {
         }
 
         binding.deleteButton.setOnClickListener {
-            val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.dialog_delete_timeslot)
-            dialog.show()
-            dialog.findViewById<TextView>(R.id.confirm_message).text = String.format(resources.getString(R.string.delete_timeslot_confirm),currentTimeSlot.title)
-            dialog.findViewById<TextView>(R.id.yesButton).setOnClickListener {
+            val dialog = AlertDialog.Builder(context)
+            val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic,null)
+            dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm),currentTimeSlot.title))
+            dialog.setView(dialogView)
 
+            dialog.setPositiveButton("Yes"){_,_ ->
                 vm.delete(idTimeslot)
                 toUpdate = false
                 Snackbar.make(binding.root, "Timeslot deleted", 1500).setAction("Undo") {
                     addNonEmptyTimeslot(currentTimeSlot)
                 }.show()
                 findNavController().navigate(R.id.edit_to_list)
-                dialog.hide()
             }
-            dialog.findViewById<TextView>(R.id.noButton).setOnClickListener {
-                dialog.hide()
+            dialog.setNegativeButton("No") {_,_ ->
             }
+            dialog.create().show()
         }
     }
 
@@ -117,13 +114,6 @@ class TimeslotEditFragment : Fragment() {
         }
     }
 
-
-    private fun dateToString(d: Int, m: Int, y: Int): String {
-        val dd = if (d > 9) d.toString() else "0$d"
-        val mm = if (m > 9) m.toString() else "0$m"
-        return "${dd}/${mm}/${y}"
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -143,12 +133,6 @@ class TimeslotEditFragment : Fragment() {
                     t.ownedBy,
                 )
             )
-            .addOnSuccessListener {
-                Toast.makeText(context, "Time Slot Re-created", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Time Slot BAD", Toast.LENGTH_SHORT).show()
-            }
     }
 
     private fun updateAllSkills() {

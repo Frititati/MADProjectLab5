@@ -10,22 +10,6 @@ import com.google.firebase.firestore.ListenerRegistration
 
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
-//    private val _timeslots = MutableLiveData<List<TimeslotData>>()
-//    val timeslot: LiveData<List<TimeslotData>> = _timeslots
-//    private val l: ListenerRegistration = FirebaseFirestore.getInstance().collection("timeslots")
-//        .addSnapshotListener { r, e ->
-//            if (r != null) {
-//                _timeslots.value = if (e != null)
-//                    emptyList()
-//                else r.mapNotNull { it.toTimeslotData() }
-//            }
-//        }
-
-//    override fun onCleared() {
-//        super.onCleared()
-//        l.remove()
-//    }
-
     fun get(id: String): LiveData<TimeslotData> {
         val timeslot = MutableLiveData<TimeslotData>()
 

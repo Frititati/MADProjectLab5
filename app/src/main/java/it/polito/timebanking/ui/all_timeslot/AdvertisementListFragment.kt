@@ -2,7 +2,6 @@ package it.polito.timebanking.ui.all_timeslot
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
@@ -19,28 +18,32 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
-import it.polito.timebanking.databinding.FragmentSkillTimeSlotBinding
+import it.polito.timebanking.databinding.FragmentAdvertisementBinding
 import it.polito.timebanking.model.timeslot.TimeslotData
-import it.polito.timebanking.model.timeslot.dateFormatter
 import it.polito.timebanking.model.timeslot.toTimeslotData
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-class SkillTimeSlotFragment : Fragment() {
+class AdvertisementListFragment : Fragment() {
 
-    private var _binding: FragmentSkillTimeSlotBinding? = null
+    private var _binding: FragmentAdvertisementBinding? = null
     private var counter = 0
-    private val timeslotListAdapter = TimeslotListAdapter()
+    private val timeslotListAdapter = AdvertisementListAdapter()
     private val binding get() = _binding!!
+    private lateinit var listener: NavBarUpdater
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSkillTimeSlotBinding.inflate(inflater, container, false)
+        listener = context as NavBarUpdater
+        listener.onFragmentInteraction(arguments?.getString("offerName"))
+        Log.d("test","${arguments?.getString("offerName")}")
+        _binding = FragmentAdvertisementBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -142,8 +145,8 @@ class SkillTimeSlotFragment : Fragment() {
     }
 
     private fun numberPickerCustom() {
-        val d = AlertDialog.Builder(context,R.style.AlertDialogStyle)
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_filter_by_date, null)
+        val d = AlertDialog.Builder(context)
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_filter, null)
         d.setTitle("Choose minimum duration")
         d.setView(dialogView)
         val numberPicker = dialogView.findViewById<NumberPicker>(R.id.dialog_number_picker)

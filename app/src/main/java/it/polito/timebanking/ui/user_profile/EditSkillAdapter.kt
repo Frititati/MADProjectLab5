@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,15 +13,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.SkillData
 
-class EditableSkillListAdapter :
-    RecyclerView.Adapter<EditableSkillListAdapter.SkillListViewHolder>() {
+class EditSkillAdapter :
+    RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {
     private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
     private var userSkills: MutableList<String> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
         return SkillListViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.edit_profile_skill_widget, parent, false)
+                .inflate(R.layout.widget_edit_profile_skill, parent, false)
         )
     }
 

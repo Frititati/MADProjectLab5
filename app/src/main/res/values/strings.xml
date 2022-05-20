@@ -1,16 +1,9 @@
 <resources>
     <string name="app_name">timebanking</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="action_edit">Edit</string>
     <string name="timeslot_list">Timeslot List</string>
     <string name="timeslot_edit">Timeslot Edit</string>
     <string name="timeslot_details">Timeslot Details</string>
-    <string name="menu_home">Timeslots List</string>
-    <string name="menu_profile">User Profile</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Edit</string>
     <string name="editButton">editButton</string>
@@ -25,7 +18,6 @@
     <string name="nickname">Your nick name</string>
     <string name="full_name">Your full name</string>
     <string name="userImage">userImage</string>
-    <string name="add_skill">Please write a new Skill</string>
     <string name="description">Your description</string>
     <string name="enter_description">Enter your description…</string>
     <string name="insert_description">Insert a description…</string>
@@ -48,14 +40,12 @@
     <string name="firebaseClientId">725588390853-r6vjbmnnf5aj4j4vj25qj3n4pmmve1o2.apps.googleusercontent.com</string>
     <string name="logout">Logout</string>
     <string name="delete">Delete</string>
-    <string name="all_skills_offered">All the skills offered by users</string>
+    <string name="all_skills_offered">List of skills you could find</string>
     <string name="all_skills">All Skills</string>
-    <string name="skill_list">Skills list</string>
     <string name="update_skills">Update Skills</string>
-    <string name="your_profile">Your Profile</string>
+    <string name="my_profile">My Profile</string>
     <string name="edit_your_profile">Edit Your Profile</string>
     <string name="see_more">See more</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="skill_with_timeslot">Choose your offer</string>
     <string name="advertisement">Offer details</string>
     <string name="ad_title">Skill offered is: %s</string>
@@ -66,6 +56,6 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="insert_a_skill">Inser a skill</string>
+    <string name="insert_a_skill">Insert a skill</string>
     <string name="myChat">My Chat</string>
 </resources>

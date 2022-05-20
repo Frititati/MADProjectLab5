@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.personal_timeslot.timeslot_list
+package it.polito.timebanking.ui.personal_timeslot
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -19,7 +19,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeslotListViewHolder {
         return TimeslotListViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.timeslot_list_personal_widget, parent, false)
+                .inflate(R.layout.widget_timeslot_list_personal, parent, false)
         )
     }
 

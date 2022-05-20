@@ -14,8 +14,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     fun getMessages(chatID: String): LiveData<List<MessageData>> {
         val messages = MutableLiveData<List<MessageData>>()
 
-        Log.d("test", "Searching $chatID")
-
         _firebase.collection("messages").whereEqualTo("chatID", chatID)
             .addSnapshotListener { r, e ->
                 if (r != null) {
@@ -27,10 +25,10 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         return messages
     }
 
-    fun getChat(): LiveData<List<Pair<String, ChatData>>> {
+    fun getChat(user:String): LiveData<List<Pair<String, ChatData>>> {
         val chats = MutableLiveData<List<Pair<String, ChatData>>>()
 
-        _firebase.collection("chats")
+        _firebase.collection("chats").whereArrayContains("users",user)
             .addSnapshotListener { r, e ->
                 if (r != null) {
                     chats.value = if (e != null)

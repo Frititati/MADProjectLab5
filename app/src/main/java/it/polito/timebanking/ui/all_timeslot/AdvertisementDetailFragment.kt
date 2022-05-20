@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentAdvertisementDetailBinding
@@ -33,7 +35,7 @@ class AdvertisementDetailFragment : Fragment() {
         val idUser = arguments?.getString("id_user")
         FirebaseFirestore.getInstance().collection("users")
             .document(idUser!!).get().addOnSuccessListener { user ->
-                binding.UserNickname.text = fullNameFormatter(user.get("fullName").toString())
+                binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
                 binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
 
@@ -44,7 +46,9 @@ class AdvertisementDetailFragment : Fragment() {
                     binding.Duration.text = durationMinuteFormatter(resources, it.duration)
                 }
             }
-
+        binding.chatStartButton.setOnClickListener {
+            findNavController().navigate(R.id.ad_to_chat, bundleOf("user" to "Chat with ${binding.UserFullName.text}"))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

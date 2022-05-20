@@ -11,7 +11,7 @@
     android:background="@drawable/shape"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".ui.personal_timeslot.detail.TimeslotDetailFragment">
+    tools:context=".ui.personal_timeslot.TimeslotDetailFragment">
 
     <TextView
         android:id="@+id/TitleTooltip"

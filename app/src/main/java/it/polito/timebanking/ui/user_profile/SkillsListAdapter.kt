@@ -16,7 +16,7 @@ class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewH
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillsListViewHolder {
         return SkillsListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.skills_list_widget, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.widget_skills_list, parent, false)
         )
     }
 
@@ -46,9 +46,9 @@ class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewH
     }
 
     class SkillsListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val sv: TextView? = v.findViewById(R.id.skill)
+        private val sv: TextView = v.findViewById(R.id.skill)
         fun bind(skillName: String) {
-            sv!!.text = skillName
+            sv.text = skillName
         }
     }
 }
