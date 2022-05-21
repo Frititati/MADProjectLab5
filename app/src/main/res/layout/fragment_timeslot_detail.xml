@@ -17,7 +17,7 @@
         android:id="@+id/TitleTooltip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
+        android:text="@string/titleTooltip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Description"
+        android:text="@string/descriptionTooltip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:drawableLeftCompat="@drawable/ic_info" />
 
@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Date"
+        android:text="@string/dateTooltip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:drawableLeftCompat="@drawable/ic_calendar_black" />
 
@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Duration"
+        android:text="@string/durationTooltip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:drawableLeftCompat="@drawable/ic_clock" />
 
@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Location"
+        android:text="@string/locationTooltip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:drawableLeftCompat="@drawable/ic_location" />
 

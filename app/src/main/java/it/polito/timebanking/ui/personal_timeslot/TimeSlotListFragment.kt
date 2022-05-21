@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotListBinding
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.TimeslotViewModel
@@ -27,6 +29,8 @@ class TimeSlotListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_UNLOCKED)
         _binding = FragmentTimeslotListBinding.inflate(inflater, container, false)
         return binding.root
     }

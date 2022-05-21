@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import it.polito.timebanking.R
 
 class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
-    private var allChats: MutableList<Pair<String,ByteArray>> = mutableListOf()
+    private var allChats: MutableList<Pair<String, ChatWithUser>> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -29,17 +29,19 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setChats(chats: MutableList<Pair<String,ByteArray>>) {
+    fun setChats(chats: MutableList<Pair<String, ChatWithUser>>) {
         allChats = chats
         notifyDataSetChanged()
     }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun addChat(chat: Pair<String,ByteArray>) {
-        allChats.add(chat)
+    fun addChat(chatID:String, chat: ChatWithUser) {
+        allChats.add(Pair(chatID,chat))
         notifyDataSetChanged()
     }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun clear(){
+    fun clear() {
         allChats.clear()
         notifyDataSetChanged()
     }
@@ -48,22 +50,31 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         return allChats.size
     }
 
+    class ChatWithUser(val u:String, val p:ByteArray){
+        var user:String = ""
+        var pic:ByteArray = byteArrayOf()
+        init{
+            user = u
+            pic = p
+        }
+    }
+
     class ChatListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val u = v.findViewById<TextView>(R.id.chatMember)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
-        fun bind(user: String, pic: ByteArray) {
-            u.text = user
+        fun bind(chatID:String, userChat:ChatWithUser) {
+            u.text = userChat.user
             image.setImageBitmap(
                 BitmapFactory.decodeByteArray(
-                    pic,
+                    userChat.pic,
                     0,
-                    pic.size
+                    userChat.pic.size
                 )
             )
             u.setOnClickListener {
                 rootView.findNavController()
-                    .navigate(R.id.chatList_to_chat, bundleOf("user" to user))
+                    .navigate(R.id.chatList_to_chat, bundleOf("user" to userChat.user,"chatID" to chatID))
             }
         }
     }

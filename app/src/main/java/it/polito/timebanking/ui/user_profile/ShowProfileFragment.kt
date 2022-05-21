@@ -2,12 +2,16 @@ package it.polito.timebanking.ui.user_profile
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.internal.NavigationMenuView
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,6 +43,9 @@ class ShowProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+
+
         FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
             .addOnSuccessListener { res ->
                 if (res.exists()) {
@@ -61,7 +68,7 @@ class ShowProfileFragment : Fragment() {
                             }
                         binding.skillView.layoutManager = LinearLayoutManager(activity)
                         binding.skillView.adapter = skillsListAdapter
-                        skillsListAdapter.setUserSkills(it.skills!!)
+                        skillsListAdapter.setUserSkills(it.skills)
                         binding.skillView.isNestedScrollingEnabled = false
                     }
                 }
@@ -112,5 +119,6 @@ class ShowProfileFragment : Fragment() {
                 skillsListAdapter.setAllSkills(map)
             }
     }
+
 
 }

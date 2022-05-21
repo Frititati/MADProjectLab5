@@ -1,7 +1,6 @@
 package it.polito.timebanking.model.profile
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,8 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private var _firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    fun get(id: String): LiveData<UserProfileData> {
-        val timeslot = MutableLiveData<UserProfileData>()
+    fun get(id: String): LiveData<ProfileData> {
+        val timeslot = MutableLiveData<ProfileData>()
 
         _firebase.collection("users").document(id)
             .addSnapshotListener { r, _ ->
@@ -30,7 +29,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         age: String,
         email: String,
         location: String,
-        description: String
+        description: String,
+        favList: List<String>
     ) {
         val data = mutableMapOf<String, Any>()
 
@@ -52,6 +52,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         if (age.isNotEmpty()) {
             data["age"] = age
         }
+        data["favorites"] = favList
         _firebase.collection("users").document(id).update(
             data as Map<String, Any>
         )

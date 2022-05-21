@@ -3,6 +3,7 @@ package it.polito.timebanking.ui.personal_timeslot
 import android.os.Bundle
 import android.view.*
 import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,13 +24,15 @@ class TimeslotDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         _binding = FragmentTimeslotDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val idTimeslot: String? = arguments?.getString("id_timeslot")
+        val idTimeslot: String? = requireArguments().getString("id_timeslot")
         vm.get(idTimeslot!!).observe(viewLifecycleOwner) {
             binding.Title.text = titleFormatter(it.title)
             binding.Description.text = descriptionFormatter(it.description)
@@ -52,7 +55,7 @@ class TimeslotDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                val idTimeslot: String? = arguments?.getString("id_timeslot")
+                val idTimeslot: String? = requireArguments().getString("id_timeslot")
                 findNavController().navigate(
                     R.id.detail_to_edit,
                     bundleOf("id_timeslot" to idTimeslot)

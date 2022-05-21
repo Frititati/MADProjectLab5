@@ -15,9 +15,19 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
     <item
         android:id="@+id/action_sort"
-        android:icon="@drawable/ic_sort"
+        android:icon="@drawable/ic_sort_and_filter"
         app:showAsAction="always"
         android:visible="false">
         <menu />
     </item>
+    <item
+        android:id="@+id/action_fav_off"
+        android:icon="@drawable/ic_favorite_off"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_fav_on"
+        android:icon="@drawable/ic_favorite_on"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

@@ -47,11 +47,11 @@ class ChatListFragment : Fragment() {
                     .document(other).get()
                     .addOnSuccessListener { user ->
                         if (user != null) {
-                            Log.d("test", "WE FOUND ${user.get("fullName").toString()}")
                             Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${other}.png")
                                 .getBytes(1024 * 1024)
                                 .addOnSuccessListener { pic ->
-                                    chatListAdapter.addChat(Pair(user.get("fullName").toString(),pic))
+                                    val userChat = ChatListAdapter.ChatWithUser(user.get("fullName").toString(),pic)
+                                    chatListAdapter.addChat(chat.first,userChat)
                                 }
                         }
                     }

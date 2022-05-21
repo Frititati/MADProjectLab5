@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/skillListFragment"
-            android:icon="@android:drawable/btn_star"
+            android:icon="@drawable/ic_skills_list"
             android:title="@string/all_skills" />
         <item
             android:id="@+id/timeslotListFragment"
@@ -20,5 +20,9 @@
             android:id="@+id/allChatsFragment"
             android:icon="@drawable/ic_chat"
             android:title="@string/myChat" />
+        <item
+            android:id="@+id/favoritesListFragment"
+            android:icon="@android:drawable/btn_star"
+            android:title="@string/favorites" />
     </group>
 </menu>

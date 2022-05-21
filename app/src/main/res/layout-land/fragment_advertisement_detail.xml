@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     tools:context=".ui.all_timeslot.AdvertisementDetailFragment">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="230dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:orientation="vertical"
             android:padding="10dp">
@@ -25,7 +25,7 @@
                 android:id="@+id/TitleTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/titleTooltip"
+                android:text="@string/title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -110,13 +110,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
             android:padding="10dp"
+            android:layout_gravity="center"
             android:layout_marginBottom="20dp">
 
             <TextView

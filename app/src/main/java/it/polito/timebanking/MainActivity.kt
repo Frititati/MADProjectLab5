@@ -3,15 +3,14 @@ package it.polito.timebanking
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -25,8 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.ActivityMainBinding
-import it.polito.timebanking.model.chat.ChatViewModel
-import it.polito.timebanking.model.profile.UserProfileData
+import it.polito.timebanking.model.profile.ProfileData
 
 
 class MainActivity : AppCompatActivity(), NavBarUpdater {
@@ -45,10 +43,11 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val drawerLayout = binding.drawerLayout
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
+        val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.timeslotListFragment, R.id.showProfileFragment, R.id.skillListFragment,R.id.allChatsFragment
+                R.id.timeslotListFragment, R.id.showProfileFragment, R.id.skillListFragment,R.id.allChatsFragment,R.id.favoritesListFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -79,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                         }
                     FirebaseFirestore.getInstance().collection("users").document(firestoreUser.uid)
                         .set(
-                            UserProfileData(
+                            ProfileData(
                                 "Your fullname",
                                 "Your nickname",
                                 getSharedPreferences(
@@ -90,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 "Your location",
                                 listOf(),
                                 "Your description",
-                            )
+                                listOf())
                         )
                     binding.navView.getHeaderView(0)
                         .findViewById<TextView>(R.id.userEmailOnDrawer).text =
@@ -123,7 +122,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     }
 
-    override fun onFragmentInteraction(title: String?) {
+    override fun setTitleWithSkill(title: String?) {
         supportActionBar!!.title = title
     }
 
@@ -163,7 +162,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.nav_host_fragment_content_main)
+        return findNavController(R.id.fragment_content_main)
             .navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

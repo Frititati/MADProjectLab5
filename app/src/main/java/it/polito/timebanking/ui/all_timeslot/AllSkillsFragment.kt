@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,6 +33,9 @@ class AllSkillsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_UNLOCKED
+        )
         _binding = FragmentSkillListBinding.inflate(inflater, container, false)
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {

@@ -57,10 +57,10 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/nickNameTootip"
+                    android:id="@+id/nickNameTooltip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nick Name"
+                    android:text="@string/nicknameTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableLeftCompat="@drawable/ic_person"
                     app:layout_constraintStart_toStartOf="parent"
@@ -72,15 +72,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/nickname"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    app:layout_constraintStart_toStartOf="@+id/nickNameTootip"
-                    app:layout_constraintTop_toBottomOf="@+id/nickNameTootip" />
+                    app:layout_constraintStart_toStartOf="@+id/nickNameTooltip"
+                    app:layout_constraintTop_toBottomOf="@+id/nickNameTooltip" />
 
                 <TextView
                     android:id="@+id/ageTooltip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Age"
+                    android:text="@string/ageTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableLeftCompat="@drawable/ic_age_calendar"
                     app:layout_constraintStart_toStartOf="parent"
@@ -100,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Email"
+                    android:text="@string/emailTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/location"
@@ -110,7 +110,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/email_address"
+                    android:text="@string/enter_email"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintStart_toStartOf="@+id/emailTooltip"
                     app:layout_constraintTop_toBottomOf="@+id/emailTooltip" />
@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Location"
+                    android:text="@string/locationTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/age"
@@ -141,7 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Description"
+                    android:text="@string/descriptionTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/email"
@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:text="Skills:"
+                    android:text="@string/skillsTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description"

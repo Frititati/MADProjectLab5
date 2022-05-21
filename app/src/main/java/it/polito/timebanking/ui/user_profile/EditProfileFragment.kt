@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import androidx.core.graphics.scale
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -36,6 +37,7 @@ class EditProfileFragment : Fragment() {
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private lateinit var listener: NavBarUpdater
     private var firestoreUser = FirebaseAuth.getInstance().currentUser
+    private var favList = listOf<String>()
 
     private val userProfilePath =
         "gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser!!.uid}.png"
@@ -45,6 +47,8 @@ class EditProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         listener = context as NavBarUpdater
         return binding.root
@@ -59,6 +63,7 @@ class EditProfileFragment : Fragment() {
             binding.email.hint = emailFormatter(it.email)
             binding.location.hint = locationFormatter(it.location)
             binding.description.hint = descriptionFormatter(it.description)
+            favList = it.favorites
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024)
                 .addOnSuccessListener { pic ->
                     binding.userImage.setImageBitmap(
@@ -92,7 +97,8 @@ class EditProfileFragment : Fragment() {
                 binding.age.text.toString(),
                 binding.email.text.toString(),
                 binding.location.text.toString(),
-                binding.description.text.toString()
+                binding.description.text.toString(),
+                favList
             )
         }
         if (binding.email.text.toString().isNotEmpty())

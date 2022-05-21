@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.all_timeslot
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,19 +17,19 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class AdvertisementListAdapter : RecyclerView.Adapter<AdvertisementListAdapter.TimeslotListViewHolder>(),
+class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<AdvertisementListAdapter.AdvertisementListViewHolder>(),
     Filterable {
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
     private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeslotListViewHolder {
-        return TimeslotListViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdvertisementListViewHolder {
+        return AdvertisementListViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.widget_advertisement, parent, false)
-        )
+        ,mode)
     }
 
-    override fun onBindViewHolder(holder: TimeslotListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AdvertisementListViewHolder, position: Int) {
         holder.bind(timeslots[position].first, timeslots[position].second)
     }
 
@@ -40,8 +41,20 @@ class AdvertisementListAdapter : RecyclerView.Adapter<AdvertisementListAdapter.T
         timeslotsFull.addAll(timeslots)
         notifyDataSetChanged()
     }
+    @SuppressLint("NotifyDataSetChanged")
+    fun addTimeslots(inTimeslot: Pair<String, TimeslotData>) {
+        timeslots.add(inTimeslot)
+        timeslotsFull.add(inTimeslot)
+        notifyDataSetChanged()
+    }
 
-    class TimeslotListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear(){
+        timeslots.clear()
+        notifyDataSetChanged()
+    }
+
+    class AdvertisementListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
         private val rootView = v
         val title: TextView = v.findViewById(R.id.title)
         private val location: TextView = v.findViewById(R.id.location)
@@ -54,9 +67,18 @@ class AdvertisementListAdapter : RecyclerView.Adapter<AdvertisementListAdapter.T
             date.text = dateFormatter(timeslot.date)
 
             button.setOnClickListener {
+                if(mode == "Watch")
                 rootView.findNavController()
                     .navigate(
                         R.id.timeslot_to_details,
+                        bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
+                    )
+                Snackbar.make(it, "Here you can view details about ${title.text}", 2500)
+                    .show()
+                if(mode == "Fav")
+                rootView.findNavController()
+                    .navigate(
+                        R.id.favoritesToDetail,
                         bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
                     )
                 Snackbar.make(it, "Here you can view details about ${title.text}", 2500)

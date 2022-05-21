@@ -2,12 +2,8 @@ package it.polito.timebanking.ui.all_timeslot
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -15,6 +11,7 @@ import android.widget.NumberPicker
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,7 +28,7 @@ class AdvertisementListFragment : Fragment() {
 
     private var _binding: FragmentAdvertisementBinding? = null
     private var counter = 0
-    private val timeslotListAdapter = AdvertisementListAdapter()
+    private val advertisementListAdapter = AdvertisementListAdapter("Watch")
     private val binding get() = _binding!!
     private lateinit var listener: NavBarUpdater
 
@@ -40,9 +37,12 @@ class AdvertisementListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        )
+
         listener = context as NavBarUpdater
-        listener.onFragmentInteraction(arguments?.getString("offerName"))
-        Log.d("test","${arguments?.getString("offerName")}")
+        listener.setTitleWithSkill(requireArguments().getString("offerName"))
         _binding = FragmentAdvertisementBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -50,11 +50,11 @@ class AdvertisementListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val selectedSkill: String = arguments?.getString("skill_select")!!
+        val selectedSkill: String = requireArguments().getString("skill_select")!!
         val usersAvailable = mutableListOf<String>()
-        val timeslotsAdvertised: MutableList<Pair<String, TimeslotData>> = mutableListOf()
+        val advertisementList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
-        binding.timeslotRecycler.adapter = timeslotListAdapter
+        binding.timeslotRecycler.adapter = advertisementListAdapter
         binding.buttonAdd.isVisible = false
 
         FirebaseFirestore.getInstance().collection("users").get().addOnSuccessListener { userList ->
@@ -66,11 +66,12 @@ class AdvertisementListFragment : Fragment() {
             }
             FirebaseFirestore.getInstance().collection("timeslots").get().addOnSuccessListener {
                 for (t in it) {
-                    if (usersAvailable.contains(t.get("ownedBy")))
-                        timeslotsAdvertised.add(Pair(t.id, t.toTimeslotData()))
+                    if (usersAvailable.contains(t.get("ownedBy"))) {
+                        advertisementList.add(Pair(t.id, t.toTimeslotData()))
+                    }
                 }
-                timeslotListAdapter.setTimeslots(timeslotsAdvertised)
-                counter = timeslotsAdvertised.size
+                advertisementListAdapter.setTimeslots(advertisementList)
+                counter = advertisementList.size
                 binding.nothingToShow.isVisible = counter == 0
             }
         }
@@ -85,7 +86,13 @@ class AdvertisementListFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
         menu.findItem(R.id.action_sort).isVisible = true
-        if (this.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+        menu.findItem(R.id.action_sort).subMenu.add(0, 1, 0, "Sort by most recent")
+        menu.findItem(R.id.action_sort).subMenu.add(0, 2, 0, "Sort by least recent")
+        menu.findItem(R.id.action_sort).subMenu.add(0, 3, 0, "Sort by longer time")
+        menu.findItem(R.id.action_sort).subMenu.add(0, 4, 0, "Sort by shorter time")
+        menu.findItem(R.id.action_sort).subMenu.add(0, 5, 0, "Filter by duration")
+        menu.findItem(R.id.action_sort).subMenu.add(0, 6, 0, "Filter by date")
+        /*if (this.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             for ((i, s) in listOf(
                 "Sort by most recent",
                 "Sort by least recent",
@@ -98,6 +105,7 @@ class AdvertisementListFragment : Fragment() {
                 colored.setSpan(ForegroundColorSpan(Color.WHITE), 0, colored.length, 0)
                 menu.findItem(R.id.action_sort).subMenu.add(0, i + 1, 0, colored)
             }
+
         } else {
             menu.findItem(R.id.action_sort).subMenu.add(0, 1, 0, "Sort by most recent")
             menu.findItem(R.id.action_sort).subMenu.add(0, 2, 0, "Sort by least recent")
@@ -106,6 +114,7 @@ class AdvertisementListFragment : Fragment() {
             menu.findItem(R.id.action_sort).subMenu.add(0, 5, 0, "Filter by duration")
             menu.findItem(R.id.action_sort).subMenu.add(0, 6, 0, "Filter by date")
         }
+         */
         menu.findItem(R.id.action_search).isVisible = true
         searchView.imeOptions = EditorInfo.IME_ACTION_DONE
 
@@ -115,7 +124,7 @@ class AdvertisementListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                timeslotListAdapter.filter.filter(newText)
+                advertisementListAdapter.filter.filter(newText)
                 return false
             }
         })
@@ -124,10 +133,10 @@ class AdvertisementListFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            1 -> timeslotListAdapter.sortByDate(true)
-            2 -> timeslotListAdapter.sortByDate(false)
-            3 -> timeslotListAdapter.sortByDuration(true)
-            4 -> timeslotListAdapter.sortByDuration(false)
+            1 -> advertisementListAdapter.sortByDate(true)
+            2 -> advertisementListAdapter.sortByDate(false)
+            3 -> advertisementListAdapter.sortByDuration(true)
+            4 -> advertisementListAdapter.sortByDuration(false)
             5 -> {
                 numberPickerCustom()
             }
@@ -154,10 +163,11 @@ class AdvertisementListFragment : Fragment() {
         numberPicker.maxValue = 240
         numberPicker.wrapSelectorWheel = false
         d.setPositiveButton("Done") { _, _ ->
-            val n = timeslotListAdapter.filterByDuration(numberPicker.value)
-            if(n == 0) {
+            val n = advertisementListAdapter.filterByDuration(numberPicker.value)
+            if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text = "No timeslots lasting ${numberPicker.value} minutes were found "
+                binding.nothingToShow.text =
+                    "No timeslots lasting ${numberPicker.value} minutes were found "
             }
         }
         d.setNegativeButton("Cancel") { _, _ -> }
@@ -168,7 +178,13 @@ class AdvertisementListFragment : Fragment() {
     private fun datePickerCustom() {
         val cal = Calendar.getInstance()
         DatePickerDialog(requireContext(), { _, y, m, d ->
-            val n = timeslotListAdapter.selectDate(LocalDateTime.parse("$y-${"%02d".format(m + 1)}-${"%02d".format(d)}T00:00:00").atOffset(ZoneOffset.UTC).toInstant().toEpochMilli())
+            val n = advertisementListAdapter.selectDate(
+                LocalDateTime.parse(
+                    "$y-${"%02d".format(m + 1)}-${
+                        "%02d".format(d)
+                    }T00:00:00"
+                ).atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+            )
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
                 binding.nothingToShow.text = "No timeslots with selected date were found"

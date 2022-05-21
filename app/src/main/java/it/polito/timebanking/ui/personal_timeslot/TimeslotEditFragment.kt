@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -46,6 +47,9 @@ class TimeslotEditFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         _binding = FragmentTimeslotEditBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,7 +60,7 @@ class TimeslotEditFragment : Fragment() {
 
         updateAllSkills()
 
-        idTimeslot = arguments?.getString("id_timeslot")!!
+        idTimeslot = requireArguments().getString("id_timeslot")!!
         vm.get(idTimeslot).observe(viewLifecycleOwner) {
             currentTimeSlot = it
             binding.editTitle.hint = titleFormatter(it.title)
