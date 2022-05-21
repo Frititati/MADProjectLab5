@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.messages
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.FragmentChatListBinding
-import it.polito.timebanking.model.chat.ChatData
 import it.polito.timebanking.model.chat.ChatViewModel
-import it.polito.timebanking.model.chat.toChatData
 
 class ChatListFragment : Fragment() {
     private var _binding: FragmentChatListBinding? = null
@@ -41,8 +38,7 @@ class ChatListFragment : Fragment() {
         vm.getChat(me).observe(viewLifecycleOwner) {
             it.forEach { chat ->
                 val other = if (chat.second.users!!.second == me) chat.second.users!!.first
-                else
-                    chat.second.users!!.second
+                            else chat.second.users!!.second
                 FirebaseFirestore.getInstance().collection("users")
                     .document(other).get()
                     .addOnSuccessListener { user ->
@@ -57,6 +53,11 @@ class ChatListFragment : Fragment() {
                     }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

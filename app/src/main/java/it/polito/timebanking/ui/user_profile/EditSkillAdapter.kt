@@ -72,13 +72,11 @@ class EditSkillAdapter :
         }
 
         private fun addSkillUser(skillID: String) {
-            // TODO onsuccess method
             _firestore.collection("users").document(firestoreUser!!.uid)
                 .update("skills", arrayUnion(skillID))
         }
 
         private fun removeSkillUser(skillID: String) {
-            // TODO onsuccess method
             _firestore.collection("users").document(firestoreUser!!.uid)
                 .update("skills", arrayRemove(skillID))
         }

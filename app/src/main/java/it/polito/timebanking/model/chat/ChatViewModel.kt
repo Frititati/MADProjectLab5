@@ -13,7 +13,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getChat(user:String): LiveData<List<Pair<String, ChatData>>> {
         val chats = MutableLiveData<List<Pair<String, ChatData>>>()
-
+        Log.d("test",user)
         _firebase.collection("chats").whereArrayContains("users",user)
             .addSnapshotListener { r, e ->
                 if (r != null) {
@@ -24,14 +24,4 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             }
         return chats
     }
-
-   /* fun addMessage(chatID: String) {
-        val data = mutableMapOf<String, Any>()
-        data["hello"] = "salut"
-        var mess: MutableList<Map<String, String>> = mutableListOf(mutableMapOf())
-        _firebase.collection("chats").document(chatID).get().addOnSuccessListener {
-            Log.d("test", "WE HAD ${it.get("messages")}")
-        }
-    }*/
-
 }

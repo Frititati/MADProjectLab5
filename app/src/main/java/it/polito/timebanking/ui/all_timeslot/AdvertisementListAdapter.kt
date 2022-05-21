@@ -24,8 +24,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdvertisementListViewHolder {
         return AdvertisementListViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.widget_advertisement, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.widget_advertisement, parent, false)
         ,mode)
     }
 

@@ -1,5 +1,6 @@
 package it.polito.timebanking.model.chat
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class ChatData(

@@ -2,7 +2,6 @@
 package it.polito.timebanking.ui.messages
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +19,10 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var messageList: MutableList<MessageData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == mSent) {
-            SentMessageHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.message_sent, parent, false))
-        } else {
-            ReceivedMessageHolder( LayoutInflater.from(parent.context)
-                .inflate(R.layout.message_received, parent, false))
-        }
-
+        return if (viewType == mSent)
+            SentMessageHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_sent, parent, false))
+         else
+            ReceivedMessageHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_received, parent, false))
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -56,15 +51,18 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setMessages(list:MutableList<MessageData>){
         messageList = list
         notifyDataSetChanged()
-        Log.d("test","MESS LIST = $messageList")
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        messageList.clear()
+        notifyDataSetChanged()
+    }
     private class SentMessageHolder constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var messageText = itemView.findViewById<TextView>(R.id.message_body)!!
         fun bind(message: MessageData) {
             messageText.text = message.message
-            Log.d("test","IL MESSAGGIO E ${messageText.text}")
         }
     }
 
@@ -73,7 +71,6 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val messageText = itemView.findViewById<TextView>(R.id.message_body)!!
         fun bind(message: MessageData) {
             messageText.text = message.message
-            Log.d("test","IL MESSAGGIO E ${messageText.text}")
         }
 
     }

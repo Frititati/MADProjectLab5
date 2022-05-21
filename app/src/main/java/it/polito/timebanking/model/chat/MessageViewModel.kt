@@ -22,4 +22,12 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             }
         return messages
     }
+
+    fun addMessage(chatID: String,message:String,senderID:String) {
+        val data = mutableMapOf<String, Any>()
+        data["message"] = message
+        data["chatID"] = chatID
+        data["senderID"] = senderID
+        _firebase.collection("messages").document().set(data)
+    }
 }
