@@ -5,12 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentChatListBinding
 import it.polito.timebanking.model.chat.ChatViewModel
 
@@ -24,12 +26,17 @@ class ChatListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentChatListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
+            DrawerLayout.LOCK_MODE_UNLOCKED
+        )
+
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
 
@@ -38,7 +45,7 @@ class ChatListFragment : Fragment() {
         vm.getChat(me).observe(viewLifecycleOwner) {
             it.forEach { chat ->
                 val other = if (chat.second.users!!.second == me) chat.second.users!!.first
-                            else chat.second.users!!.second
+                else chat.second.users!!.second
                 FirebaseFirestore.getInstance().collection("users")
                     .document(other).get()
                     .addOnSuccessListener { user ->
@@ -46,8 +53,10 @@ class ChatListFragment : Fragment() {
                             Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${other}.png")
                                 .getBytes(1024 * 1024)
                                 .addOnSuccessListener { pic ->
-                                    val userChat = ChatListAdapter.ChatWithUser(user.get("fullName").toString(),pic)
-                                    chatListAdapter.addChat(chat.first,userChat)
+                                    val userChat = ChatListAdapter.ChatWithUser(
+                                        user.get("fullName").toString(), pic
+                                    )
+                                    chatListAdapter.addChat(chat.first, userChat)
                                 }
                         }
                     }
