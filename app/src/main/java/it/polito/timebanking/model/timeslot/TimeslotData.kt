@@ -59,8 +59,7 @@ fun dateFormatter(milliSeconds: Long?): String {
     if (milliSeconds == null || milliSeconds == 0L) {
         return "Empty Date"
     }
-    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN)
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = milliSeconds
-    return formatter.format(calendar.time)
+    return SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN).format(calendar.time)
 }

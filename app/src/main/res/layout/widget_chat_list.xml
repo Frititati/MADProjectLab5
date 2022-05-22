@@ -10,6 +10,7 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardElevation="0dp"
         android:layout_gravity="start">
 
         <ImageView
@@ -25,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Andrea"
+            android:text="@string/user"
             android:textStyle="bold"
             android:layout_marginStart="70dp"
             android:textSize="18sp" />

@@ -51,7 +51,7 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonSend.setOnClickListener {
-            vm.addMessage(chatID,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid)
+            vm.addMessage(chatID,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
             binding.writeMessage.setText("")
         }
     }

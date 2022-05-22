@@ -15,6 +15,7 @@
         android:layout_gravity="center"
         android:backgroundTint="@color/Blue_Lotus"
         android:gravity="center"
+        card_view:cardElevation="0dp"
         card_view:cardCornerRadius="20dp"
         card_view:contentPadding="10dp"
         card_view:layout_constraintEnd_toEndOf="parent"
