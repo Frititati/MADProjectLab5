@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentMessagesBinding
@@ -46,12 +47,12 @@ class MessageListFragment : Fragment() {
 
         messageListAdapter.clear()
 
-        vm.getMessages(chatID).observe(viewLifecycleOwner) {
+        vm.getMessages(chatID!!).observe(viewLifecycleOwner) {
             messageListAdapter.setMessages(it.toMutableList())
         }
 
         binding.buttonSend.setOnClickListener {
-            vm.addMessage(chatID,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
+            vm.addMessage(chatID!!,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
             binding.writeMessage.setText("")
         }
     }

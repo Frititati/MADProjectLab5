@@ -52,18 +52,28 @@ class AdvertisementDetailFragment : Fragment() {
             }
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
-            favList = it.get("favorites") as MutableList<String>
-            if(favList.contains(idTimeslot)){
-                fav = true
-                requireActivity().invalidateOptionsMenu()
+                favList = it.get("favorites") as MutableList<String>
+                if (favList.contains(idTimeslot)) {
+                    fav = true
+                    requireActivity().invalidateOptionsMenu()
+                }
             }
-        }
 
         binding.chatStartButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.ad_to_chat,
-                bundleOf("user" to "Chat with ${binding.UserFullName.text}")
+            val data = mutableMapOf<String, Any>()
+            data["messagesList"] = emptyList<String>()
+            data["users"] = listOf(
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                requireArguments().getString("id_user")
             )
+            data["lastMessage"] = 0
+            FirebaseFirestore.getInstance().collection("chats").add(data).addOnSuccessListener {
+                val chatID = it.id
+                findNavController().navigate(
+                    R.id.ad_to_chat,
+                    bundleOf("user" to binding.UserFullName.text,"chatID" to chatID)
+                )
+            }
         }
     }
 
@@ -108,19 +118,19 @@ class AdvertisementDetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun updateUserData(newFavList:List<String>){
+    private fun updateUserData(newFavList: List<String>) {
         val vm by viewModels<ProfileViewModel>()
-            vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner){
-                vm.update(
-                    FirebaseAuth.getInstance().currentUser!!.uid,
-                    it.fullName.toString(),
-                    it.nickName.toString(),
-                    it.age.toString(),
-                    it.email.toString(),
-                    it.location.toString(),
-                    it.description.toString(),
-                    newFavList
-                )
-            }
+        vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+            vm.update(
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                it.fullName.toString(),
+                it.nickName.toString(),
+                it.age.toString(),
+                it.email.toString(),
+                it.location.toString(),
+                it.description.toString(),
+                newFavList
+            )
+        }
     }
 }

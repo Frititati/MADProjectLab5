@@ -1,7 +1,6 @@
 package it.polito.timebanking.model.chat
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,13 +15,12 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         FirebaseFirestore.getInstance().collection("chats").document(chatID)
             .addSnapshotListener { r, _ ->
                 if (r != null) {
-                    val messagesIDList = r.get("messagesList") as List<String>
                     val messagesList: MutableList<MessageData> = mutableListOf()
-                    messagesIDList.forEach {
+                    (r.get("messagesList") as List<String>?)?.forEach {
                         FirebaseFirestore.getInstance().collection("messages").document(it)
                             .addSnapshotListener { m, _ ->
-                                if(m != null) {
-                                    messagesList.add(messagesList.size,m.toMessageData())
+                                if (m != null) {
+                                    messagesList.add(messagesList.size, m.toMessageData())
                                     messages.value = messagesList
                                 }
                             }
