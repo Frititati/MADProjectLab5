@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.all_timeslot.AdvertisementDetailFragment">
+    android:layout_gravity="center"
+    tools:context=".ui.offers.OfferDetailFragment">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="230dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:orientation="vertical"
             android:padding="10dp">
@@ -25,15 +25,15 @@
                 android:id="@+id/TitleTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/titleTooltip"
+                android:text="@string/title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/Title"
                 android:layout_width="fill_parent"
-                android:text="@string/insert_a_title"
                 android:layout_height="wrap_content"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_a_description"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <TextView
@@ -67,7 +67,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_date_and_time"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
@@ -84,8 +84,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_duration"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:text="@string/no_info"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/LocationTooltip"
@@ -102,22 +103,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_location"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:text="@string/no_info"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_marginBottom="20dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/UserNicknameTooltip"
@@ -132,8 +132,8 @@
                 android:id="@+id/UserFullName"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/full_name"
                 android:layout_marginBottom="10dp"
+                android:text="@string/full_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <TextView
@@ -161,9 +161,9 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/descriptionTooltip"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:drawableLeftCompat="@drawable/ic_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/email"
-                app:drawableLeftCompat="@drawable/ic_info" />
+                app:layout_constraintTop_toBottomOf="@+id/email" />
 
             <TextView
                 android:id="@+id/UserDescription"
@@ -184,9 +184,9 @@
             android:clickable="true"
             android:contentDescription="@string/myChat"
             android:focusable="true"
-            app:tint="@color/AntiqueWhite"
             android:src="@drawable/ic_chat_bubble"
-            app:backgroundTint="@color/Ocean_Blue" />
+            app:backgroundTint="@color/Ocean_Blue"
+            app:tint="@color/AntiqueWhite" />
 
     </LinearLayout>
 

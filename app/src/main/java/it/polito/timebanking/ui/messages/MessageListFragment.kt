@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -47,13 +48,33 @@ class MessageListFragment : Fragment() {
 
         messageListAdapter.clear()
 
-        vm.getMessages(chatID!!).observe(viewLifecycleOwner) {
+        vm.getMessages(chatID).observe(viewLifecycleOwner) {
             messageListAdapter.setMessages(it.toMutableList())
         }
 
         binding.buttonSend.setOnClickListener {
-            vm.addMessage(chatID!!,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
+            vm.addMessage(chatID,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
             binding.writeMessage.setText("")
+        }
+
+        binding.buttonAccept.setOnClickListener {
+            FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+                .addOnSuccessListener {user ->
+                    FirebaseFirestore.getInstance().collection("timeslots").document(requireArguments().getString("timeslotID").toString()).get()
+                        .addOnSuccessListener { ts ->
+                            val timeRequired = ts.get("duration").toString().toInt()
+                            val time = user.get("time").toString().toInt()
+                            Log.d("test","QUI $time vs $timeRequired")
+                            if(time >= timeRequired){
+                            val data: MutableMap<String, Any> = mutableMapOf()
+                                data["available"] = false
+                                FirebaseFirestore.getInstance().collection("timeslots").document(requireArguments().getString("timeslotID").toString()).update(data)
+                            }
+                            else{
+                                Toast.makeText(context,"You don't have enough time to spend!",Toast.LENGTH_LONG).show()
+                            }
+                        }
+                }
         }
     }
 

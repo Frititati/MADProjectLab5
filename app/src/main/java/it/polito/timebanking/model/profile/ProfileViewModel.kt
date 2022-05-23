@@ -50,7 +50,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             data["fullName"] = fullName
         }
         if (age.isNotEmpty()) {
-            data["age"] = age
+            data["age"] = age.toInt()
         }
         data["favorites"] = favList
         _firebase.collection("users").document(id).update(

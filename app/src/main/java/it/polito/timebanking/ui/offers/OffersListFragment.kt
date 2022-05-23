@@ -1,10 +1,9 @@
-package it.polito.timebanking.ui.all_timeslot
+package it.polito.timebanking.ui.offers
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.NumberPicker
@@ -17,18 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
-import it.polito.timebanking.databinding.FragmentAdvertisementBinding
+import it.polito.timebanking.databinding.FragmentOffersBinding
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.toTimeslotData
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-class AdvertisementListFragment : Fragment() {
+class OffersListFragment : Fragment() {
 
-    private var _binding: FragmentAdvertisementBinding? = null
+    private var _binding: FragmentOffersBinding? = null
     private var counter = 0
-    private val advertisementListAdapter = AdvertisementListAdapter("Watch")
+    private val offersListAdapter = OffersListAdapter("Watch")
     private val binding get() = _binding!!
     private lateinit var listener: NavBarUpdater
 
@@ -42,8 +41,8 @@ class AdvertisementListFragment : Fragment() {
         )
 
         listener = context as NavBarUpdater
-        listener.setTitleWithSkill(requireArguments().getString("offerName"))
-        _binding = FragmentAdvertisementBinding.inflate(inflater, container, false)
+        listener.setTitleWithSkill("Offers for" + " " + requireArguments().getString("offerName"))
+        _binding = FragmentOffersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -52,9 +51,9 @@ class AdvertisementListFragment : Fragment() {
 
         val selectedSkill: String = requireArguments().getString("skill_select")!!
         val usersAvailable = mutableListOf<String>()
-        val advertisementList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
+        val offerList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
-        binding.timeslotRecycler.adapter = advertisementListAdapter
+        binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
 
         FirebaseFirestore.getInstance().collection("users").get().addOnSuccessListener { userList ->
@@ -67,11 +66,12 @@ class AdvertisementListFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("timeslots").get().addOnSuccessListener {
                 for (t in it) {
                     if (usersAvailable.contains(t.get("ownedBy"))) {
-                        advertisementList.add(Pair(t.id, t.toTimeslotData()))
+                        offerList.add(Pair(t.id, t.toTimeslotData()))
                     }
                 }
-                advertisementListAdapter.setTimeslots(advertisementList)
-                counter = advertisementList.size
+                offersListAdapter.setTimeslots(offerList)
+                counter = offerList.size
+                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_found,requireArguments().getString("offerName")))
                 binding.nothingToShow.isVisible = counter == 0
             }
         }
@@ -124,7 +124,7 @@ class AdvertisementListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                advertisementListAdapter.filter.filter(newText)
+                offersListAdapter.filter.filter(newText)
                 return false
             }
         })
@@ -133,10 +133,10 @@ class AdvertisementListFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            1 -> advertisementListAdapter.sortByDate(true)
-            2 -> advertisementListAdapter.sortByDate(false)
-            3 -> advertisementListAdapter.sortByDuration(true)
-            4 -> advertisementListAdapter.sortByDuration(false)
+            1 -> offersListAdapter.sortByDate(true)
+            2 -> offersListAdapter.sortByDate(false)
+            3 -> offersListAdapter.sortByDuration(true)
+            4 -> offersListAdapter.sortByDuration(false)
             5 -> {
                 numberPickerCustom()
             }
@@ -163,11 +163,10 @@ class AdvertisementListFragment : Fragment() {
         numberPicker.maxValue = 240
         numberPicker.wrapSelectorWheel = false
         d.setPositiveButton("Done") { _, _ ->
-            val n = advertisementListAdapter.filterByDuration(numberPicker.value)
+            val n = offersListAdapter.filterByDuration(numberPicker.value)
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text =
-                    "No timeslots lasting ${numberPicker.value} minutes were found "
+                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_duration),numberPicker.value)
             }
         }
         d.setNegativeButton("Cancel") { _, _ -> }
@@ -178,7 +177,7 @@ class AdvertisementListFragment : Fragment() {
     private fun datePickerCustom() {
         val cal = Calendar.getInstance()
         DatePickerDialog(requireContext(), { _, y, m, d ->
-            val n = advertisementListAdapter.selectDate(
+            val n = offersListAdapter.selectDate(
                 LocalDateTime.parse(
                     "$y-${"%02d".format(m + 1)}-${
                         "%02d".format(d)
@@ -187,7 +186,8 @@ class AdvertisementListFragment : Fragment() {
             )
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text = "No timeslots with selected date were found"
+                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_date))
+
             }
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
             .show()

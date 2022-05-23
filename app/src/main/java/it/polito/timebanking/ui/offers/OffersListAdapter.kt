@@ -1,7 +1,6 @@
-package it.polito.timebanking.ui.all_timeslot
+package it.polito.timebanking.ui.offers
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,18 +16,18 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<AdvertisementListAdapter.AdvertisementListViewHolder>(),
+class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(),
     Filterable {
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
     private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdvertisementListViewHolder {
-        return AdvertisementListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_advertisement, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
+        return OfferListViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false)
         ,mode)
     }
 
-    override fun onBindViewHolder(holder: AdvertisementListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
         holder.bind(timeslots[position].first, timeslots[position].second)
     }
 
@@ -53,7 +52,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
-    class AdvertisementListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
+    class OfferListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
         private val rootView = v
         val title: TextView = v.findViewById(R.id.title)
         private val location: TextView = v.findViewById(R.id.location)
@@ -72,7 +71,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
                         R.id.timeslot_to_details,
                         bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
                     )
-                Snackbar.make(it, "Here you can view details about ${title.text}", 2500)
+                Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
                     .show()
                 if(mode == "Fav")
                 rootView.findNavController()
@@ -80,7 +79,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
                         R.id.favoritesToDetail,
                         bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
                     )
-                Snackbar.make(it, "Here you can view details about ${title.text}", 2500)
+                Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
                     .show()
             }
         }
@@ -98,7 +97,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
             else {
                 val pattern = constraint.toString().lowercase().trim()
                 filteredList =
-                    timeslotsFull.filter { it.second.title!!.lowercase().contains(pattern) }
+                    timeslotsFull.filter { it.second.title.lowercase().contains(pattern) }
                         .toMutableList()
             }
             val results = FilterResults()
@@ -133,7 +132,7 @@ class AdvertisementListAdapter(private val mode: String) : RecyclerView.Adapter<
     @SuppressLint("NotifyDataSetChanged")
     fun filterByDuration(duration: Int):Int {
         timeslots.clear()
-            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration!! >= duration }) }
+            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration >= duration }) }
         notifyDataSetChanged()
         return timeslots.size
     }

@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.concurrent.thread
 
 
-class TimeslotEditFragment : Fragment() {
+class EditTimeslotFragment : Fragment() {
     private var _binding: FragmentTimeslotEditBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<TimeslotViewModel>()
@@ -111,7 +111,8 @@ class TimeslotEditFragment : Fragment() {
                     dateMilli,
                     binding.editDuration.text.toString(),
                     binding.editLocation.text.toString(),
-                    userSkills
+                    userSkills,
+                    true
                 )
                 Snackbar.make(binding.root, "Updated Timeslot", 1500).show()
             }
@@ -135,6 +136,7 @@ class TimeslotEditFragment : Fragment() {
                     t.duration,
                     t.location,
                     t.ownedBy,
+                    t.available
                 )
             )
     }

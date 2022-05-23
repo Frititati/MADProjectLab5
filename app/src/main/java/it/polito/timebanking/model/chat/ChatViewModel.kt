@@ -13,7 +13,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getChat(user:String): LiveData<List<Pair<String, ChatData>>> {
         val chats = MutableLiveData<List<Pair<String, ChatData>>>()
-        Log.d("test",user)
         _firebase.collection("chats").whereArrayContains("users",user)
             .addSnapshotListener { r, e ->
                 if (r != null) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.personal_timeslot.TimeslotEditFragment">
+    tools:context=".ui.personal_timeslot.EditTimeslotFragment">
 
     <LinearLayout
         android:id="@+id/externalLayout"

@@ -3,14 +3,15 @@ package it.polito.timebanking.model.profile
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class ProfileData(
-    var fullName: String?,
-    var nickName: String?,
-    var email: String?,
-    var age: Int?,
-    var location: String?,
+    var fullName: String,
+    var nickName: String,
+    var email: String,
+    var age: Int,
+    var location: String,
     var skills: List<String>,
-    var description: String?,
-    var favorites: List<String>
+    var description: String,
+    var favorites: List<String>,
+    var time: Int
 )
 
 fun DocumentSnapshot.toUserProfileData(): ProfileData {
@@ -18,11 +19,12 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.get("fullName").toString(),
         this.get("nickName").toString(),
         this.get("email").toString(),
-        this.get("age").toString().toIntOrNull(),
+        this.get("age").toString().toInt(),
         this.get("location").toString(),
         this.get("skills") as List<String>,
         this.get("description").toString(),
-        this.get("favorites") as List<String>
+        this.get("favorites") as List<String>,
+        this.get("time").toString().toInt()
     )
 }
 

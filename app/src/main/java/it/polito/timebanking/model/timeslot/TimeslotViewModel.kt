@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -43,7 +42,8 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         date: Long,
         duration: String,
         location: String,
-        skills: List<String>
+        skills: List<String>,
+        available: Boolean
     ) {
         val data: MutableMap<String, Any> = mutableMapOf()
         if (title.isNotEmpty()) {
@@ -70,6 +70,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         }
 
         data["editedAt"] = System.currentTimeMillis()
+        data["available"] = available
 
         FirebaseFirestore.getInstance().collection("timeslots").document(id).update(
             data as Map<String, Any>

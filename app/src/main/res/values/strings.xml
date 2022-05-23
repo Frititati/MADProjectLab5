@@ -1,6 +1,5 @@
 <resources>
     <string name="action_edit">Edit</string>
-    <string name="action_settings">Edit</string>
     <string name="ad_description">The user says: %s</string>
     <string name="ad_title">Skill offered is: %s</string>
     <string name="ad_user">The timeslot is offered by: %s</string>
@@ -25,7 +24,7 @@
     <string name="edit">Edit</string>
     <string name="editButton">editButton</string>
     <string name="editImage">editImage</string>
-    <string name="edit_your_profile">Edit Your Profile</string>
+    <string name="edit_your_profile">Edit Profile</string>
     <string name="emailTooltip">Email</string>
     <string name="email_address">Your email</string>
     <string name="enter_age">Enter your age…</string>
@@ -57,7 +56,7 @@
     <string name="nickname">Your nick name</string>
     <string name="nicknameTooltip">Nickname</string>
     <string name="no">No</string>
-    <string name="nothing_here_yet">Nothing here…yet</string>
+    <string name="loading">Loading data…</string>
     <string name="save">Save</string>
     <string name="search">Search</string>
     <string name="see_more">See more</string>
@@ -77,4 +76,11 @@
     <string name="message">Message</string>
     <string name="enter_message">Message…</string>
     <string name="send">Send</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="no_info">Not specified</string>
+    <string name="no_offers_duration">No offer for %d minutes was found</string>
+    <string name="no_offers_date">No offer for selected date was found</string>
+    <string name="no_offers_found">No offer for %s was found</string>
+    <string name="no_favorites">You haven\'t set any favorites yet</string>
 </resources>

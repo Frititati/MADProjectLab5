@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    tools:context=".ui.all_timeslot.AdvertisementDetailFragment">
+    tools:context=".ui.offers.OfferDetailFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="230dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:orientation="vertical"
             android:padding="10dp">
@@ -25,14 +25,14 @@
                 android:id="@+id/TitleTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/title"
+                android:text="@string/titleTooltip"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/Title"
                 android:layout_width="fill_parent"
-                android:text="@string/insert_a_title"
+                android:text="@string/no_info"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
@@ -50,7 +50,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_a_description"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <TextView
@@ -67,7 +67,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_date_and_time"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
@@ -84,7 +84,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_duration"
+                android:textStyle="bold"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
@@ -102,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="10dp"
-                android:text="@string/insert_location"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         </LinearLayout>
@@ -110,12 +111,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
             android:padding="10dp"
-            android:layout_gravity="center"
             android:layout_marginBottom="20dp">
 
             <TextView
@@ -131,7 +133,7 @@
                 android:id="@+id/UserFullName"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/full_name"
+                android:text="@string/no_info"
                 android:layout_marginBottom="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
@@ -168,7 +170,7 @@
                 android:id="@+id/UserDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/description"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toStartOf="parent" />
         </LinearLayout>

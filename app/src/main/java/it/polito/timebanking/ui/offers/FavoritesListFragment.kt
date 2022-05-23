@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.all_timeslot
+package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
 import android.view.*
@@ -7,13 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import it.polito.timebanking.databinding.FragmentAdvertisementBinding
+import it.polito.timebanking.R
+import it.polito.timebanking.databinding.FragmentOffersBinding
 import it.polito.timebanking.model.timeslot.toTimeslotData
 
 class FavoritesListFragment : Fragment() {
 
-    private var _binding: FragmentAdvertisementBinding? = null
-    private val advertisementListAdapter = AdvertisementListAdapter("Fav")
+    private var _binding: FragmentOffersBinding? = null
+    private val offersListAdapter = OffersListAdapter("Fav")
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -21,7 +22,7 @@ class FavoritesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAdvertisementBinding.inflate(inflater, container, false)
+        _binding = FragmentOffersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -30,9 +31,9 @@ class FavoritesListFragment : Fragment() {
 
         var favorites: MutableList<String>
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
-        binding.timeslotRecycler.adapter = advertisementListAdapter
+        binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
-        advertisementListAdapter.clear()
+        offersListAdapter.clear()
 
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
@@ -40,9 +41,11 @@ class FavoritesListFragment : Fragment() {
                 favorites.forEach { f ->
                     FirebaseFirestore.getInstance().collection("timeslots").document(f).get()
                         .addOnSuccessListener { t ->
-                            advertisementListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
+                            offersListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
                         }
                 }
+                binding.nothingToShow.text = String.format(resources.getString(
+                    R.string.no_favorites))
                 binding.nothingToShow.isVisible = favorites.size == 0
             }
     }

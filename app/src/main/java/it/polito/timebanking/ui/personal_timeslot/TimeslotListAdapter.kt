@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +47,6 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
-
             title.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.home_to_detail, bundleOf("id_timeslot" to id))

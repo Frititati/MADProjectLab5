@@ -7,50 +7,52 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class TimeslotData(
-    var createdAt: Long?,
-    var editedAt: Long?,
-    var title: String?,
-    var description: String?,
-    var date: Long?,
-    var duration: Int?,
-    var location: String?,
-    var ownedBy: String?,
+    var createdAt: Long,
+    var editedAt: Long,
+    var title: String,
+    var description: String,
+    var date: Long,
+    var duration: Int,
+    var location: String,
+    var ownedBy: String,
+    var available: Boolean
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
     return TimeslotData(
-        this.get("createdAt") as Long?,
-        this.get("editedAt") as Long?,
+        this.get("createdAt").toString().toLong(),
+        this.get("editedAt").toString().toLong(),
         this.get("title").toString(),
         this.get("description").toString(),
-        this.get("date") as Long?,
-        this.get("duration").toString().toIntOrNull(),
+        this.get("date").toString().toLong(),
+        this.get("duration").toString().toInt(),
         this.get("location").toString(),
         this.get("ownedBy").toString(),
+        this.get("available") as Boolean
     )
 }
 
-fun titleFormatter(title: String?) : String {
+fun titleFormatter(title: String?): String {
     return if (title.isNullOrEmpty()) "Empty Title"
     else title
 }
 
-fun descriptionFormatter(description: String?) : String {
+fun descriptionFormatter(description: String?): String {
     return if (description.isNullOrEmpty()) "Empty Description"
     else description
 }
 
-fun durationMinuteFormatter(r: Resources, duration: Int?) : String {
+fun durationMinuteFormatter(r: Resources, duration: Int?): String {
     return if (duration == null || duration == 0) String.format(r.getString(R.string.minutes), 0)
     else String.format(r.getString(R.string.minutes), duration)
 }
 
-fun durationFormatter(duration: Int?) : Int {
+fun durationFormatter(duration: Int?): Int {
     return if (duration == null || duration == 0) 0
     else duration
 }
 
-fun locationFormatter(location: String?) : String {
+fun locationFormatter(location: String?): String {
     return if (location.isNullOrEmpty()) "Empty Location"
     else location
 }

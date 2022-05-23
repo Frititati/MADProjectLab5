@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.all_timeslot
+package it.polito.timebanking.ui.offers
 
 import android.app.AlertDialog
 import android.content.Intent

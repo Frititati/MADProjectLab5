@@ -117,7 +117,7 @@ class LoginActivity : AppCompatActivity() {
                         "Welcome, ${mAuth.currentUser!!.displayName}",
                         Toast.LENGTH_LONG
                     ).show()
-                    getSharedPreferences("group21.lab4.PREFERENCES", MODE_PRIVATE).edit()
+                    getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).edit()
                         .putString("email", account.email).apply()
                     startActivity(Intent(this, MainActivity::class.java))
                     progressDialog.dismiss()

@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val defaultAge = 18
+    private val startingTime = 120
     private val firestoreUser = FirebaseAuth.getInstance().currentUser
     private val defaultProfilePath = "gs://madproject-3381c.appspot.com/user.png"
 
@@ -79,22 +80,23 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     FirebaseFirestore.getInstance().collection("users").document(firestoreUser.uid)
                         .set(
                             ProfileData(
-                                "Your fullname",
-                                "Your nickname",
+                                "Empty fullname",
+                                "Empty nickname",
                                 getSharedPreferences(
-                                    "group21.lab4.PREFERENCES",
+                                    "group21.lab5.PREFERENCES",
                                     MODE_PRIVATE
-                                ).getString("email", "unknown email"),
+                                ).getString("email", "unknown email")!!,
                                 defaultAge,
-                                "Your location",
+                                "Empty location",
                                 listOf(),
-                                "Your description",
-                                listOf())
+                                "Empty description",
+                                listOf(),
+                                startingTime)
                         )
                     binding.navView.getHeaderView(0)
                         .findViewById<TextView>(R.id.userEmailOnDrawer).text =
                         getSharedPreferences(
-                            "group21.lab4.PREFERENCES",
+                            "group21.lab5.PREFERENCES",
                             MODE_PRIVATE
                         ).getString("email", "unknown email")
 

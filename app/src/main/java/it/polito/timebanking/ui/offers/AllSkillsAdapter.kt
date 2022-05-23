@@ -1,4 +1,4 @@
-package it.polito.timebanking.ui.all_timeslot
+package it.polito.timebanking.ui.offers
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -43,8 +43,8 @@ class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolde
         fun bind(id: String, skill: SkillData) {
             title.text = skill.title
             title.setOnClickListener {
-                rootView.findNavController().navigate(R.id.skill_to_timeslot, bundleOf("skill_select" to id, "offerName" to "Offers for ${title.text}"))
-                Snackbar.make(it, "Here you can view all users with: ${title.text}", 2500)
+                rootView.findNavController().navigate(R.id.skill_to_timeslot, bundleOf("skill_select" to id, "offerName" to title.text))
+                Snackbar.make(it, "Here you can view all timeslot for ${title.text}", 2500)
                     .show()
             }
         }
