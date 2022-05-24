@@ -83,4 +83,7 @@
     <string name="no_offers_date">No offer for selected date was found</string>
     <string name="no_offers_found">No offer for %s was found</string>
     <string name="no_favorites">You haven\'t set any favorites yet</string>
+    <string name="no_skills">No skills available</string>
+    <string name="no_chat">You have no chat right now</string>
+    <string name="no_timeslot">You don\'t have any timeslots</string>
 </resources>

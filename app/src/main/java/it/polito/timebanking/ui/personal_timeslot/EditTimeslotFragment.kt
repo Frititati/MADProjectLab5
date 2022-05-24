@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotEditBinding
@@ -88,6 +89,7 @@ class EditTimeslotFragment : Fragment() {
 
             dialog.setPositiveButton("Yes"){_,_ ->
                 vm.delete(idTimeslot)
+                vm.deleteUserTimeslot(idTimeslot)
                 toUpdate = false
                 Snackbar.make(binding.root, "Timeslot deleted", 1500).setAction("Undo") {
                     addNonEmptyTimeslot(currentTimeSlot)
@@ -138,7 +140,11 @@ class EditTimeslotFragment : Fragment() {
                     t.ownedBy,
                     t.available
                 )
-            )
+            ).addOnSuccessListener {
+                FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).update(
+                    "timeslots",FieldValue.arrayUnion(it.id)
+                )
+            }
     }
 
     private fun updateAllSkills() {

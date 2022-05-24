@@ -7,28 +7,28 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class TimeslotData(
-    var createdAt: Long,
-    var editedAt: Long,
+    var createdAt: Long?,
+    var editedAt: Long?,
     var title: String,
     var description: String,
-    var date: Long,
-    var duration: Int,
+    var date: Long?,
+    var duration: Int?,
     var location: String,
     var ownedBy: String,
-    var available: Boolean
+    var available: Boolean?
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
     return TimeslotData(
-        this.get("createdAt").toString().toLong(),
-        this.get("editedAt").toString().toLong(),
+        this.get("createdAt").toString().toLongOrNull(),
+        this.get("editedAt").toString().toLongOrNull(),
         this.get("title").toString(),
         this.get("description").toString(),
-        this.get("date").toString().toLong(),
-        this.get("duration").toString().toInt(),
+        this.get("date").toString().toLongOrNull(),
+        this.get("duration").toString().toIntOrNull(),
         this.get("location").toString(),
         this.get("ownedBy").toString(),
-        this.get("available") as Boolean
+        this.get("available") as Boolean?
     )
 }
 

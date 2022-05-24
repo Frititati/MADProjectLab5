@@ -5,7 +5,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import it.polito.timebanking.model.chat.MessageData
+import it.polito.timebanking.model.chat.toMessageData
+import java.sql.Time
 
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,17 +26,30 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         return timeslot
     }
 
-    fun getUserTimeslots(id: String): LiveData<List<Pair<String, TimeslotData>>> {
+    fun getUserTimeslots(): LiveData<List<Pair<String, TimeslotData>>> {
         val timeslots = MutableLiveData<List<Pair<String, TimeslotData>>>()
 
-        FirebaseFirestore.getInstance().collection("timeslots").whereEqualTo("ownedBy", id)
+        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .addSnapshotListener { ut, _ ->
+                    val timeslotsList: MutableList<Pair<String,TimeslotData>> = mutableListOf()
+                    (ut?.get("timeslots") as List<*>?)?.forEach {
+                        FirebaseFirestore.getInstance().collection("timeslots").document(it.toString())
+                            .addSnapshotListener { t, _ ->
+                                if (t != null) {
+                                    timeslotsList.add(Pair(t.id, t.toTimeslotData()))
+                                    timeslots.value = timeslotsList
+                                }
+                            }
+                    }
+            }
+        /*FirebaseFirestore.getInstance().collection("timeslots").whereEqualTo("ownedBy", id)
             .addSnapshotListener { r, e ->
                 if (r != null) {
                     timeslots.value = if (e != null)
                         emptyList()
                     else r.mapNotNull { Pair(it.id, it.toTimeslotData()) }
                 }
-            }
+            }*/
         return timeslots
     }
 
@@ -79,7 +97,12 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
 
     fun delete(id: String) {
         FirebaseFirestore.getInstance().collection("timeslots").document(id).delete()
-            .addOnSuccessListener { Log.d("test", "Cancelled $id") }
+            .addOnSuccessListener {  }
             .addOnFailureListener { e -> Log.w("test", "Error deleting document", e) }
+    }
+    fun deleteUserTimeslot(id:String){
+        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).update(
+            "timeslots",FieldValue.arrayRemove(id)
+        )
     }
 }

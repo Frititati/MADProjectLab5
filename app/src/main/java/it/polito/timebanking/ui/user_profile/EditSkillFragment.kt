@@ -74,16 +74,16 @@ class EditSkillFragment : Fragment() {
         editableSkillListAdapter.setEmptyLists()
         val dialog = AlertDialog.Builder(context)
         val dialogConfirm = AlertDialog.Builder(context)
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_skill, null)
-        val dialogConfirmView = this.layoutInflater.inflate(R.layout.dialog_generic,null)
-        dialog.setTitle("Insert a skill")
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_skill, null)
+        val dialogConfirmView = layoutInflater.inflate(R.layout.dialog_generic,null)
+        dialog.setTitle("Write your skill")
         dialog.setView(dialogView)
         dialogConfirm.setTitle("Similar skill found. Are you sure you want to add a new one?")
         dialogConfirm.setView(dialogConfirmView)
 
         dialog.setPositiveButton("Done") { _, _ ->
             newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString()
-            if(allSkills.contains(newSkill)) {
+            if(isUnique(allSkills,newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_LONG).show()
                 updateAllSkills()
             }
@@ -128,6 +128,9 @@ class EditSkillFragment : Fragment() {
         }
     }
 
+    private fun isUnique(list: List<String>, skill: String):Boolean{
+        return list.any { it.lowercase() == skill.lowercase().replace("\\s".toRegex(), "")}
+    }
 
     private fun lockMatch(s: String, t: String): Int {
         val totalWord = wordCount(s)

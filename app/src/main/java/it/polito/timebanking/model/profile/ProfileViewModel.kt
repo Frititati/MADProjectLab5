@@ -7,12 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
-    private var _firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     fun get(id: String): LiveData<ProfileData> {
         val timeslot = MutableLiveData<ProfileData>()
 
-        _firebase.collection("users").document(id)
+        FirebaseFirestore.getInstance().collection("users").document(id)
             .addSnapshotListener { r, _ ->
                 if (r != null) {
                     timeslot.value = r.toUserProfileData()
@@ -53,7 +52,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             data["age"] = age.toInt()
         }
         data["favorites"] = favList
-        _firebase.collection("users").document(id).update(
+        FirebaseFirestore.getInstance().collection("users").document(id).update(
             data as Map<String, Any>
         )
     }

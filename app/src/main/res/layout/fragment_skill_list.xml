@@ -14,7 +14,6 @@
         android:layout_marginTop="10dp"
         android:text="@string/all_skills_offered"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/skillListText" />
 
@@ -33,25 +31,9 @@
         android:layout_height="wrap_content"
         android:text="@string/loading"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/skillListText"/>
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/updateButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:contentDescription="@string/update_skills"
-        android:focusable="true"
-        android:src="@android:drawable/ic_popup_sync"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/skillListText" />
+        app:layout_constraintTop_toBottomOf="@id/skill_list_recycler"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

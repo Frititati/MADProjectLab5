@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotListBinding
@@ -18,10 +20,9 @@ import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.TimeslotViewModel
 
 
-class TimeSlotListFragment : Fragment() {
+class TimeslotListFragment : Fragment() {
     private var _binding: FragmentTimeslotListBinding? = null
     private val binding get() = _binding!!
-    private var counter = 0
     private val vm by viewModels<TimeslotViewModel>()
 
     override fun onCreateView(
@@ -30,7 +31,8 @@ class TimeSlotListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_UNLOCKED)
+            DrawerLayout.LOCK_MODE_UNLOCKED
+        )
         _binding = FragmentTimeslotListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -40,14 +42,13 @@ class TimeSlotListFragment : Fragment() {
         val timeslotListAdapter = TimeslotListAdapter()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
         binding.timeslotRecycler.adapter = timeslotListAdapter
+        binding.nothingToShow.text = resources.getString(R.string.no_timeslot)
 
-        vm.getUserTimeslots(FirebaseAuth.getInstance().currentUser!!.uid)
-            .observe(viewLifecycleOwner) {
-                timeslotListAdapter.setTimeslots(it.sortedByDescending { t -> t.second.date }
-                    .toMutableList())
-                counter = it.size
-                binding.nothingToShow.isVisible = counter == 0
-            }
+        vm.getUserTimeslots().observe(viewLifecycleOwner) {
+            timeslotListAdapter.setTimeslots(it.sortedBy { t -> t.second.title }
+                .toMutableList())
+            binding.nothingToShow.isVisible = it.isEmpty()
+        }
 
         binding.buttonAdd.setOnClickListener {
             addEmptyTimeslot()
@@ -75,6 +76,10 @@ class TimeSlotListFragment : Fragment() {
                 )
             )
             .addOnSuccessListener {
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(FirebaseAuth.getInstance().currentUser!!.uid).update(
+                        "timeslots", FieldValue.arrayUnion(it.id)
+                    )
                 Snackbar.make(binding.root, "Time Slot Created", Snackbar.LENGTH_SHORT).show()
             }
             .addOnFailureListener {

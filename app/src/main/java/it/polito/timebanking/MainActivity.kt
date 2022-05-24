@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 defaultAge,
                                 "Empty location",
                                 listOf<Any>(),
+                                listOf<Any>(),
                                 "Empty description",
                                 listOf<Any>(),
                                 startingTime)

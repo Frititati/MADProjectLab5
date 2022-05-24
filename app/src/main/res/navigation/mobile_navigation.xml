@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/timeslotListFragment"
-        android:name="it.polito.timebanking.ui.personal_timeslot.TimeSlotListFragment"
+        android:name="it.polito.timebanking.ui.personal_timeslot.TimeslotListFragment"
         android:label="@string/timeslot_list"
         tools:layout="@layout/fragment_timeslot_list">
         <action

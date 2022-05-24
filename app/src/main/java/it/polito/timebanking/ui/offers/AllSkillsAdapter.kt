@@ -13,7 +13,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.SkillData
 
 class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolder>() {
-    private var skills: List<Pair<String, SkillData>> = emptyList()
+    private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
         return SkillListViewHolder(
@@ -23,15 +23,15 @@ class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolde
     }
 
     override fun onBindViewHolder(holder: SkillListViewHolder, position: Int) {
-        val temp = skills[position]
+        val temp = allSkills[position]
         holder.bind(temp.first, temp.second)
     }
 
-    override fun getItemCount() = skills.size
+    override fun getItemCount() = allSkills.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setSkills(in_skills: List<Pair<String, SkillData>>) {
-        skills = in_skills.toList()
+    fun setSkills(skills: MutableList<Pair<String, SkillData>>) {
+        allSkills = skills.sortedBy { it.second.title }.toMutableList()
         notifyDataSetChanged()
     }
 

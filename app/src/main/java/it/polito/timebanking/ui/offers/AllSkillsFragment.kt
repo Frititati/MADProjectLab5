@@ -10,19 +10,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentSkillListBinding
+import it.polito.timebanking.model.skill.SkillViewModel
 import it.polito.timebanking.model.timeslot.SkillData
-import it.polito.timebanking.model.timeslot.toSkillData
 
 class AllSkillsFragment : Fragment() {
 
     private var _binding: FragmentSkillListBinding? = null
     private val binding get() = _binding!!
     private var skillListAdapter = AllSkillsAdapter()
-    private var _firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val vm by viewModels<SkillViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,10 +66,10 @@ class AllSkillsFragment : Fragment() {
 
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = skillListAdapter
-        updateAllSkills()
-
-        binding.updateButton.setOnClickListener {
-            updateAllSkills()
+        vm.get().observe(viewLifecycleOwner){
+            skillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
+            binding.nothingToShow.isVisible = it.isEmpty()
+            binding.nothingToShow.text = resources.getString(R.string.no_skills)
         }
     }
 
@@ -78,15 +78,4 @@ class AllSkillsFragment : Fragment() {
         _binding = null
     }
 
-    private fun updateAllSkills() {
-        val map: MutableList<Pair<String, SkillData>> = mutableListOf()
-        _firebase.collection("skills").get()
-            .addOnSuccessListener { documents ->
-                binding.nothingToShow.isVisible = documents.size() == 0
-                for (document in documents) {
-                    map.add(Pair(document.id, document.toSkillData()))
-                }
-                skillListAdapter.setSkills(map)
-            }
-    }
 }

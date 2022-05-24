@@ -132,7 +132,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
     @SuppressLint("NotifyDataSetChanged")
     fun filterByDuration(duration: Int):Int {
         timeslots.clear()
-            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration >= duration }) }
+            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration!! >= duration }) }
         notifyDataSetChanged()
         return timeslots.size
     }

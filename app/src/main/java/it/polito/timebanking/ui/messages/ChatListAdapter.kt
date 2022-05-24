@@ -36,7 +36,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setChat(chats: MutableList<Pair<String, ChatData>>) {
+    fun setChats(chats: MutableList<Pair<String, ChatData>>) {
         allChats = chats
         notifyDataSetChanged()
     }
@@ -52,8 +52,8 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         private val rootView = v
         fun bind(chatID: String, chat: ChatData) {
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (chat.users!!.second == userID) chat.users!!.first
-            else chat.users!!.second
+            val otherUserID = if (chat.users.second == userID) chat.users.first
+            else chat.users.second
 
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()

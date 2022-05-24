@@ -8,11 +8,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 
 class ChatViewModel(application: Application) : AndroidViewModel(application) {
-    private var _firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     fun getChat(user:String): LiveData<List<Pair<String, ChatData>>> {
         val chats = MutableLiveData<List<Pair<String, ChatData>>>()
-        _firebase.collection("chats").whereArrayContains("users",user)
+        FirebaseFirestore.getInstance().collection("chats").whereArrayContains("users",user)
             .addSnapshotListener { r, e ->
                 if (r != null) {
                     chats.value = if (e != null)

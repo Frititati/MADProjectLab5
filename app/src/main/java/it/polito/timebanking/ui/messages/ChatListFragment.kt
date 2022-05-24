@@ -5,13 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentChatListBinding
 import it.polito.timebanking.model.chat.ChatData
@@ -40,10 +38,11 @@ class ChatListFragment : Fragment() {
 
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
+        binding.nothingToShow.text = resources.getString(R.string.no_chat)
 
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
-        vm.getChat(userID).observe(viewLifecycleOwner) {
-            chatListAdapter.setChat(it as MutableList<Pair<String, ChatData>>)
+        vm.getChat(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+            chatListAdapter.setChats(it as MutableList<Pair<String, ChatData>>)
+            binding.nothingToShow.isVisible = it.isEmpty()
         }
     }
 
