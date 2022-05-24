@@ -41,25 +41,10 @@ class ChatListFragment : Fragment() {
         binding.chatListRecycler.adapter = chatListAdapter
 
         chatListAdapter.clear()
-        val me = FirebaseAuth.getInstance().currentUser!!.uid
-        vm.getChat(me).observe(viewLifecycleOwner) {
-            it.forEach { chat ->
-                val other = if (chat.second.users!!.second == me) chat.second.users!!.first
-                else chat.second.users!!.second
-                FirebaseFirestore.getInstance().collection("users")
-                    .document(other).get()
-                    .addOnSuccessListener { user ->
-                        if (user != null) {
-                            Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${other}.png")
-                                .getBytes(1024 * 1024)
-                                .addOnSuccessListener { pic ->
-                                    val userChat = ChatListAdapter.ChatWithUser(
-                                        user.get("fullName").toString(), pic
-                                    )
-                                    chatListAdapter.addChat(chat.first, userChat)
-                                }
-                        }
-                    }
+        val userID = FirebaseAuth.getInstance().currentUser!!.uid
+        vm.getChat(userID).observe(viewLifecycleOwner) {
+            it.forEachIndexed { index, chat ->
+                chatListAdapter.addChat(chat.first, chat.second, index)
             }
         }
     }
