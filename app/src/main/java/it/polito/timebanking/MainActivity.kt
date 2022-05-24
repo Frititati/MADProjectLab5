@@ -88,9 +88,9 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 ).getString("email", "unknown email")!!,
                                 defaultAge,
                                 "Empty location",
-                                listOf(),
+                                listOf<Any>(),
                                 "Empty description",
-                                listOf(),
+                                listOf<Any>(),
                                 startingTime)
                         )
                     binding.navView.getHeaderView(0)

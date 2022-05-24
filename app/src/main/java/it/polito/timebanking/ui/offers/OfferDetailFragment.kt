@@ -19,7 +19,7 @@ import it.polito.timebanking.model.timeslot.*
 class OfferDetailFragment : Fragment() {
     private val timeslotVM by viewModels<TimeslotViewModel>()
     private var _binding: FragmentOfferDetailBinding? = null
-    private var favList = mutableListOf<String>()
+    private var favList =  mutableListOf<String>()
     private val binding get() = _binding!!
     private var fav = false
 
@@ -53,7 +53,8 @@ class OfferDetailFragment : Fragment() {
             }
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
-                favList = it.get("favorites") as MutableList<String>
+                val myList = it.get("favorites") as MutableList<*>
+                favList = myList.map { f -> f.toString() }.toMutableList()
                 if (favList.contains(idTimeslot)) {
                     fav = true
                     requireActivity().invalidateOptionsMenu()

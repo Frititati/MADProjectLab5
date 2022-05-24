@@ -145,7 +145,7 @@ class EditTimeslotFragment : Fragment() {
         _firestore.collection("users").document(firestoreUser!!.uid).get()
             .addOnSuccessListener { r ->
                 if (r != null) {
-                    userSkills = r.toUserProfileData().skills
+                    userSkills = r.toUserProfileData().skills.map { it.toString() }
                 }
             }
     }

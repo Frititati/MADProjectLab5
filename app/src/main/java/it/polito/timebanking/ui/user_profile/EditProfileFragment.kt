@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream
 import kotlin.concurrent.thread
 
 
+@Suppress("DEPRECATION")
 class EditProfileFragment : Fragment() {
 
     private val vm by viewModels<ProfileViewModel>()
@@ -48,7 +49,8 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        )
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         listener = context as NavBarUpdater
         return binding.root
@@ -63,7 +65,7 @@ class EditProfileFragment : Fragment() {
             binding.email.hint = emailFormatter(it.email)
             binding.location.hint = locationFormatter(it.location)
             binding.description.hint = descriptionFormatter(it.description)
-            favList = it.favorites
+            favList = it.favorites.map { f -> f.toString() }
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024)
                 .addOnSuccessListener { pic ->
                     binding.userImage.setImageBitmap(
@@ -156,6 +158,7 @@ class EditProfileFragment : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {

@@ -3,12 +3,12 @@ package it.polito.timebanking.model.chat
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class MessageData(
-    var senderID: String?,
-    var receiverID: String?,
-    var message:String?,
-    var sentAt: Long?,
+    var senderID: String,
+    var receiverID: String,
+    var message: String,
+    var sentAt: Long,
     /*var receivedAt: Long?,
-    var status: Int?,
+    var status: Int,
     var seenAt: Long?*/
 )
 
@@ -17,7 +17,7 @@ fun DocumentSnapshot.toMessageData(): MessageData{
         this.get("senderID").toString(),
         this.get("receiverID").toString(),
         this.get("message").toString(),
-        this.get("sentAt") as Long?,
+        this.get("sentAt").toString().toLong(),
        /* this.get("sentAt") as Long?,
         this.get("receivedAt") as Long?,
         this.get("status").toString().toIntOrNull(),

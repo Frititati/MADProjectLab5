@@ -8,9 +8,9 @@ data class ProfileData(
     var email: String,
     var age: Int,
     var location: String,
-    var skills: List<String>,
+    var skills: List<*>,
     var description: String,
-    var favorites: List<String>,
+    var favorites: List<*>,
     var time: Int
 )
 
@@ -21,9 +21,9 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.get("email").toString(),
         this.get("age").toString().toInt(),
         this.get("location").toString(),
-        this.get("skills") as List<String>,
+        this.get("skills") as List<*>,
         this.get("description").toString(),
-        this.get("favorites") as List<String>,
+        this.get("favorites") as List<*>,
         this.get("time").toString().toInt()
     )
 }

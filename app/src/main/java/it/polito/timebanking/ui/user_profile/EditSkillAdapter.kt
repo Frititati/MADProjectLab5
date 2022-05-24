@@ -34,8 +34,6 @@ class EditSkillAdapter :
 
     override fun getItemCount() = allSkills.size
 
-    fun getAll() = allSkills
-
     @SuppressLint("NotifyDataSetChanged")
     fun setAllSkills(inAllSkills: List<Pair<String, SkillData>>) {
         allSkills = inAllSkills.sortedBy { it.second.title }.toMutableList()

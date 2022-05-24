@@ -65,7 +65,7 @@ class ShowProfileFragment : Fragment() {
                             }
                         binding.skillView.layoutManager = LinearLayoutManager(activity)
                         binding.skillView.adapter = skillsListAdapter
-                        skillsListAdapter.setUserSkills(it.skills)
+                        skillsListAdapter.setUserSkills(it.skills.map {l -> l.toString() })
                         binding.skillView.isNestedScrollingEnabled = false
                     }
                 }

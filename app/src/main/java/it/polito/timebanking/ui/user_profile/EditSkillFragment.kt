@@ -63,7 +63,8 @@ class EditSkillFragment : Fragment() {
         FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
             .addOnSuccessListener { r ->
                 if (r != null) {
-                    editableSkillListAdapter.setUserSkills(r.toUserProfileData().skills)
+                    val myList = r.toUserProfileData().skills
+                    editableSkillListAdapter.setUserSkills(myList.map{it.toString()})
                 }
             }
     }
