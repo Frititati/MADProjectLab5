@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentEditSkillBinding
 import it.polito.timebanking.model.profile.toUserProfileData
+import it.polito.timebanking.model.skill.SkillViewModel
 import it.polito.timebanking.model.timeslot.SkillData
 import it.polito.timebanking.model.timeslot.toSkillData
 
@@ -23,8 +25,9 @@ class EditSkillFragment : Fragment() {
     private var _binding: FragmentEditSkillBinding? = null
     private val binding get() = _binding!!
     private var firestoreUser = FirebaseAuth.getInstance().currentUser
+    private val vm by viewModels<SkillViewModel>()
     private var editableSkillListAdapter = EditSkillAdapter()
-    private val allSkills = mutableListOf<String>()
+    private val allSkills = mutableListOf<SkillData>()
     private var newSkill = ""
 
 
@@ -42,7 +45,16 @@ class EditSkillFragment : Fragment() {
 
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = editableSkillListAdapter
-        updateAllSkills()
+        vm.get().observe(viewLifecycleOwner) {
+            FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
+                .addOnSuccessListener { r ->
+                    if (r != null) {
+                        val myList = r.toUserProfileData().skills
+                        editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
+                    }
+                    editableSkillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
+                }
+        }
 
         binding.buttonAdd.setOnClickListener {
             createDialog()
@@ -55,16 +67,16 @@ class EditSkillFragment : Fragment() {
                 val map: MutableList<Pair<String, SkillData>> = mutableListOf()
                 for (document in documents) {
                     map.add(Pair(document.id, document.toSkillData()))
-                    allSkills.add(document.get("title").toString())
+                    allSkills.add(SkillData(document.get("title").toString()))
                 }
-                editableSkillListAdapter.setAllSkills(map)
+                editableSkillListAdapter.setSkills(map)
             }
 
         FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
             .addOnSuccessListener { r ->
                 if (r != null) {
                     val myList = r.toUserProfileData().skills
-                    editableSkillListAdapter.setUserSkills(myList.map{it.toString()})
+                    editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
                 }
             }
     }
@@ -75,7 +87,7 @@ class EditSkillFragment : Fragment() {
         val dialog = AlertDialog.Builder(context)
         val dialogConfirm = AlertDialog.Builder(context)
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_skill, null)
-        val dialogConfirmView = layoutInflater.inflate(R.layout.dialog_generic,null)
+        val dialogConfirmView = layoutInflater.inflate(R.layout.dialog_generic, null)
         dialog.setTitle("Write your skill")
         dialog.setView(dialogView)
         dialogConfirm.setTitle("Similar skill found. Are you sure you want to add a new one?")
@@ -83,20 +95,18 @@ class EditSkillFragment : Fragment() {
 
         dialog.setPositiveButton("Done") { _, _ ->
             newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString()
-            if(isUnique(allSkills,newSkill)) {
+            if (isUnique(allSkills, newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_LONG).show()
                 updateAllSkills()
-            }
-            else if(allSkills.any { lockMatch(it, newSkill) >= 0.1 }){
-                dialogConfirm.setPositiveButton("Yes"){_,_ ->
-                createNewSkill()
+            } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
+                dialogConfirm.setPositiveButton("Yes") { _, _ ->
+                    createNewSkill()
                 }
-                dialogConfirm.setNegativeButton("No"){_,_ ->
+                dialogConfirm.setNegativeButton("No") { _, _ ->
                     updateAllSkills()
                 }
                 dialogConfirm.create().show()
-            }
-            else{
+            } else {
                 createNewSkill()
             }
         }
@@ -128,8 +138,8 @@ class EditSkillFragment : Fragment() {
         }
     }
 
-    private fun isUnique(list: List<String>, skill: String):Boolean{
-        return list.any { it.lowercase() == skill.lowercase().replace("\\s".toRegex(), "")}
+    private fun isUnique(list: List<SkillData>, skill: String): Boolean {
+        return list.any { it.title.lowercase() == skill.lowercase().replace("\\s".toRegex(), "") }
     }
 
     private fun lockMatch(s: String, t: String): Int {

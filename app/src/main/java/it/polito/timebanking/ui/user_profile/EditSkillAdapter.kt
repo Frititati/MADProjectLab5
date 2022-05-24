@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class EditSkillAdapter :
     override fun onBindViewHolder(holder: SkillListViewHolder, position: Int) {
         if (allSkills.isNotEmpty()) {
             val temp = allSkills[position]
+            Log .d("test","${temp.first} $userSkills")
             holder.bind(temp.first, temp.second, temp.first in userSkills)
         }
     }
@@ -35,13 +37,14 @@ class EditSkillAdapter :
     override fun getItemCount() = allSkills.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setAllSkills(inAllSkills: List<Pair<String, SkillData>>) {
+    fun setSkills(inAllSkills: List<Pair<String, SkillData>>) {
         allSkills = inAllSkills.sortedBy { it.second.title }.toMutableList()
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setUserSkills(inUserSkills: List<String>) {
+        Log.d("test","$inUserSkills")
         userSkills = inUserSkills as MutableList<String>
         notifyDataSetChanged()
     }
