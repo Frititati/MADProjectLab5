@@ -16,7 +16,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
             .addSnapshotListener { r, _ ->
                 if (r != null) {
                     val messagesList: MutableList<MessageData> = mutableListOf()
-                    (r.get("messagesList") as List<*>).forEach {
+                    (r.get("messagesList") as List<*>?)?.forEach {
                         FirebaseFirestore.getInstance().collection("messages").document(it.toString())
                             .addSnapshotListener { m, _ ->
                                 if (m != null) {

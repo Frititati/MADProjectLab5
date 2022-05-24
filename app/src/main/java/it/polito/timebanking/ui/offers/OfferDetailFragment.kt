@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
+import it.polito.timebanking.model.chat.ChatData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
@@ -19,7 +20,7 @@ import it.polito.timebanking.model.timeslot.*
 class OfferDetailFragment : Fragment() {
     private val timeslotVM by viewModels<TimeslotViewModel>()
     private var _binding: FragmentOfferDetailBinding? = null
-    private var favList =  mutableListOf<String>()
+    private var favList = mutableListOf<String>()
     private val binding get() = _binding!!
     private var fav = false
 
@@ -34,7 +35,7 @@ class OfferDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val idTimeslot = requireArguments().getString("id_timeslot")
+        val idTimeslot = requireArguments().getString("id_timeslot")!!
         val idUser = requireArguments().getString("id_user")
         FirebaseFirestore.getInstance().collection("users")
             .document(idUser!!).get().addOnSuccessListener { user ->
@@ -43,7 +44,7 @@ class OfferDetailFragment : Fragment() {
                 binding.UserDescription.text =
                     descriptionFormatter(user.get("description").toString())
 
-                timeslotVM.get(idTimeslot!!).observe(viewLifecycleOwner) {
+                timeslotVM.get(idTimeslot).observe(viewLifecycleOwner) {
                     binding.Title.text = titleFormatter(it.title)
                     binding.Description.text = descriptionFormatter(it.description)
                     binding.Date.text = dateFormatter(it.date)
@@ -69,6 +70,7 @@ class OfferDetailFragment : Fragment() {
                 requireArguments().getString("id_user")
             )
             data["lastMessage"] = 0
+            data["timeslotID"] = idTimeslot
             FirebaseFirestore.getInstance().collection("chats").add(data).addOnSuccessListener {
                 val chatID = it.id
                 findNavController().navigate(

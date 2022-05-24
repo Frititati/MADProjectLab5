@@ -17,6 +17,7 @@ import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.model.chat.ChatData
 import it.polito.timebanking.model.profile.toUserProfileData
+import it.polito.timebanking.model.timeslot.toTimeslotData
 
 class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
     private var allChats: MutableList<Pair<String, ChatData>> = mutableListOf()
@@ -35,7 +36,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setChat(chats : MutableList<Pair<String, ChatData>>) {
+    fun setChat(chats: MutableList<Pair<String, ChatData>>) {
         allChats = chats
         notifyDataSetChanged()
     }
@@ -44,18 +45,9 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         return allChats.size
     }
 
-    class ChatWithUser(val u: String, val p: ByteArray) {
-        var user: String = ""
-        var pic: ByteArray = byteArrayOf()
-
-        init {
-            user = u
-            pic = p
-        }
-    }
-
     class ChatListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val u = v.findViewById<TextView>(R.id.chatMember)
+        private val userName = v.findViewById<TextView>(R.id.chatMember)
+        private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
         fun bind(chatID: String, chat: ChatData) {
@@ -66,7 +58,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()
                 .addOnSuccessListener { otherUser ->
-                    u.text = otherUser.toUserProfileData().fullName
+                    userName.text = otherUser.toUserProfileData().fullName
                     if (otherUser != null) {
                         Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${otherUserID}.png")
                             .getBytes(1024 * 1024)
@@ -81,7 +73,14 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
                             }
                     }
                 }
-            u.setOnClickListener {
+            
+            FirebaseFirestore.getInstance().collection("timeslots")
+                .document(chat.timeslotID).get()
+                .addOnSuccessListener { timeslot ->
+                    timeslotTitle.text = timeslot.toTimeslotData().title
+                }
+
+            rootView.setOnClickListener {
                 rootView.findNavController()
                     .navigate(
                         R.id.chatList_to_chat,

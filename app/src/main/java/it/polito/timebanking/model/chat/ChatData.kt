@@ -5,7 +5,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 data class ChatData(
     var users: Pair<String, String>,
     var lastMessage: Long,
-    var messageIDList: List<*>
+    var messagesList: List<*>,
+    var timeslotID: String
 )
 
 fun DocumentSnapshot.toChatData(): ChatData {
@@ -13,6 +14,7 @@ fun DocumentSnapshot.toChatData(): ChatData {
         pair(this.get("users") as List<*>),
         this.get("lastMessage").toString().toLong(),
         this.get("messagesList") as List<*>,
+        this.get("timeslotID").toString(),
     )
 }
 

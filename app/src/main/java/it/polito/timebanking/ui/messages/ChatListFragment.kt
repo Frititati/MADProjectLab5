@@ -41,7 +41,6 @@ class ChatListFragment : Fragment() {
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
 
-//        chatListAdapter.clear()
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
         vm.getChat(userID).observe(viewLifecycleOwner) {
             chatListAdapter.setChat(it as MutableList<Pair<String, ChatData>>)
