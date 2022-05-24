@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import it.polito.timebanking.model.timeslot.toTimeslotData
 
 class MessageViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -27,10 +28,20 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
             }
+
+//        val messagesList: MutableList<MessageData> = mutableListOf()
+//        FirebaseFirestore.getInstance().collection("messages").whereEqualTo("chatID", chatID)
+//            .addSnapshotListener { m, e ->
+//                if (m != null) {
+//                    messages.value = if (e != null)
+//                        emptyList()
+//                    else m.mapNotNull { it.toMessageData() }
+//                }
+//            }
         return messages
     }
 
-    fun addMessage(chatID: String, message: String, senderID: String,time:Long) {
+    fun addMessage(chatID: String, message: String, senderID: String, time: Long) {
         val data = mutableMapOf<String, Any>()
         data["message"] = message
         data["chatID"] = chatID

@@ -41,7 +41,8 @@ class MessageListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        )
 
         binding.messageListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.messageListRecycler.adapter = messageListAdapter
@@ -49,29 +50,41 @@ class MessageListFragment : Fragment() {
         messageListAdapter.clear()
 
         vm.getMessages(chatID).observe(viewLifecycleOwner) {
-            messageListAdapter.setMessages(it.toMutableList())
+            messageListAdapter.setMessages(it.sortedBy { a -> a.sentAt }.toMutableList())
         }
 
         binding.buttonSend.setOnClickListener {
-            vm.addMessage(chatID,binding.writeMessage.text.toString(),FirebaseAuth.getInstance().currentUser!!.uid,System.currentTimeMillis())
+            vm.addMessage(
+                chatID,
+                binding.writeMessage.text.toString(),
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                System.currentTimeMillis()
+            )
             binding.writeMessage.setText("")
         }
 
         binding.buttonAccept.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-                .addOnSuccessListener {user ->
-                    FirebaseFirestore.getInstance().collection("timeslots").document(requireArguments().getString("timeslotID").toString()).get()
+            FirebaseFirestore.getInstance().collection("users")
+                .document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+                .addOnSuccessListener { user ->
+                    FirebaseFirestore.getInstance().collection("timeslots")
+                        .document(requireArguments().getString("timeslotID").toString()).get()
                         .addOnSuccessListener { ts ->
                             val timeRequired = ts.get("duration").toString().toInt()
                             val time = user.get("time").toString().toInt()
-                            Log.d("test","QUI $time vs $timeRequired")
-                            if(time >= timeRequired){
-                            val data: MutableMap<String, Any> = mutableMapOf()
+                            Log.d("test", "QUI $time vs $timeRequired")
+                            if (time >= timeRequired) {
+                                val data: MutableMap<String, Any> = mutableMapOf()
                                 data["available"] = false
-                                FirebaseFirestore.getInstance().collection("timeslots").document(requireArguments().getString("timeslotID").toString()).update(data)
-                            }
-                            else{
-                                Toast.makeText(context,"You don't have enough time to spend!",Toast.LENGTH_LONG).show()
+                                FirebaseFirestore.getInstance().collection("timeslots")
+                                    .document(requireArguments().getString("timeslotID").toString())
+                                    .update(data)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "You don't have enough time to spend!",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                 }
