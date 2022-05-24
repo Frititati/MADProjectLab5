@@ -35,14 +35,8 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addChat(chatID: String, chat: ChatData, index: Int) {
-        allChats.add(Pair(chatID,chat))
-        notifyItemInserted(index)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun clear() {
-        allChats.clear()
+    fun setChat(chats : MutableList<Pair<String, ChatData>>) {
+        allChats = chats
         notifyDataSetChanged()
     }
 

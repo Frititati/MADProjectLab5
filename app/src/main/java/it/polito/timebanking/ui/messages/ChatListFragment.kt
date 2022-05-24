@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentChatListBinding
+import it.polito.timebanking.model.chat.ChatData
 import it.polito.timebanking.model.chat.ChatViewModel
 
 class ChatListFragment : Fragment() {
@@ -40,12 +41,10 @@ class ChatListFragment : Fragment() {
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
 
-        chatListAdapter.clear()
+//        chatListAdapter.clear()
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
         vm.getChat(userID).observe(viewLifecycleOwner) {
-            it.forEachIndexed { index, chat ->
-                chatListAdapter.addChat(chat.first, chat.second, index)
-            }
+            chatListAdapter.setChat(it as MutableList<Pair<String, ChatData>>)
         }
     }
 
