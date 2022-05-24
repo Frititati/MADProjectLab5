@@ -66,19 +66,22 @@ class OfferDetailFragment : Fragment() {
         binding.chatStartButton.isVisible = FirebaseAuth.getInstance().currentUser!!.uid != idUser
 
         binding.chatStartButton.setOnClickListener {
-            val data = mutableMapOf<String, Any>()
-            data["messagesList"] = emptyList<String>()
-            data["users"] = listOf(
-                FirebaseAuth.getInstance().currentUser!!.uid,
-                requireArguments().getString("id_user")
+            val data = ChatData(
+                listOf(
+                    FirebaseAuth.getInstance().currentUser!!.uid,
+                    requireArguments().getString("id_user")!!
+                ),
+                0L,
+                emptyList<String>(), idTimeslot
             )
-            data["lastMessage"] = 0
-            data["timeslotID"] = idTimeslot
             FirebaseFirestore.getInstance().collection("chats").add(data).addOnSuccessListener {
-                val chatID = it.id
                 findNavController().navigate(
                     R.id.ad_to_chat,
-                    bundleOf("user" to binding.UserFullName.text,"chatID" to chatID,"timeslotID" to idTimeslot)
+                    bundleOf(
+                        "user" to binding.UserFullName.text,
+                        "chatID" to it.id,
+                        "timeslotID" to idTimeslot
+                    )
                 )
             }
         }

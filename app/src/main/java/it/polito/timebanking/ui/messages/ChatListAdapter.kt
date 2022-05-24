@@ -52,8 +52,8 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         private val rootView = v
         fun bind(chatID: String, chat: ChatData) {
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (chat.users.second == userID) chat.users.first
-            else chat.users.second
+            val otherUserID = if (chat.users[1] == userID) chat.users[0].toString()
+            else chat.users[1].toString()
 
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()
@@ -84,7 +84,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
                 rootView.findNavController()
                     .navigate(
                         R.id.chatList_to_chat,
-                        bundleOf("user" to otherUserID, "chatID" to chatID)
+                        bundleOf("user" to userName.text, "chatID" to chatID)
                     )
             }
         }
