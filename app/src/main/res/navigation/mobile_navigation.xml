@@ -47,7 +47,7 @@
         android:id="@+id/personalTimeslotEditFragment"
         android:name="it.polito.timebanking.ui.personal_timeslot.EditTimeslotFragment"
         android:label="@string/timeslot_edit"
-        tools:layout="@layout/fragment_timeslot_edit" >
+        tools:layout="@layout/fragment_timeslot_edit">
         <action
             android:id="@+id/edit_to_personal"
             app:destination="@id/personalTimeslotListFragment"
@@ -55,8 +55,8 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpToInclusive="true"
-            app:popUpTo="@+id/personalTimeslotListFragment"/>
+            app:popUpTo="@+id/personalTimeslotListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -75,7 +75,7 @@
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="it.polito.timebanking.ui.user_profile.EditProfileFragment"
-        android:label="@string/edit_your_profile" >
+        android:label="@string/edit_your_profile">
         <action
             android:id="@+id/edit_profile_to_edit_skill"
             app:destination="@id/editProfileSkillFragment"
@@ -88,7 +88,7 @@
         android:id="@+id/allSkillFragment"
         android:name="it.polito.timebanking.ui.offers.AllSkillsFragment"
         android:label="@string/all_skills"
-        tools:layout="@layout/fragment_skill_list" >
+        tools:layout="@layout/fragment_skill_list">
         <action
             android:id="@+id/skill_to_offers"
             app:destination="@id/offerListFragment"
@@ -101,11 +101,11 @@
         android:id="@+id/offerListFragment"
         android:name="it.polito.timebanking.ui.offers.OffersListFragment"
         android:label="@string/skill_with_timeslot"
-        tools:layout="@layout/fragment_offers" >
+        tools:layout="@layout/fragment_offers">
         <argument
             android:name="offerName"
-            app:argType="string"
-            android:defaultValue="" />
+            android:defaultValue=""
+            app:argType="string" />
         <action
             android:id="@+id/offers_to_offer"
             app:destination="@id/offerDetailFragment"
@@ -123,24 +123,24 @@
         android:id="@+id/offerDetailFragment"
         android:name="it.polito.timebanking.ui.offers.OfferDetailFragment"
         android:label="@string/advertisement"
-        tools:layout="@layout/fragment_offer_detail" >
+        tools:layout="@layout/fragment_offer_detail">
         <action
             android:id="@+id/offer_to_job"
             app:destination="@id/jobFragment" />
     </fragment>
     <fragment
-        android:id="@+id/allChatsFragment"
-        android:name="it.polito.timebanking.ui.messages.ChatListFragment"
+        android:id="@+id/consumingJobsFragment"
+        android:name="it.polito.timebanking.ui.messages.ConsumingJobsFragment"
         android:label="Your Chats"
-        tools:layout="@layout/fragment_chat_list" >
+        tools:layout="@layout/fragment_consuming_jobs">
         <action
-            android:id="@+id/chats_to_job"
+            android:id="@+id/consuming_to_job"
             app:destination="@id/jobFragment" />
     </fragment>
     <fragment
         android:id="@+id/jobFragment"
         android:name="it.polito.timebanking.ui.messages.MessageListFragment"
-        android:label="ChatFragment" >
+        android:label="ChatFragment">
         <action
             android:id="@+id/job_to_offer"
             app:destination="@id/offerDetailFragment" />
@@ -148,10 +148,19 @@
     <fragment
         android:id="@+id/favoritesListFragment"
         android:name="it.polito.timebanking.ui.offers.FavoritesListFragment"
-        android:label="Favorites" >
+        android:label="Favorites">
         <action
             android:id="@+id/favoritesToDetail"
             app:destination="@id/offerDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/producingJobFragment"
+        android:name="it.polito.timebanking.ui.messages.ProducingJobsFragment"
+        android:label="fragment_personal_active_jobs"
+        tools:layout="@layout/fragment_producing_jobs">
+        <action
+            android:id="@+id/producing_to_job"
+            app:destination="@id/jobFragment" />
     </fragment>
 
 </navigation>

@@ -26,7 +26,6 @@ import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.toTimeslotData
 
-
 class MessageListFragment : Fragment() {
     private var _binding: FragmentMessagesBinding? = null
     private val binding get() = _binding!!

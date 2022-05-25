@@ -88,4 +88,10 @@
     <string name="no_timeslot">You don\'t have any timeslots</string>
     <string name="offer">Offer</string>
     <string name="request">Request</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="activeJobs">Active Jobs</string>
+    <string name="interestedJobs">Interested Jobs</string>
+    <string name="offeredJobs">Offered Jobs</string>
+    <string name="requestedJobs">Requested Jobs</string>
 </resources>

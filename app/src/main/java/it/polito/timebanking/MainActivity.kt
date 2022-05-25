@@ -52,8 +52,9 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 R.id.personalTimeslotListFragment,
                 R.id.showProfileFragment,
                 R.id.allSkillFragment,
-                R.id.allChatsFragment,
-                R.id.favoritesListFragment
+                R.id.favoritesListFragment,
+                R.id.consumingJobsFragment,
+                R.id.producingJobFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

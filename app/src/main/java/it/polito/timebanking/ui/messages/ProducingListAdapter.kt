@@ -19,19 +19,19 @@ import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.toTimeslotData
 
-class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
+class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.ProducingListViewHolder>() {
     private var allJobs: MutableList<Pair<String, JobData>> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ChatListViewHolder {
-        return ChatListViewHolder(
+    ): ProducingListViewHolder {
+        return ProducingListViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.widget_chat_list, parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProducingListViewHolder, position: Int) {
         holder.bind(allJobs[position].first, allJobs[position].second)
     }
 
@@ -45,7 +45,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         return allJobs.size
     }
 
-    class ChatListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    class ProducingListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val userName = v.findViewById<TextView>(R.id.chatMember)
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
@@ -83,7 +83,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
             rootView.setOnClickListener {
                 rootView.findNavController()
                     .navigate(
-                        R.id.chats_to_job,
+                        R.id.producing_to_job,
                         bundleOf(
                             "otherUserName" to userName.text,
                             "jobID" to jobID,
