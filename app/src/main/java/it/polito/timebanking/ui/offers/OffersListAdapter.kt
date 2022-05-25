@@ -67,7 +67,7 @@ class OffersListAdapter(private val mode: String) :
                             R.id.offers_to_offer,
                             bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
                         )
-                Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
+                Snackbar.make(it, "Details about ${title.text}", 1500)
                     .show()
                 if (mode == "Fav")
                     rootView.findNavController()
@@ -75,7 +75,7 @@ class OffersListAdapter(private val mode: String) :
                             R.id.favoritesToDetail,
                             bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
                         )
-                Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
+                Snackbar.make(it, "Details about ${title.text}", 1500)
                     .show()
             }
         }

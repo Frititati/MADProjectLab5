@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -13,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
@@ -25,6 +26,7 @@ import it.polito.timebanking.model.profile.ProfileData
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.toTimeslotData
+
 
 class MessageListFragment : Fragment() {
     private var _binding: FragmentMessagesBinding? = null
@@ -91,8 +93,10 @@ class MessageListFragment : Fragment() {
         binding.messageListRecycler.adapter = messageListAdapter
 
         vm.getMessages(jobID).observe(viewLifecycleOwner) {
+            binding.messageListRecycler.scrollToPosition(messageListAdapter.itemCount)
             messageListAdapter.setMessages(it.sortedBy { a -> a.sentAt }.toMutableList())
         }
+
 
         binding.buttonSend.setOnClickListener {
             vm.addMessage(

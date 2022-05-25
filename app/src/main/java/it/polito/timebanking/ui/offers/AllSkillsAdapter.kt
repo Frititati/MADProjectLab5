@@ -44,7 +44,7 @@ class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolde
             title.text = skill.title
             title.setOnClickListener {
                 rootView.findNavController().navigate(R.id.skill_to_offers, bundleOf("skill_select" to id, "offerName" to title.text))
-                Snackbar.make(it, "Here you can view all timeslot for ${title.text}", 2500)
+                Snackbar.make(it, "You are seeing all offers for ${title.text}", 1500)
                     .show()
             }
         }

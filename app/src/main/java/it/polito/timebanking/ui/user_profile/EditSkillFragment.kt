@@ -61,6 +61,12 @@ class EditSkillFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Snackbar.make(binding.root, "Skills updated", Snackbar.LENGTH_SHORT).show()
+
+    }
+
     private fun updateAllSkills() {
         FirebaseFirestore.getInstance().collection("skills").get()
             .addOnSuccessListener { documents ->
@@ -95,7 +101,11 @@ class EditSkillFragment : Fragment() {
 
         dialog.setPositiveButton("Done") { _, _ ->
             newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString()
-            if (isUnique(allSkills, newSkill)) {
+            if(newSkill.isEmpty()){
+                Toast.makeText(context,"Cannot create empty skill",Toast.LENGTH_SHORT).show()
+                updateAllSkills()
+            }
+            else if (isUnique(allSkills, newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_LONG).show()
                 updateAllSkills()
             } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
@@ -121,21 +131,17 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun createNewSkill() {
-        if (newSkill != "") {
-            FirebaseFirestore.getInstance().collection("skills")
-                .add(
-                    SkillData(newSkill)
-                )
-                .addOnSuccessListener {
-                    newSkill = ""
-                    updateAllSkills()
-                    Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    newSkill = ""
-                    Snackbar.make(binding.root, "Skill BAD", Snackbar.LENGTH_SHORT).show()
-                }
-        }
+        FirebaseFirestore.getInstance().collection("skills")
+            .add(
+                SkillData(newSkill)
+            )
+            .addOnSuccessListener {
+                updateAllSkills()
+                Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Snackbar.make(binding.root, "Skill BAD", Snackbar.LENGTH_SHORT).show()
+            }
     }
 
     private fun isUnique(list: List<SkillData>, skill: String): Boolean {

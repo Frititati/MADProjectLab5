@@ -60,7 +60,7 @@ class TimeslotDetailFragment : Fragment() {
                     R.id.details_to_edit,
                     bundleOf("id_timeslot" to idTimeslot)
                 )
-                Snackbar.make(binding.root, "Here you can edit your timeslot", 1000).show()
+                Snackbar.make(binding.root, "Edit your timeslot here", 1500).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -130,7 +130,6 @@
                     android:id="@+id/location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#FFEB3B"
                     android:text="@string/no_info"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintStart_toStartOf="parent"
@@ -157,6 +156,26 @@
                     app:layout_constraintTop_toBottomOf="@+id/DescriptionTooltip" />
 
                 <TextView
+                    android:id="@+id/RatingTooltip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/rating"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableLeftCompat="@drawable/ic_rating"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/description" />
+
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_info"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/RatingTooltip" />
+
+                <TextView
                     android:id="@+id/skillsToolTip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -165,7 +184,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableLeftCompat="@drawable/ic_list"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/description" />
+                    app:layout_constraintTop_toBottomOf="@+id/rating" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/skillView"

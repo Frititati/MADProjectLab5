@@ -93,4 +93,7 @@
     <string name="interestedJobs">Interested Jobs</string>
     <string name="offeredJobs">Offered Jobs</string>
     <string name="requestedJobs">Requested Jobs</string>
+    <string name="optional_comment">Optional comment…</string>
+    <string name="rate">Rate</string>
+    <string name="rating">Rating</string>
 </resources>

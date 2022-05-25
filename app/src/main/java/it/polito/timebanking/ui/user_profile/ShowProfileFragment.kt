@@ -99,7 +99,7 @@ class ShowProfileFragment : Fragment() {
                 findNavController().navigate(
                     R.id.show_to_edit,
                 )
-                Snackbar.make(binding.root, "Here you can edit your profile", 1500).show()
+                Snackbar.make(binding.root, "Edit your profile here", 1500).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

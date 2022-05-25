@@ -49,13 +49,13 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             title.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
-                Snackbar.make(it, "Here you can view your timeslot ${title.text}", 1500)
+                Snackbar.make(it, "Details about: ${title.text}", 1500)
                     .show()
             }
             button.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.personal_to_edit, bundleOf("id_timeslot" to id))
-                Snackbar.make(it, "Here you can edit your timeslot ${title.text}", 1500)
+                Snackbar.make(it, "Edit your timeslot here", 1500)
                     .show()
             }
         }

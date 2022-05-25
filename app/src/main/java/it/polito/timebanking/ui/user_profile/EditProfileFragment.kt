@@ -86,6 +86,8 @@ class EditProfileFragment : Fragment() {
         binding.buttonSkill.setOnClickListener {
             view.findNavController()
                 .navigate(R.id.edit_profile_to_edit_skill)
+            Snackbar.make(binding.root, "Edit your skills here", 1500).show()
+
         }
     }
 
