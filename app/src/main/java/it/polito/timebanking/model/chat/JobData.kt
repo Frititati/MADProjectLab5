@@ -9,8 +9,6 @@ data class JobData(
     var userProducerID: String?,
     var userConsumerID: String?,
     var users: List<*>,
-    var requestedAt: Long?,
-    var requestStatus: String?,
     var jobStatus: String?,
     var ratingProducer : String?,
     var ratingConsumer: String?,
@@ -24,8 +22,6 @@ fun DocumentSnapshot.toJobData(): JobData {
         this.getString("userProducerID"),
         this.getString("userConsumerID"),
         this.get("users") as List<*>,
-        this.getLong("requestedAt"),
-        this.getString("requestStatus"),
         this.getString("jobStatus"),
         this.getString("ratingProducer"),
         this.getString("ratingConsumer")

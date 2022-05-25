@@ -81,9 +81,7 @@ class OfferDetailFragment : Fragment() {
                                 otherUserID,
                                 userID
                             ),
-                            0L,
-                            "",
-                            "",
+                            "INIT",
                             "",
                             ""
                         )

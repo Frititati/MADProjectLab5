@@ -73,12 +73,12 @@ class MessageListFragment : Fragment() {
 
                                 userIsProducer = (userID == job.userProducerID)
                                 if (userIsProducer) {
-                                    if (job.requestedAt != 0L) {
+                                    if (job.jobStatus == "REQUESTED") {
                                         binding.buttonAccept.isVisible = true
                                         binding.buttonReject.isVisible = true
                                     }
                                 } else {
-                                    if (job.requestedAt == 0L && userConsumer.time != null && timeslot.duration != null) {
+                                    if (job.jobStatus == "INIT" && userConsumer.time != null && timeslot.duration != null) {
                                         if (userConsumer.time!! >= timeslot.duration!!) {
                                             binding.buttonRequest.isVisible = true
                                         }
@@ -114,8 +114,8 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonRequest.setOnClickListener {
-            job.requestedAt = System.currentTimeMillis()
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID).set(job)
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+                .update("jobStatus", "REQUESTED")
                 .addOnSuccessListener {
                     binding.buttonRequest.visibility = View.GONE
                 }
@@ -124,49 +124,70 @@ class MessageListFragment : Fragment() {
         binding.buttonAccept.setOnClickListener {
             if (userConsumer.time != null && timeslot.duration != null) {
                 if (userConsumer.time!! >= timeslot.duration!!) {
-                    // userconsumer has enought time
+                    // userconsumer does not have enough time
                     userConsumer.time = userConsumer.time!! - timeslot.duration!!
-                    FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID!!)
-                        .set(userConsumer).addOnSuccessListener { userConsumerIt ->
+                    FirebaseFirestore.getInstance().collection("users")
+                        .document(job.userConsumerID!!)
+                        .set(userConsumer).addOnSuccessListener {
 
                             timeslot.booked = true
                             FirebaseFirestore.getInstance().collection("timeslots")
                                 .document(job.timeslotID!!)
-                                .set(timeslot).addOnSuccessListener { userConsumerIt ->
-                                    binding.buttonAccept.visibility = View.GONE
-                                    binding.buttonRequest.visibility = View.GONE
+                                .set(timeslot).addOnSuccessListener {
+
+                                    FirebaseFirestore.getInstance().collection("jobs")
+                                        .document(jobID)
+                                        .update("jobStatus", "ACCEPTED").addOnSuccessListener {
+                                            binding.buttonAccept.visibility = View.GONE
+                                            binding.buttonReject.visibility = View.GONE
+                                        }
                                 }
                         }
                 } else {
-                    // userconsumer does not have enought time
+                    Log.d("test", "there is a problem with the time and durations2")
+                    // TODO Error message
                 }
+
+            } else {
+                Log.d("test", "there is a problem with the time and durations1")
+                // TODO Error message
             }
 
 
-            FirebaseFirestore.getInstance().collection("users")
-                .document(job.userConsumerID!!).get()
-                .addOnSuccessListener { userIt ->
+            // TODO error handling
 
-                    FirebaseFirestore.getInstance().collection("timeslots")
-                        .document(job.timeslotID!!).get()
-                        .addOnSuccessListener { ts ->
-                            val timeRequired = ts.get("duration").toString().toInt()
-                            val time = userIt.get("time").toString().toInt()
-                            Log.d("test", "QUI $time vs $timeRequired")
-                            if (time >= timeRequired) {
-                                val data: MutableMap<String, Any> = mutableMapOf()
-                                data["available"] = false
-                                FirebaseFirestore.getInstance().collection("timeslots")
-                                    .document(job.timeslotID!!)
-                                    .update(data)
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "You don't have enough time to spend!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
+//            FirebaseFirestore.getInstance().collection("users")
+//                .document(job.userConsumerID!!).get()
+//                .addOnSuccessListener { userIt ->
+//
+//                    FirebaseFirestore.getInstance().collection("timeslots")
+//                        .document(job.timeslotID!!).get()
+//                        .addOnSuccessListener { ts ->
+//                            val timeRequired = ts.get("duration").toString().toInt()
+//                            val time = userIt.get("time").toString().toInt()
+//                            Log.d("test", "QUI $time vs $timeRequired")
+//                            if (time >= timeRequired) {
+//                                val data: MutableMap<String, Any> = mutableMapOf()
+//                                data["available"] = false
+//                                FirebaseFirestore.getInstance().collection("timeslots")
+//                                    .document(job.timeslotID!!)
+//                                    .update(data)
+//                            } else {
+//                                Toast.makeText(
+//                                    context,
+//                                    "You don't have enough time to spend!",
+//                                    Toast.LENGTH_LONG
+//                                ).show()
+//                            }
+//                        }
+//                }
+        }
+
+        binding.buttonReject.setOnClickListener {
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("jobStatus", "REJECTED")
+                .addOnSuccessListener {
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
                 }
         }
     }
