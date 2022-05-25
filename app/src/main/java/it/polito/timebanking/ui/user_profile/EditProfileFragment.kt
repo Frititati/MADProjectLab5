@@ -96,7 +96,7 @@ class EditProfileFragment : Fragment() {
                 firestoreUser!!.uid,
                 binding.fullName.text.toString(),
                 binding.nickName.text.toString(),
-                binding.age.text.toString(),
+                binding.age.text.toString().toLongOrNull(),
                 binding.email.text.toString(),
                 binding.location.text.toString(),
                 binding.description.text.toString(),

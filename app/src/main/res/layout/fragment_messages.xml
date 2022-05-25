@@ -9,9 +9,9 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/Blue_Orchid"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        android:backgroundTint="@color/Blue_Orchid"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,19 +20,43 @@
             android:layout_height="?attr/actionBarSize">
 
             <Button
+                android:id="@+id/buttonOffer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:backgroundTint="@color/Ash_Gray"
+                android:text="@string/offer" />
+
+            <Button
+                android:id="@+id/buttonRequest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/Green_Onion"
+                android:text="@string/request"
+                android:visibility="gone" />
+
+
+            <Button
                 android:id="@+id/buttonAccept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/Green_Onion"
                 android:text="@string/accept"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/Green_Onion"/>
+                android:visibility="gone" />
+
 
             <Button
                 android:id="@+id/buttonReject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/Blush_Red"
                 android:text="@string/reject"
-                android:backgroundTint="@color/Blush_Red"/>
+                android:visibility="gone" />
+
+
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -44,7 +68,8 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/chatBox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -59,11 +84,11 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-            android:layout_marginStart="16dp"
             android:id="@+id/write_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
             android:layout_toStartOf="@+id/button_send"
             android:background="@android:color/transparent"
             android:hint="@string/enter_message"
@@ -77,10 +102,10 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:backgroundTint="@color/Blue_Dress"
+            android:contentDescription="@string/send"
             android:src="@drawable/ic_send_message"
-            app:tint="@color/AntiqueWhite"
             android:textColor="@color/black"
-            android:contentDescription="@string/send" />
+            app:tint="@color/AntiqueWhite" />
 
     </RelativeLayout>
 

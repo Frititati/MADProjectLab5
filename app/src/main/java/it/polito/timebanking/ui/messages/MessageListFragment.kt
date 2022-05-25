@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +21,10 @@ import it.polito.timebanking.databinding.FragmentMessagesBinding
 import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.chat.MessageViewModel
 import it.polito.timebanking.model.chat.toJobData
+import it.polito.timebanking.model.profile.ProfileData
+import it.polito.timebanking.model.profile.toUserProfileData
+import it.polito.timebanking.model.timeslot.TimeslotData
+import it.polito.timebanking.model.timeslot.toTimeslotData
 
 
 class MessageListFragment : Fragment() {
@@ -27,7 +34,9 @@ class MessageListFragment : Fragment() {
     private val messageListAdapter = MessageListAdapter()
     private lateinit var jobID: String
     private lateinit var drawerListener: NavBarUpdater
-    private lateinit var job : JobData
+    private lateinit var job: JobData
+    private lateinit var timeslot: TimeslotData
+    private lateinit var userConsumer: ProfileData
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,16 +56,40 @@ class MessageListFragment : Fragment() {
         )
 
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
+        var userIsProducer = false
 
         FirebaseFirestore.getInstance().collection("jobs")
-            .document(jobID).get().addOnSuccessListener {
-                job = it.toJobData()
+            .document(jobID).get().addOnSuccessListener { jobIt ->
+                job = jobIt.toJobData()
+
+                FirebaseFirestore.getInstance().collection("timeslots")
+                    .document(job.timeslotID!!).get().addOnSuccessListener { timeslotIt ->
+                        timeslot = timeslotIt.toTimeslotData()
+
+                        FirebaseFirestore.getInstance().collection("users")
+                            .document(job.userConsumerID!!).get()
+                            .addOnSuccessListener { userIt ->
+                                userConsumer = userIt.toUserProfileData()
+
+                                userIsProducer = (userID == job.userProducerID)
+                                if (userIsProducer) {
+                                    if (job.requestedAt != 0L) {
+                                        binding.buttonAccept.isVisible = true
+                                        binding.buttonReject.isVisible = true
+                                    }
+                                } else {
+                                    if (job.requestedAt == 0L && userConsumer.time != null && timeslot.duration != null) {
+                                        if (userConsumer.time!! >= timeslot.duration!!) {
+                                            binding.buttonRequest.isVisible = true
+                                        }
+                                    }
+                                }
+                            }
+                    }
             }
 
         binding.messageListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.messageListRecycler.adapter = messageListAdapter
-
-        messageListAdapter.clear()
 
         vm.getMessages(jobID).observe(viewLifecycleOwner) {
             messageListAdapter.setMessages(it.sortedBy { a -> a.sentAt }.toMutableList())
@@ -72,21 +105,59 @@ class MessageListFragment : Fragment() {
             binding.writeMessage.setText("")
         }
 
+        binding.buttonOffer.setOnClickListener {
+            findNavController().navigate(
+                R.id.job_to_offer, bundleOf(
+                    "id_timeslot" to job.timeslotID, "id_user" to job.userProducerID
+                )
+            )
+        }
+
+        binding.buttonRequest.setOnClickListener {
+            job.requestedAt = System.currentTimeMillis()
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).set(job)
+                .addOnSuccessListener {
+                    binding.buttonRequest.visibility = View.GONE
+                }
+        }
+
         binding.buttonAccept.setOnClickListener {
+            if (userConsumer.time != null && timeslot.duration != null) {
+                if (userConsumer.time!! >= timeslot.duration!!) {
+                    // userconsumer has enought time
+                    userConsumer.time = userConsumer.time!! - timeslot.duration!!
+                    FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID!!)
+                        .set(userConsumer).addOnSuccessListener { userConsumerIt ->
+
+                            timeslot.booked = true
+                            FirebaseFirestore.getInstance().collection("timeslots")
+                                .document(job.timeslotID!!)
+                                .set(timeslot).addOnSuccessListener { userConsumerIt ->
+                                    binding.buttonAccept.visibility = View.GONE
+                                    binding.buttonRequest.visibility = View.GONE
+                                }
+                        }
+                } else {
+                    // userconsumer does not have enought time
+                }
+            }
+
+
             FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-                .addOnSuccessListener { user ->
+                .document(job.userConsumerID!!).get()
+                .addOnSuccessListener { userIt ->
+
                     FirebaseFirestore.getInstance().collection("timeslots")
-                        .document(job.timeslotID).get()
+                        .document(job.timeslotID!!).get()
                         .addOnSuccessListener { ts ->
                             val timeRequired = ts.get("duration").toString().toInt()
-                            val time = user.get("time").toString().toInt()
+                            val time = userIt.get("time").toString().toInt()
                             Log.d("test", "QUI $time vs $timeRequired")
                             if (time >= timeRequired) {
                                 val data: MutableMap<String, Any> = mutableMapOf()
                                 data["available"] = false
                                 FirebaseFirestore.getInstance().collection("timeslots")
-                                    .document(job.timeslotID)
+                                    .document(job.timeslotID!!)
                                     .update(data)
                             } else {
                                 Toast.makeText(

@@ -52,8 +52,8 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         private val rootView = v
         fun bind(jobID: String, job: JobData) {
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (job.userProducerID == userID) job.userConsumerID
-            else job.userProducerID
+            val otherUserID = if (job.userProducerID == userID) job.userConsumerID!!
+            else job.userProducerID!!
 
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()
@@ -75,7 +75,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
                 }
 
             FirebaseFirestore.getInstance().collection("timeslots")
-                .document(job.timeslotID).get()
+                .document(job.timeslotID!!).get()
                 .addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
                 }
@@ -83,7 +83,7 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
             rootView.setOnClickListener {
                 rootView.findNavController()
                     .navigate(
-                        R.id.chatList_to_chat,
+                        R.id.chats_to_job,
                         bundleOf(
                             "otherUserName" to userName.text,
                             "jobID" to jobID,

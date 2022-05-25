@@ -16,15 +16,16 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(),
+class OffersListAdapter(private val mode: String) :
+    RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(),
     Filterable {
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
     private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
         return OfferListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false)
-        ,mode)
+            LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false), mode
+        )
     }
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
@@ -39,6 +40,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
         timeslotsFull.addAll(timeslots)
         notifyDataSetChanged()
     }
+
     @SuppressLint("NotifyDataSetChanged")
     fun addTimeslots(inTimeslot: Pair<String, TimeslotData>) {
         timeslots.add(inTimeslot)
@@ -47,7 +49,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun clear(){
+    fun clear() {
         timeslots.clear()
         notifyDataSetChanged()
     }
@@ -65,20 +67,20 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
             date.text = dateFormatter(timeslot.date)
 
             button.setOnClickListener {
-                if(mode == "Watch")
-                rootView.findNavController()
-                    .navigate(
-                        R.id.timeslot_to_details,
-                        bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
-                    )
+                if (mode == "Watch")
+                    rootView.findNavController()
+                        .navigate(
+                            R.id.offers_to_offer,
+                            bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
+                        )
                 Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
                     .show()
-                if(mode == "Fav")
-                rootView.findNavController()
-                    .navigate(
-                        R.id.favoritesToDetail,
-                        bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
-                    )
+                if (mode == "Fav")
+                    rootView.findNavController()
+                        .navigate(
+                            R.id.favoritesToDetail,
+                            bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
+                        )
                 Snackbar.make(it, "Here you can view details about ${title.text}", 1500)
                     .show()
             }
@@ -97,7 +99,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
             else {
                 val pattern = constraint.toString().lowercase().trim()
                 filteredList =
-                    timeslotsFull.filter { it.second.title.lowercase().contains(pattern) }
+                    timeslotsFull.filter { it.second.title!!.lowercase().contains(pattern) }
                         .toMutableList()
             }
             val results = FilterResults()
@@ -130,7 +132,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun filterByDuration(duration: Int):Int {
+    fun filterByDuration(duration: Int): Int {
         timeslots.clear()
             .run { timeslots.addAll(timeslotsFull.filter { it.second.duration!! >= duration }) }
         notifyDataSetChanged()
@@ -138,7 +140,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun selectDate(date: Long):Int {
+    fun selectDate(date: Long): Int {
         timeslots.clear().run { timeslots.addAll(timeslotsFull.filter { it.second.date == date }) }
         notifyDataSetChanged()
         return timeslots.size

@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val defaultAge = 18
-    private val startingTime = 120
+    private val defaultAge = 18L
+    private val startingTime = 120L
     private val firestoreUser = FirebaseAuth.getInstance().currentUser
     private val defaultProfilePath = "gs://madproject-3381c.appspot.com/user.png"
 
@@ -44,11 +44,16 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val drawerLayout = binding.drawerLayout
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.timeslotListFragment, R.id.showProfileFragment, R.id.skillListFragment,R.id.allChatsFragment,R.id.favoritesListFragment
+                R.id.personalTimeslotListFragment,
+                R.id.showProfileFragment,
+                R.id.allSkillFragment,
+                R.id.allChatsFragment,
+                R.id.favoritesListFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -92,7 +97,8 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 listOf<Any>(),
                                 "Empty description",
                                 listOf<Any>(),
-                                startingTime)
+                                startingTime
+                            )
                         )
                     binding.navView.getHeaderView(0)
                         .findViewById<TextView>(R.id.userEmailOnDrawer).text =
@@ -111,16 +117,16 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 }
             }
 
-      /*
-        when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenDark)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenLight)
-            }
-        }
-       */
+        /*
+          when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+              Configuration.UI_MODE_NIGHT_YES -> {
+                  window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenDark)
+              }
+              Configuration.UI_MODE_NIGHT_NO -> {
+                  window.statusBarColor = ContextCompat.getColor(this, R.color.myGreenLight)
+              }
+          }
+         */
         window.statusBarColor = ContextCompat.getColor(this, R.color.Ocean_Blue)
 
     }

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +50,8 @@ class EditTimeslotFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        )
 
         _binding = FragmentTimeslotEditBinding.inflate(inflater, container, false)
         return binding.root
@@ -83,26 +85,35 @@ class EditTimeslotFragment : Fragment() {
 
         binding.deleteButton.setOnClickListener {
             val dialog = AlertDialog.Builder(context)
-            val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic,null)
-            dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm),currentTimeSlot.title))
+            val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
+            dialog.setTitle(
+                String.format(
+                    resources.getString(R.string.delete_timeslot_confirm),
+                    currentTimeSlot.title
+                )
+            )
             dialog.setView(dialogView)
 
-            dialog.setPositiveButton("Yes"){_,_ ->
-                vm.delete(idTimeslot)
-                vm.deleteUserTimeslot(idTimeslot)
+            dialog.setPositiveButton("Yes") { _, _ ->
                 toUpdate = false
+                vm.delete(idTimeslot){
+                    vm.deleteUserTimeslot(idTimeslot){
+                        findNavController().navigate(R.id.edit_to_personal)
+                    }
+                }
+
                 Snackbar.make(binding.root, "Timeslot deleted", 1500).setAction("Undo") {
                     addNonEmptyTimeslot(currentTimeSlot)
                 }.show()
-                findNavController().navigate(R.id.edit_to_list)
             }
-            dialog.setNegativeButton("No") {_,_ ->
+            dialog.setNegativeButton("No") { _, _ ->
             }
             dialog.create().show()
         }
     }
 
     override fun onPause() {
+        Log.d("test", "pause was called")
         super.onPause()
         if (toUpdate) {
             thread {
@@ -128,21 +139,10 @@ class EditTimeslotFragment : Fragment() {
 
     private fun addNonEmptyTimeslot(t: TimeslotData) {
         FirebaseFirestore.getInstance().collection("timeslots")
-            .add(
-                TimeslotData(
-                    t.createdAt,
-                    t.editedAt,
-                    t.title,
-                    t.description,
-                    t.date,
-                    t.duration,
-                    t.location,
-                    t.ownedBy,
-                    t.available
-                )
-            ).addOnSuccessListener {
-                FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).update(
-                    "timeslots",FieldValue.arrayUnion(it.id)
+            .add(t).addOnSuccessListener {
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(FirebaseAuth.getInstance().currentUser!!.uid).update(
+                    "timeslots", FieldValue.arrayUnion(it.id)
                 )
             }
     }

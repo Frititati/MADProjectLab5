@@ -1,6 +1,7 @@
 package it.polito.timebanking.model.timeslot
 
 import android.content.res.Resources
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import it.polito.timebanking.R
 import java.text.SimpleDateFormat
@@ -9,26 +10,28 @@ import java.util.*
 data class TimeslotData(
     var createdAt: Long?,
     var editedAt: Long?,
-    var title: String,
-    var description: String,
+    var title: String?,
+    var description: String?,
     var date: Long?,
-    var duration: Int?,
-    var location: String,
-    var ownedBy: String,
-    var available: Boolean?
+    var duration: Long?,
+    var location: String?,
+    var ownedBy: String?,
+    var available: Boolean?,
+    var booked: Boolean?
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
     return TimeslotData(
-        this.get("createdAt").toString().toLongOrNull(),
-        this.get("editedAt").toString().toLongOrNull(),
-        this.get("title").toString(),
-        this.get("description").toString(),
-        this.get("date").toString().toLongOrNull(),
-        this.get("duration").toString().toIntOrNull(),
-        this.get("location").toString(),
-        this.get("ownedBy").toString(),
-        this.get("available") as Boolean?
+        this.getLong("createdAt"),
+        this.getLong("editedAt"),
+        this.getString("title"),
+        this.getString("description"),
+        this.getLong("date"),
+        this.getLong("duration"),
+        this.getString("location"),
+        this.getString("ownedBy"),
+        this.getBoolean("available"),
+        this.getBoolean("booked")
     )
 }
 
@@ -42,13 +45,13 @@ fun descriptionFormatter(description: String?): String {
     else description
 }
 
-fun durationMinuteFormatter(r: Resources, duration: Int?): String {
-    return if (duration == null || duration == 0) String.format(r.getString(R.string.minutes), 0)
+fun durationMinuteFormatter(r: Resources, duration: Long?): String {
+    return if (duration == null || duration == 0L) String.format(r.getString(R.string.minutes), 0)
     else String.format(r.getString(R.string.minutes), duration)
 }
 
-fun durationFormatter(duration: Int?): Int {
-    return if (duration == null || duration == 0) 0
+fun durationFormatter(duration: Long?): Long {
+    return if (duration == null || duration == 0L) 0
     else duration
 }
 

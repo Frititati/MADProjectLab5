@@ -3,30 +3,30 @@ package it.polito.timebanking.model.profile
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class ProfileData(
-    var fullName: String,
-    var nickName: String,
-    var email: String,
-    var age: Int,
-    var location: String,
+    var fullName: String?,
+    var nickName: String?,
+    var email: String?,
+    var age: Long?,
+    var location: String?,
     var skills: List<*>,
     var timeslots: List<*>,
-    var description: String,
+    var description: String?,
     var favorites: List<*>,
-    var time: Int
+    var time: Long?
 )
 
 fun DocumentSnapshot.toUserProfileData(): ProfileData {
     return ProfileData(
-        this.get("fullName").toString(),
-        this.get("nickName").toString(),
-        this.get("email").toString(),
-        this.get("age").toString().toInt(),
-        this.get("location").toString(),
+        this.getString("fullName"),
+        this.getString("nickName"),
+        this.getString("email"),
+        this.getLong("age"),
+        this.getString("location"),
         this.get("skills") as List<*>,
         this.get("timeslots") as List<*>,
-        this.get("description").toString(),
+        this.getString("description"),
         this.get("favorites") as List<*>,
-        this.get("time").toString().toInt()
+        this.getLong("time")
     )
 }
 

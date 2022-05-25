@@ -86,4 +86,6 @@
     <string name="no_skills">No skills available</string>
     <string name="no_chat">You have no chat right now</string>
     <string name="no_timeslot">You don\'t have any timeslots</string>
+    <string name="offer">Offer</string>
+    <string name="request">Request</string>
 </resources>

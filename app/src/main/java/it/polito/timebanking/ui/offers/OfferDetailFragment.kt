@@ -13,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
 import it.polito.timebanking.model.chat.JobData
-import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
@@ -91,7 +90,7 @@ class OfferDetailFragment : Fragment() {
                         FirebaseFirestore.getInstance().collection("jobs").add(jobData)
                             .addOnSuccessListener { int ->
                                 findNavController().navigate(
-                                    R.id.ad_to_chat,
+                                    R.id.offer_to_job,
                                     bundleOf(
                                         "otherUserName" to binding.UserFullName.text,
                                         "jobID" to int.id
@@ -101,7 +100,7 @@ class OfferDetailFragment : Fragment() {
                     } else {
                         val chat = ext.first()
                         findNavController().navigate(
-                            R.id.ad_to_chat,
+                            R.id.offer_to_job,
                             bundleOf(
                                 "otherUserName" to binding.UserFullName.text,
                                 "jobID" to chat.id
@@ -157,11 +156,13 @@ class OfferDetailFragment : Fragment() {
     private fun updateUserData(newFavList: List<String>) {
         val vm by viewModels<ProfileViewModel>()
         vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+            it.favorites = newFavList
+
             vm.update(
                 FirebaseAuth.getInstance().currentUser!!.uid,
                 it.fullName,
                 it.nickName,
-                it.age.toString(),
+                it.age,
                 it.email,
                 it.location,
                 it.description,

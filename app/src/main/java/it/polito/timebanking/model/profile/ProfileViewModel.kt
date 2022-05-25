@@ -23,33 +23,43 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun update(
         id: String,
-        fullName: String,
-        nickname: String,
-        age: String,
-        email: String,
-        location: String,
-        description: String,
+        fullName: String?,
+        nickname: String?,
+        age: Long?,
+        email: String?,
+        location: String?,
+        description: String?,
         favList: List<String>
     ) {
         val data = mutableMapOf<String, Any>()
 
-        if (location.isNotEmpty()) {
-            data["location"] = location
+        if (location != null) {
+            if (location.isNotEmpty()) {
+                data["location"] = location
+            }
         }
-        if (description.isNotEmpty()) {
-            data["description"] = description
+        if (description != null) {
+            if (description.isNotEmpty()) {
+                data["description"] = description
+            }
         }
-        if (nickname.isNotEmpty()) {
-            data["nickName"] = nickname
+        if (nickname != null) {
+            if (nickname.isNotEmpty()) {
+                data["nickName"] = nickname
+            }
         }
-        if (email.isNotEmpty()) {
-            data["email"] = email
+        if (email != null) {
+            if (email.isNotEmpty()) {
+                data["email"] = email
+            }
         }
-        if (fullName.isNotEmpty()) {
-            data["fullName"] = fullName
+        if (fullName != null) {
+            if (fullName.isNotEmpty()) {
+                data["fullName"] = fullName
+            }
         }
-        if (age.isNotEmpty()) {
-            data["age"] = age.toInt()
+        if (age != null) {
+            data["age"] = age
         }
         data["favorites"] = favList
         FirebaseFirestore.getInstance().collection("users").document(id).update(

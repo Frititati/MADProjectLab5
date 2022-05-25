@@ -5,11 +5,11 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/skillListFragment"
+            android:id="@+id/allSkillFragment"
             android:icon="@drawable/ic_skills_list"
             android:title="@string/all_skills" />
         <item
-            android:id="@+id/timeslotListFragment"
+            android:id="@+id/personalTimeslotListFragment"
             android:icon="@drawable/ic_timeslots"
             android:title="@string/timeslot_list" />
         <item

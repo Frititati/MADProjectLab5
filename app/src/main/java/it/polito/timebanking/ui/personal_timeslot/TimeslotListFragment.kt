@@ -72,7 +72,8 @@ class TimeslotListFragment : Fragment() {
                     0,
                     "",
                     FirebaseAuth.getInstance().currentUser!!.uid,
-                    true,
+                    available = true,
+                    booked = false
                 )
             )
             .addOnSuccessListener {

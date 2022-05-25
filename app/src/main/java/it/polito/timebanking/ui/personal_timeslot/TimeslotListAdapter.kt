@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,13 +48,13 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             date.text = dateFormatter(timeslot.date)
             title.setOnClickListener {
                 rootView.findNavController()
-                    .navigate(R.id.home_to_detail, bundleOf("id_timeslot" to id))
+                    .navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
                 Snackbar.make(it, "Here you can view your timeslot ${title.text}", 1500)
                     .show()
             }
             button.setOnClickListener {
                 rootView.findNavController()
-                    .navigate(R.id.home_to_edit, bundleOf("id_timeslot" to id))
+                    .navigate(R.id.personal_to_edit, bundleOf("id_timeslot" to id))
                 Snackbar.make(it, "Here you can edit your timeslot ${title.text}", 1500)
                     .show()
             }

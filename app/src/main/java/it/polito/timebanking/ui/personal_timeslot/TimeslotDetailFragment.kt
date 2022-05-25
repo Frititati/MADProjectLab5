@@ -57,7 +57,7 @@ class TimeslotDetailFragment : Fragment() {
             R.id.action_settings -> {
                 val idTimeslot: String? = requireArguments().getString("id_timeslot")
                 findNavController().navigate(
-                    R.id.detail_to_edit,
+                    R.id.details_to_edit,
                     bundleOf("id_timeslot" to idTimeslot)
                 )
                 Snackbar.make(binding.root, "Here you can edit your timeslot", 1000).show()
