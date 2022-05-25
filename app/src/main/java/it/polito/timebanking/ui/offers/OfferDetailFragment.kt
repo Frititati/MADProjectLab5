@@ -23,7 +23,7 @@ class OfferDetailFragment : Fragment() {
     private var _binding: FragmentOfferDetailBinding? = null
     private var favList = mutableListOf<String>()
     private val binding get() = _binding!!
-    private var fav = false
+    private var fav = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,14 +37,16 @@ class OfferDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val idTimeslot = requireArguments().getString("id_timeslot")!!
-        val otherUserID = requireArguments().getString("id_user")
+        val otherUserID = requireArguments().getString("id_user")!!
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
+
+        if (otherUserID == userID)
+            Toast.makeText(context, "Your own offer!", Toast.LENGTH_SHORT).show()
         FirebaseFirestore.getInstance().collection("users")
-            .document(otherUserID!!).get().addOnSuccessListener { user ->
+            .document(otherUserID).get().addOnSuccessListener { user ->
                 binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
-                binding.UserDescription.text =
-                    descriptionFormatter(user.get("description").toString())
+                binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
 
                 timeslotVM.get(idTimeslot).observe(viewLifecycleOwner) {
                     binding.Title.text = titleFormatter(it.title)
@@ -55,11 +57,15 @@ class OfferDetailFragment : Fragment() {
                 }
             }
         FirebaseFirestore.getInstance().collection("users")
-            .document(userID).get().addOnSuccessListener {
-                val myList = it.get("favorites") as MutableList<*>
-                favList = myList.map { f -> f.toString() }.toMutableList()
+            .document(userID).get().addOnSuccessListener { d ->
+                val myList = d.get("favorites") as MutableList<*>
+                favList = myList.map { it.toString() }.toMutableList()
                 if (favList.contains(idTimeslot)) {
-                    fav = true
+                    fav = 1
+                    requireActivity().invalidateOptionsMenu()
+                }
+                if (userID == otherUserID) {
+                    fav = 2
                     requireActivity().invalidateOptionsMenu()
                 }
             }
@@ -74,7 +80,7 @@ class OfferDetailFragment : Fragment() {
                         val jobData = JobData(
                             idTimeslot,
                             emptyList<String>(),
-                            0L,
+                            0,
                             otherUserID,
                             userID,
                             listOf(
@@ -117,26 +123,33 @@ class OfferDetailFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        if (fav) {
-            menu.findItem(R.id.action_fav_on).isVisible = true
-            menu.findItem(R.id.action_fav_off).isVisible = false
-        } else {
-            menu.findItem(R.id.action_fav_on).isVisible = false
-            menu.findItem(R.id.action_fav_off).isVisible = true
+        when (fav) {
+            1 -> {
+                menu.findItem(R.id.action_fav_on).isVisible = true
+                menu.findItem(R.id.action_fav_off).isVisible = false
+            }
+            0 -> {
+                menu.findItem(R.id.action_fav_on).isVisible = false
+                menu.findItem(R.id.action_fav_off).isVisible = true
+            }
+            else -> {
+                menu.findItem(R.id.action_fav_on).isVisible = false
+                menu.findItem(R.id.action_fav_off).isVisible = false
+            }
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_fav_off -> {
-                fav = true
+                fav = 1
                 requireActivity().invalidateOptionsMenu()
                 favList.add(requireArguments().getString("id_timeslot").toString())
                 updateUserData(favList)
                 Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
             }
             R.id.action_fav_on -> {
-                fav = false
+                fav = 0
                 requireActivity().invalidateOptionsMenu()
                 favList.remove(requireArguments().getString("id_timeslot").toString())
                 updateUserData(favList)

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentSkillListBinding
 import it.polito.timebanking.model.skill.SkillViewModel
-import it.polito.timebanking.model.timeslot.SkillData
+import it.polito.timebanking.model.skill.SkillData
 
 class AllSkillsFragment : Fragment() {
 

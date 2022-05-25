@@ -29,17 +29,16 @@ class FavoritesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var favorites: MutableList<String>
+        var favorites: MutableList<*>
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
         binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
-        offersListAdapter.clear()
 
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
-                favorites = it.get("favorites") as MutableList<String>
+                favorites = it.get("favorites") as MutableList<*>
                 favorites.forEach { f ->
-                    FirebaseFirestore.getInstance().collection("timeslots").document(f).get()
+                    FirebaseFirestore.getInstance().collection("timeslots").document(f.toString()).get()
                         .addOnSuccessListener { t ->
                             offersListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
                         }

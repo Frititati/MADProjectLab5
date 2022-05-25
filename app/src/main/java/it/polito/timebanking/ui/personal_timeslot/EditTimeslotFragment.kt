@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotEditBinding
@@ -38,7 +37,6 @@ class EditTimeslotFragment : Fragment() {
 
     private var idTimeslot: String = ""
     private var toUpdate: Boolean = true
-    private lateinit var currentTimeSlot: TimeslotData
 
     private lateinit var userSkills: List<String>
 
@@ -65,7 +63,6 @@ class EditTimeslotFragment : Fragment() {
 
         idTimeslot = requireArguments().getString("id_timeslot")!!
         vm.get(idTimeslot).observe(viewLifecycleOwner) {
-            currentTimeSlot = it
             binding.editTitle.hint = titleFormatter(it.title)
             binding.editDescription.hint = descriptionFormatter(it.description)
             binding.editDate.hint = dateFormatter(it.date)
@@ -89,22 +86,16 @@ class EditTimeslotFragment : Fragment() {
             dialog.setTitle(
                 String.format(
                     resources.getString(R.string.delete_timeslot_confirm),
-                    currentTimeSlot.title
                 )
             )
             dialog.setView(dialogView)
 
             dialog.setPositiveButton("Yes") { _, _ ->
                 toUpdate = false
-                vm.delete(idTimeslot){
-                    vm.deleteUserTimeslot(idTimeslot){
-                        findNavController().navigate(R.id.edit_to_personal)
-                    }
-                }
-
-                Snackbar.make(binding.root, "Timeslot deleted", 1500).setAction("Undo") {
-                    addNonEmptyTimeslot(currentTimeSlot)
-                }.show()
+                vm.delete(idTimeslot)
+                vm.deleteUserTimeslot(idTimeslot)
+                findNavController().navigate(R.id.edit_to_personal)
+                Snackbar.make(binding.root, "Timeslot deleted", 1500).show()
             }
             dialog.setNegativeButton("No") { _, _ ->
             }
@@ -113,7 +104,6 @@ class EditTimeslotFragment : Fragment() {
     }
 
     override fun onPause() {
-        Log.d("test", "pause was called")
         super.onPause()
         if (toUpdate) {
             thread {
@@ -135,16 +125,6 @@ class EditTimeslotFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun addNonEmptyTimeslot(t: TimeslotData) {
-        FirebaseFirestore.getInstance().collection("timeslots")
-            .add(t).addOnSuccessListener {
-                FirebaseFirestore.getInstance().collection("users")
-                    .document(FirebaseAuth.getInstance().currentUser!!.uid).update(
-                    "timeslots", FieldValue.arrayUnion(it.id)
-                )
-            }
     }
 
     private fun updateAllSkills() {

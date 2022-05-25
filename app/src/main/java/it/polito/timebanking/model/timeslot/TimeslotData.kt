@@ -1,38 +1,41 @@
 package it.polito.timebanking.model.timeslot
 
 import android.content.res.Resources
-import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import it.polito.timebanking.R
 import java.text.SimpleDateFormat
 import java.util.*
 
 data class TimeslotData(
-    var createdAt: Long?,
-    var editedAt: Long?,
-    var title: String?,
-    var description: String?,
-    var date: Long?,
-    var duration: Long?,
-    var location: String?,
-    var ownedBy: String?,
-    var available: Boolean?,
-    var booked: Boolean?
+    var createdAt: Long,
+    var editedAt: Long,
+    var title: String,
+    var description: String,
+    var date: Long,
+    var duration: Long,
+    var location: String,
+    var ownedBy: String,
+    var available: Boolean,
+    var booked: Boolean
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
-    return TimeslotData(
-        this.getLong("createdAt"),
-        this.getLong("editedAt"),
-        this.getString("title"),
-        this.getString("description"),
-        this.getLong("date"),
-        this.getLong("duration"),
-        this.getString("location"),
-        this.getString("ownedBy"),
-        this.getBoolean("available"),
-        this.getBoolean("booked")
-    )
+    return try {
+        TimeslotData(
+            this.get("createdAt").toString().toLong(),
+            this.get("editedAt").toString().toLong(),
+            this.get("title").toString(),
+            this.get("description").toString(),
+            this.get("date").toString().toLong(),
+            this.get("duration").toString().toLong(),
+            this.get("location").toString(),
+            this.get("ownedBy").toString(),
+            this.get("available").toString().toBoolean(),
+            this.get("booked").toString().toBoolean()
+        )
+    } catch (e: NumberFormatException) {
+        TimeslotData(0, 0, "", "", 0, 0, "", "", available = false, booked = false)
+    }
 }
 
 fun titleFormatter(title: String?): String {

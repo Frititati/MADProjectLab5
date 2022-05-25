@@ -64,7 +64,7 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(itemView) {
         fun bind(message: MessageData) {
             itemView.findViewById<TextView>(R.id.message_text)!!.text = message.message
-            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt!!)
+            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt)
         }
         private fun timeFormatter(time: Long): String {
             val calendar = Calendar.getInstance()
@@ -78,7 +78,7 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(itemView) {
         fun bind(message: MessageData) {
             itemView.findViewById<TextView>(R.id.message_text)!!.text = message.message
-            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt!!)
+            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt)
         }
 
         private fun timeFormatter(time: Long): String {

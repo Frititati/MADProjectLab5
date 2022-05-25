@@ -9,14 +9,14 @@
     <string name="ageTooltip">Age</string>
     <string name="all_skills">All Skills</string>
     <string name="all_skills_offered">List of skills you could find</string>
-    <string name="app_name">timebanking</string>
+    <string name="app_name">Timebanking</string>
     <string name="cancel">Cancel</string>
     <string name="date">Date</string>
     <string name="dateTooltip">Date</string>
     <string name="delete">Delete</string>
     <string name="delete_skill">Delete a skill</string>
     <string name="delete_timeslot">Delete Timeslot</string>
-    <string name="delete_timeslot_confirm">Do you really want to delete %s ?</string>
+    <string name="delete_timeslot_confirm">Do you really want to delete your timeslot?</string>
     <string name="description">Your description</string>
     <string name="descriptionTooltip">Description</string>
     <string name="duration">Duration</string>
@@ -84,12 +84,11 @@
     <string name="no_offers_found">No offer for %s was found</string>
     <string name="no_favorites">You haven\'t set any favorites yet</string>
     <string name="no_skills">No skills available</string>
-    <string name="no_chat">You have no chat right now</string>
-    <string name="no_timeslot">You don\'t have any timeslots</string>
+    <string name="no_producing_jobs">You don\'t have any work to do</string>
+    <string name="no_consuming_jobs">You don\'t have any request</string>
+    <string name="no_timeslots">You don\'t have any timeslots</string>
     <string name="offer">Offer</string>
     <string name="request">Request</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="activeJobs">Active Jobs</string>
     <string name="interestedJobs">Interested Jobs</string>
     <string name="offeredJobs">Offered Jobs</string>

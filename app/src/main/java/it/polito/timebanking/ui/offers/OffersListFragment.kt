@@ -58,7 +58,7 @@ class OffersListFragment : Fragment() {
 
         FirebaseFirestore.getInstance().collection("users").get().addOnSuccessListener { userList ->
             for (user in userList) {
-                val list: List<String> = user.get("skills") as List<String>
+                val list: List<*> = user.get("skills") as List<*>
                 if (list.contains(selectedSkill)) {
                     usersAvailable.add(user.id)
                 }

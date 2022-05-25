@@ -49,7 +49,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         data["sentAt"] = time
         FirebaseFirestore.getInstance().collection("messages").add(data).addOnSuccessListener {
             FirebaseFirestore.getInstance().collection("jobs").document(chatID)
-                .update("messagesList", FieldValue.arrayUnion(it.id))
+                .update("messagesList", FieldValue.arrayUnion(it.id),
+                    "lastMessage",System.currentTimeMillis())
         }
 
     }

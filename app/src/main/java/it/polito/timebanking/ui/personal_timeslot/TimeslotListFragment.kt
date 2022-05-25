@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,7 @@ class TimeslotListFragment : Fragment() {
         val timeslotListAdapter = TimeslotListAdapter()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
         binding.timeslotRecycler.adapter = timeslotListAdapter
-        binding.nothingToShow.text = resources.getString(R.string.no_timeslot)
+        binding.nothingToShow.text = resources.getString(R.string.no_timeslots)
 
         vm.getUserTimeslots().observe(viewLifecycleOwner) {
             timeslotListAdapter.setTimeslots(it.sortedBy { t -> t.second.title }
@@ -69,7 +68,7 @@ class TimeslotListFragment : Fragment() {
                     "",
                     "",
                     0,
-                    0,
+                    5,
                     "",
                     FirebaseAuth.getInstance().currentUser!!.uid,
                     available = true,

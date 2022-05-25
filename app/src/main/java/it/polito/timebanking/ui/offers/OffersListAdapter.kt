@@ -48,12 +48,6 @@ class OffersListAdapter(private val mode: String) :
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun clear() {
-        timeslots.clear()
-        notifyDataSetChanged()
-    }
-
     class OfferListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
         private val rootView = v
         val title: TextView = v.findViewById(R.id.title)
@@ -99,7 +93,7 @@ class OffersListAdapter(private val mode: String) :
             else {
                 val pattern = constraint.toString().lowercase().trim()
                 filteredList =
-                    timeslotsFull.filter { it.second.title!!.lowercase().contains(pattern) }
+                    timeslotsFull.filter { it.second.title.lowercase().contains(pattern) }
                         .toMutableList()
             }
             val results = FilterResults()
@@ -134,7 +128,7 @@ class OffersListAdapter(private val mode: String) :
     @SuppressLint("NotifyDataSetChanged")
     fun filterByDuration(duration: Int): Int {
         timeslots.clear()
-            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration!! >= duration }) }
+            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration >= duration }) }
         notifyDataSetChanged()
         return timeslots.size
     }

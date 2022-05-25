@@ -17,8 +17,8 @@ import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentEditSkillBinding
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.skill.SkillViewModel
-import it.polito.timebanking.model.timeslot.SkillData
-import it.polito.timebanking.model.timeslot.toSkillData
+import it.polito.timebanking.model.skill.SkillData
+import it.polito.timebanking.model.skill.toSkillData
 
 
 class EditSkillFragment : Fragment() {

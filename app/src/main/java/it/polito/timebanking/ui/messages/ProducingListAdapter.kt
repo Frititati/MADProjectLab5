@@ -37,7 +37,7 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
 
     @SuppressLint("NotifyDataSetChanged")
     fun setChats(chats: MutableList<Pair<String, JobData>>) {
-        allJobs = chats
+        allJobs = chats.sortedBy { it.second.lastMessage }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -52,8 +52,8 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
         private val rootView = v
         fun bind(jobID: String, job: JobData) {
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (job.userProducerID == userID) job.userConsumerID!!
-            else job.userProducerID!!
+            val otherUserID = if (job.userProducerID == userID) job.userConsumerID
+            else job.userProducerID
 
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()
@@ -75,7 +75,7 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
                 }
 
             FirebaseFirestore.getInstance().collection("timeslots")
-                .document(job.timeslotID!!).get()
+                .document(job.timeslotID).get()
                 .addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
                 }

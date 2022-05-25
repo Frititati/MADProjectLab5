@@ -10,7 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import it.polito.timebanking.R
-import it.polito.timebanking.model.timeslot.SkillData
+import it.polito.timebanking.model.skill.SkillData
 
 class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolder>() {
     private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()

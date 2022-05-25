@@ -17,8 +17,8 @@ import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentShowProfileBinding
 import it.polito.timebanking.model.profile.ProfileViewModel
-import it.polito.timebanking.model.timeslot.SkillData
-import it.polito.timebanking.model.timeslot.toSkillData
+import it.polito.timebanking.model.skill.SkillData
+import it.polito.timebanking.model.skill.toSkillData
 
 
 class ShowProfileFragment : Fragment() {

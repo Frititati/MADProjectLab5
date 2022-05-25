@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.timebanking.R
-import it.polito.timebanking.model.timeslot.SkillData
+import it.polito.timebanking.model.skill.SkillData
 
 
 class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewHolder>() {

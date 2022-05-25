@@ -1,4 +1,4 @@
-package it.polito.timebanking.model.timeslot
+package it.polito.timebanking.model.skill
 
 import com.google.firebase.firestore.DocumentSnapshot
 

@@ -37,7 +37,7 @@ class ConsumingJobsFragment : Fragment() {
 
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
-        binding.nothingToShow.text = resources.getString(R.string.no_chat)
+        binding.nothingToShow.text = resources.getString(R.string.no_consuming_jobs)
 
         vm.getConsumingJobs(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
             chatListAdapter.setChats(it as MutableList<Pair<String, JobData>>)

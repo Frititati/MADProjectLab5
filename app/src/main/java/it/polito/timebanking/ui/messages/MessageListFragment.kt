@@ -55,18 +55,18 @@ class MessageListFragment : Fragment() {
         )
 
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
-        var userIsProducer = false
+        var userIsProducer:Boolean
 
         FirebaseFirestore.getInstance().collection("jobs")
             .document(jobID).get().addOnSuccessListener { jobIt ->
                 job = jobIt.toJobData()
 
                 FirebaseFirestore.getInstance().collection("timeslots")
-                    .document(job.timeslotID!!).get().addOnSuccessListener { timeslotIt ->
+                    .document(job.timeslotID).get().addOnSuccessListener { timeslotIt ->
                         timeslot = timeslotIt.toTimeslotData()
 
                         FirebaseFirestore.getInstance().collection("users")
-                            .document(job.userConsumerID!!).get()
+                            .document(job.userConsumerID).get()
                             .addOnSuccessListener { userIt ->
                                 userConsumer = userIt.toUserProfileData()
 
@@ -77,8 +77,8 @@ class MessageListFragment : Fragment() {
                                         binding.buttonReject.isVisible = true
                                     }
                                 } else {
-                                    if (job.jobStatus == "INIT" && userConsumer.time != null && timeslot.duration != null) {
-                                        if (userConsumer.time!! >= timeslot.duration!!) {
+                                    if (job.jobStatus == "INIT") {
+                                        if (userConsumer.time >= timeslot.duration) {
                                             binding.buttonRequest.isVisible = true
                                         }
                                     }
@@ -121,34 +121,28 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonAccept.setOnClickListener {
-            if (userConsumer.time != null && timeslot.duration != null) {
-                if (userConsumer.time!! >= timeslot.duration!!) {
-                    // userconsumer does not have enough time
-                    userConsumer.time = userConsumer.time!! - timeslot.duration!!
-                    FirebaseFirestore.getInstance().collection("users")
-                        .document(job.userConsumerID!!)
-                        .set(userConsumer).addOnSuccessListener {
+            if (userConsumer.time >= timeslot.duration) {
+                // userconsumer does not have enough time
+                userConsumer.time = userConsumer.time - timeslot.duration
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(job.userConsumerID)
+                    .set(userConsumer).addOnSuccessListener {
 
-                            timeslot.booked = true
-                            FirebaseFirestore.getInstance().collection("timeslots")
-                                .document(job.timeslotID!!)
-                                .set(timeslot).addOnSuccessListener {
+                        timeslot.booked = true
+                        FirebaseFirestore.getInstance().collection("timeslots")
+                            .document(job.timeslotID)
+                            .set(timeslot).addOnSuccessListener {
 
-                                    FirebaseFirestore.getInstance().collection("jobs")
-                                        .document(jobID)
-                                        .update("jobStatus", "ACCEPTED").addOnSuccessListener {
-                                            binding.buttonAccept.visibility = View.GONE
-                                            binding.buttonReject.visibility = View.GONE
-                                        }
-                                }
-                        }
-                } else {
-                    Log.d("test", "there is a problem with the time and durations2")
-                    // TODO Error message
-                }
-
+                                FirebaseFirestore.getInstance().collection("jobs")
+                                    .document(jobID)
+                                    .update("jobStatus", "ACCEPTED").addOnSuccessListener {
+                                        binding.buttonAccept.visibility = View.GONE
+                                        binding.buttonReject.visibility = View.GONE
+                                    }
+                            }
+                    }
             } else {
-                Log.d("test", "there is a problem with the time and durations1")
+                Log.d("test", "there is a problem with the time and durations2")
                 // TODO Error message
             }
 

@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FieldValue.arrayRemove
 import com.google.firebase.firestore.FieldValue.arrayUnion
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
-import it.polito.timebanking.model.timeslot.SkillData
+import it.polito.timebanking.model.skill.SkillData
 
 class EditSkillAdapter :
     RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {

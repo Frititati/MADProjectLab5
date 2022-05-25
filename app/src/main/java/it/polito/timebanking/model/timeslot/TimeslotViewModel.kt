@@ -8,9 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import it.polito.timebanking.model.chat.MessageData
-import it.polito.timebanking.model.chat.toMessageData
-import java.sql.Time
 
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -18,8 +15,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         val timeslot = MutableLiveData<TimeslotData>()
 
         FirebaseFirestore.getInstance().collection("timeslots").document(id)
-            .addSnapshotListener { r, e ->
-                Log.d("test", "hi there ${r.toString()} and ${e.toString()}")
+            .addSnapshotListener { r, _ ->
                 if (r != null) {
                     timeslot.value = r.toTimeslotData()
                 }
@@ -34,7 +30,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
             .document(FirebaseAuth.getInstance().currentUser!!.uid)
             .addSnapshotListener { ut, _ ->
                 val timeslotsList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
-                (ut?.get("timeslots") as List<*>?)?.forEach {
+                (ut?.get("timeslots") as List<*>).forEach {
                     FirebaseFirestore.getInstance().collection("timeslots").document(it.toString())
                         .addSnapshotListener { t, _ ->
                             if (t != null) {
@@ -97,18 +93,17 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    fun delete(id: String, myCallback: () -> Unit) {
+    fun delete(id: String) {
         FirebaseFirestore.getInstance().collection("timeslots").document(id).delete()
-            .addOnSuccessListener { myCallback.invoke() }
+            .addOnSuccessListener {  }
             .addOnFailureListener { e -> Log.w("test", "Error deleting document", e) }
     }
 
-    fun deleteUserTimeslot(id: String, myCallback: () -> Unit) {
+    fun deleteUserTimeslot(id: String) {
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).update(
                 "timeslots", FieldValue.arrayRemove(id)
             ).addOnSuccessListener {
-                myCallback.invoke()
             }
     }
 }
