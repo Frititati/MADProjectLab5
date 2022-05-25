@@ -12,7 +12,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
-import it.polito.timebanking.model.chat.ChatData
+import it.polito.timebanking.model.chat.JobData
+import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
@@ -37,9 +38,10 @@ class OfferDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val idTimeslot = requireArguments().getString("id_timeslot")!!
-        val idUser = requireArguments().getString("id_user")
+        val otherUserID = requireArguments().getString("id_user")
+        val userID = FirebaseAuth.getInstance().currentUser!!.uid
         FirebaseFirestore.getInstance().collection("users")
-            .document(idUser!!).get().addOnSuccessListener { user ->
+            .document(otherUserID!!).get().addOnSuccessListener { user ->
                 binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
                 binding.UserDescription.text =
@@ -54,7 +56,7 @@ class OfferDetailFragment : Fragment() {
                 }
             }
         FirebaseFirestore.getInstance().collection("users")
-            .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
+            .document(userID).get().addOnSuccessListener {
                 val myList = it.get("favorites") as MutableList<*>
                 favList = myList.map { f -> f.toString() }.toMutableList()
                 if (favList.contains(idTimeslot)) {
@@ -63,27 +65,51 @@ class OfferDetailFragment : Fragment() {
                 }
             }
 
-        binding.chatStartButton.isVisible = FirebaseAuth.getInstance().currentUser!!.uid != idUser
+        binding.chatStartButton.isVisible = userID != otherUserID
 
         binding.chatStartButton.setOnClickListener {
-            val data = ChatData(
-                listOf(
-                    FirebaseAuth.getInstance().currentUser!!.uid,
-                    requireArguments().getString("id_user")!!
-                ),
-                0L,
-                emptyList<String>(), idTimeslot
-            )
-            FirebaseFirestore.getInstance().collection("chats").add(data).addOnSuccessListener {
-                findNavController().navigate(
-                    R.id.ad_to_chat,
-                    bundleOf(
-                        "user" to binding.UserFullName.text,
-                        "chatID" to it.id,
-                        "timeslotID" to idTimeslot
-                    )
-                )
-            }
+            FirebaseFirestore.getInstance().collection("jobs")
+                .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
+                .addOnSuccessListener { ext ->
+                    if (ext.isEmpty) {
+                        val jobData = JobData(
+                            idTimeslot,
+                            emptyList<String>(),
+                            0L,
+                            otherUserID,
+                            userID,
+                            listOf(
+                                otherUserID,
+                                userID
+                            ),
+                            0L,
+                            "",
+                            "",
+                            "",
+                            ""
+                        )
+                        FirebaseFirestore.getInstance().collection("jobs").add(jobData)
+                            .addOnSuccessListener { int ->
+                                findNavController().navigate(
+                                    R.id.ad_to_chat,
+                                    bundleOf(
+                                        "otherUserName" to binding.UserFullName.text,
+                                        "jobID" to int.id
+                                    )
+                                )
+                            }
+                    } else {
+                        val chat = ext.first()
+                        findNavController().navigate(
+                            R.id.ad_to_chat,
+                            bundleOf(
+                                "otherUserName" to binding.UserFullName.text,
+                                "jobID" to chat.id
+                            )
+                        )
+                    }
+                }
+
         }
     }
 

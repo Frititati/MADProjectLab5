@@ -13,7 +13,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
     fun getMessages(chatID: String): LiveData<List<MessageData>> {
         val messages = MutableLiveData<List<MessageData>>()
 
-        FirebaseFirestore.getInstance().collection("chats").document(chatID)
+        FirebaseFirestore.getInstance().collection("jobs").document(chatID)
             .addSnapshotListener { r, _ ->
                 if (r != null) {
                     val messagesList: MutableList<MessageData> = mutableListOf()
@@ -48,7 +48,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         data["senderID"] = senderID
         data["sentAt"] = time
         FirebaseFirestore.getInstance().collection("messages").add(data).addOnSuccessListener {
-            FirebaseFirestore.getInstance().collection("chats").document(chatID)
+            FirebaseFirestore.getInstance().collection("jobs").document(chatID)
                 .update("messagesList", FieldValue.arrayUnion(it.id))
         }
 

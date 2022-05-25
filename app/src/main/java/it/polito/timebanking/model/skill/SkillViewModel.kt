@@ -1,12 +1,10 @@
 package it.polito.timebanking.model.skill
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
-import it.polito.timebanking.model.chat.toChatData
 import it.polito.timebanking.model.timeslot.SkillData
 import it.polito.timebanking.model.timeslot.toSkillData
 

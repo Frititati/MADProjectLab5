@@ -15,12 +15,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
-import it.polito.timebanking.model.chat.ChatData
+import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.toTimeslotData
 
 class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
-    private var allChats: MutableList<Pair<String, ChatData>> = mutableListOf()
+    private var allJobs: MutableList<Pair<String, JobData>> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -32,17 +32,17 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
     }
 
     override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
-        holder.bind(allChats[position].first, allChats[position].second)
+        holder.bind(allJobs[position].first, allJobs[position].second)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setChats(chats: MutableList<Pair<String, ChatData>>) {
-        allChats = chats
+    fun setChats(chats: MutableList<Pair<String, JobData>>) {
+        allJobs = chats
         notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
-        return allChats.size
+        return allJobs.size
     }
 
     class ChatListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -50,10 +50,10 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
-        fun bind(chatID: String, chat: ChatData) {
+        fun bind(jobID: String, job: JobData) {
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (chat.users[1] == userID) chat.users[0].toString()
-            else chat.users[1].toString()
+            val otherUserID = if (job.userProducerID == userID) job.userConsumerID
+            else job.userProducerID
 
             FirebaseFirestore.getInstance().collection("users")
                 .document(otherUserID).get()
@@ -73,9 +73,9 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
                             }
                     }
                 }
-            
+
             FirebaseFirestore.getInstance().collection("timeslots")
-                .document(chat.timeslotID).get()
+                .document(job.timeslotID).get()
                 .addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
                 }
@@ -84,7 +84,10 @@ class ChatListAdapter : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>
                 rootView.findNavController()
                     .navigate(
                         R.id.chatList_to_chat,
-                        bundleOf("user" to userName.text, "chatID" to chatID)
+                        bundleOf(
+                            "otherUserName" to userName.text,
+                            "jobID" to jobID,
+                        )
                     )
             }
         }

@@ -15,25 +15,27 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentMessagesBinding
+import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.chat.MessageViewModel
+import it.polito.timebanking.model.chat.toJobData
 
 
 class MessageListFragment : Fragment() {
-    private lateinit var listener: NavBarUpdater
     private var _binding: FragmentMessagesBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<MessageViewModel>()
     private val messageListAdapter = MessageListAdapter()
-    private lateinit var chatID: String
+    private lateinit var jobID: String
+    private lateinit var drawerListener: NavBarUpdater
+    private lateinit var job : JobData
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        listener = context as NavBarUpdater
-        chatID = requireArguments().getString("chatID").toString()
-        listener.setTitleWithSkill("Chat with " + requireArguments().getString("user"))
+        jobID = requireArguments().getString("jobID", "").toString()
+        drawerListener = context as NavBarUpdater
+        drawerListener.setTitleWithSkill("Chat with " + requireArguments().getString("otherUserName"))
         _binding = FragmentMessagesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,20 +46,27 @@ class MessageListFragment : Fragment() {
             DrawerLayout.LOCK_MODE_LOCKED_CLOSED
         )
 
+        val userID = FirebaseAuth.getInstance().currentUser!!.uid
+
+        FirebaseFirestore.getInstance().collection("jobs")
+            .document(jobID).get().addOnSuccessListener {
+                job = it.toJobData()
+            }
+
         binding.messageListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.messageListRecycler.adapter = messageListAdapter
 
         messageListAdapter.clear()
 
-        vm.getMessages(chatID).observe(viewLifecycleOwner) {
+        vm.getMessages(jobID).observe(viewLifecycleOwner) {
             messageListAdapter.setMessages(it.sortedBy { a -> a.sentAt }.toMutableList())
         }
 
         binding.buttonSend.setOnClickListener {
             vm.addMessage(
-                chatID,
+                jobID,
                 binding.writeMessage.text.toString(),
-                FirebaseAuth.getInstance().currentUser!!.uid,
+                userID,
                 System.currentTimeMillis()
             )
             binding.writeMessage.setText("")
@@ -68,7 +77,7 @@ class MessageListFragment : Fragment() {
                 .document(FirebaseAuth.getInstance().currentUser!!.uid).get()
                 .addOnSuccessListener { user ->
                     FirebaseFirestore.getInstance().collection("timeslots")
-                        .document(requireArguments().getString("timeslotID").toString()).get()
+                        .document(job.timeslotID).get()
                         .addOnSuccessListener { ts ->
                             val timeRequired = ts.get("duration").toString().toInt()
                             val time = user.get("time").toString().toInt()
@@ -77,7 +86,7 @@ class MessageListFragment : Fragment() {
                                 val data: MutableMap<String, Any> = mutableMapOf()
                                 data["available"] = false
                                 FirebaseFirestore.getInstance().collection("timeslots")
-                                    .document(requireArguments().getString("timeslotID").toString())
+                                    .document(job.timeslotID)
                                     .update(data)
                             } else {
                                 Toast.makeText(

@@ -5,18 +5,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
 
-class ChatViewModel(application: Application) : AndroidViewModel(application) {
+class JobViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun getChat(user:String): LiveData<List<Pair<String, ChatData>>> {
-        val chats = MutableLiveData<List<Pair<String, ChatData>>>()
-        FirebaseFirestore.getInstance().collection("chats").whereArrayContains("users",user)
+    fun getJob(user:String): LiveData<List<Pair<String, JobData>>> {
+        val chats = MutableLiveData<List<Pair<String, JobData>>>()
+        FirebaseFirestore.getInstance().collection("jobs").whereArrayContains("users",user)
             .addSnapshotListener { r, e ->
                 if (r != null) {
                     chats.value = if (e != null)
                         emptyList()
-                    else r.mapNotNull { Pair(it.id, it.toChatData()) }
+                    else r.mapNotNull { Pair(it.id, it.toJobData()) }
                 }
             }
         return chats
