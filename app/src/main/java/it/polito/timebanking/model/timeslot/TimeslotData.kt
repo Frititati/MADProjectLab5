@@ -15,7 +15,8 @@ data class TimeslotData(
     var duration: Long,
     var location: String,
     var ownedBy: String,
-    var available: Boolean
+    var available: Boolean,
+    var skills: List<String>
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
@@ -28,7 +29,8 @@ fun DocumentSnapshot.toTimeslotData(): TimeslotData {
         this.getLong("duration") ?: 0L,
         this.getString("location") ?: "",
         this.getString("ownedBy") ?: "",
-        this.getBoolean("available") ?: false
+        this.getBoolean("available") ?: false,
+        this.get("skills") as List<String>
     )
 }
 
@@ -59,7 +61,7 @@ fun locationFormatter(location: String?): String {
 
 fun dateFormatter(milliSeconds: Long?): String {
     if (milliSeconds == null || milliSeconds == 0L) {
-        return "Empty Date"
+        return "No Date"
     }
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = milliSeconds

@@ -4,8 +4,8 @@
     android:id="@+id/navigationDrawer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/side_nav_bar"
-    android:backgroundTint="@color/Blue_Eyes"
+    android:background="@color/MenuColor"
+    android:backgroundTint="@color/MenuColor"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:backgroundTint="@color/Blue_Dress"
+        android:backgroundTint="@color/ColorBlue"
         android:fontFamily="sans-serif-black"
         android:text="@string/logout"
         android:textColor="@color/Azure" />
@@ -53,9 +53,9 @@
             android:id="@+id/userTimeOnDrawer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time"
-            android:gravity="center_horizontal"
             android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:text="@string/time"
             android:textColor="@color/Milk_White"
             android:textStyle="bold" />
     </LinearLayout>

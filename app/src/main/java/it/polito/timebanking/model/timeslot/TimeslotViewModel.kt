@@ -26,17 +26,11 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
     fun getTimeslotsForSkill(skill: String): LiveData<List<Pair<String, TimeslotData>>> {
         val offers = MutableLiveData<List<Pair<String, TimeslotData>>>()
 
-        FirebaseFirestore.getInstance().collection("users").whereArrayContains("skills", skill)
+        FirebaseFirestore.getInstance().collection("timeslots").whereArrayContains("skills", skill)
+            .whereEqualTo("available", true)
             .addSnapshotListener { u, _ ->
                 if (u != null) {
-                    val userListID = u.map { it.id }
-                    FirebaseFirestore.getInstance().collection("timeslots")
-                        .whereIn("ownedBy", userListID).addSnapshotListener { ts, _ ->
-                            if (ts != null) {
-                                offers.value = ts.filter { it.toTimeslotData().available }
-                                    .map { Pair(it.id, it.toTimeslotData()) }
-                            }
-                        }
+                    offers.value = u.map { Pair(it.id, it.toTimeslotData()) }
                 }
             }
         return offers
@@ -70,7 +64,6 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         date: Long,
         duration: String,
         location: String,
-        skills: List<String>,
         available: Boolean
     ) {
         val data: MutableMap<String, Any> = mutableMapOf()
@@ -91,10 +84,6 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
 
         if (location.isNotEmpty()) {
             data["location"] = location
-        }
-
-        if (skills.isNotEmpty()) {
-            data["skills"] = skills
         }
 
         data["editedAt"] = System.currentTimeMillis()

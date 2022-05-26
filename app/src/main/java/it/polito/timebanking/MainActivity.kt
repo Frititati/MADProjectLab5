@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 ).getString("email", "unknown email")!!,
                                 defaultAge,
                                 "Empty location",
-                                listOf<Any>(),
+                                listOf(),
                                 listOf<Any>(),
                                 "Empty description",
                                 listOf<Any>(),
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
               }
           }
          */
-        window.statusBarColor = ContextCompat.getColor(this, R.color.Ocean_Blue)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.MenuColor)
 
     }
 

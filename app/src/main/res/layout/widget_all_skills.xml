@@ -6,17 +6,17 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="horizontal"
-    android:padding="15dp">
+    android:padding="6dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|center_horizontal"
-        android:backgroundTint="@color/Blue_Orchid"
+        android:backgroundTint="@color/MenuColor"
         android:layout_gravity="center"
         card_view:cardElevation="0dp"
-        card_view:cardCornerRadius="20dp"
+        card_view:cardCornerRadius="4dp"
         card_view:contentPadding="10dp"
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"

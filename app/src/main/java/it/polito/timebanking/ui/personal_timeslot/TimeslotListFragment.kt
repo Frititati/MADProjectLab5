@@ -18,7 +18,6 @@ import it.polito.timebanking.databinding.FragmentTimeslotListBinding
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.TimeslotViewModel
 
-
 class TimeslotListFragment : Fragment() {
     private var _binding: FragmentTimeslotListBinding? = null
     private val binding get() = _binding!!
@@ -68,10 +67,11 @@ class TimeslotListFragment : Fragment() {
                     "",
                     "",
                     0,
-                    5,
+                    0,
                     "",
                     FirebaseAuth.getInstance().currentUser!!.uid,
-                    available = true,
+                    available = false,
+                    listOf()
                 )
             )
             .addOnSuccessListener {

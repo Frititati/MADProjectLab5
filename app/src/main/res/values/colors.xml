@@ -335,4 +335,10 @@
     <color name="SeaShell">#FFF5EE</color>
     <color name="Milk_White">#FEFCFF</color>
     <color name="White">#FFFFFF</color>
+    <color name="MenuColor">#0096C7</color>
+    <color name="ColorLightBlue">#BCF4DE</color>
+    <color name="ColorRed">#F96E46</color>
+    <color name="ColorYellow">#F9C846</color>
+    <color name="ColorGreen">#20BF55</color>
+    <color name="ColorBlue">#97D8CE</color>
 </resources>

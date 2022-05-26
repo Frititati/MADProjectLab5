@@ -8,7 +8,7 @@
     <string name="age">%d Years Old</string>
     <string name="ageTooltip">Age</string>
     <string name="all_skills">All Skills</string>
-    <string name="all_skills_offered">List of skills you could find</string>
+    <string name="all_skills_offered">List of all skills offered</string>
     <string name="app_name">Timebanking</string>
     <string name="cancel">Cancel</string>
     <string name="date">Date</string>
@@ -99,4 +99,7 @@
     <string name="jobStart">Job Start</string>
     <string name="jobEnd">Job End</string>
     <string name="time">Your time</string>
+    <string name="activate">Activate</string>
+    <string name="disactivate">Disactivate</string>
+    <string name="view">View</string>
 </resources>

@@ -46,7 +46,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
-            title.setOnClickListener {
+            rootView.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
                 Snackbar.make(it, "Details about: ${title.text}", 1500)

@@ -14,6 +14,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/all_skills_offered"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -5,84 +5,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/Blue_Orchid"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:backgroundTint="@color/ColorBlue"
+        app:cardCornerRadius="4dp"
+        app:contentPadding="5dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+        <Button
+            android:id="@+id/buttonOffer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:backgroundTint="@color/Ash_Gray"
+            android:text="@string/offer" />
 
-            <Button
-                android:id="@+id/buttonOffer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:backgroundTint="@color/Ash_Gray"
-                android:text="@string/offer" />
+        <Button
+            android:id="@+id/buttonRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/ColorGreen"
+            android:text="@string/request"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonRequest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/Green_Onion"
-                android:text="@string/request"
-                android:visibility="gone" />
+        <Button
+            android:id="@+id/buttonAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/ColorGreen"
+            android:text="@string/accept"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonAccept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/Green_Onion"
-                android:text="@string/accept"
-                android:visibility="gone" />
+        <Button
+            android:id="@+id/buttonReject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/ColorRed"
+            android:text="@string/reject"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonReject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/Blush_Red"
-                android:text="@string/reject"
-                android:visibility="gone" />
+        <Button
+            android:id="@+id/buttonJobStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/ColorYellow"
+            android:text="@string/jobStart"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonJobStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/Green_Onion"
-                android:text="@string/jobStart"
-                android:visibility="gone" />
+        <Button
+            android:id="@+id/buttonJobEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/ColorGreen"
+            android:text="@string/jobEnd"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonJobEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/Green_Onion"
-                android:text="@string/jobEnd"
-                android:visibility="gone" />
+        <Button
+            android:id="@+id/buttonRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/ColorGreen"
+            android:text="@string/rate"
+            android:visibility="gone" />
 
-            <Button
-                android:id="@+id/buttonRate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/Green_Onion"
-                android:text="@string/rate"
-                android:visibility="gone" />
-
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_list_recycler"
@@ -92,7 +89,7 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/chatBox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <View
         android:id="@+id/view"
