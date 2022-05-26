@@ -12,32 +12,35 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentMessagesBinding
 import it.polito.timebanking.model.chat.JobData
+import it.polito.timebanking.model.chat.JobViewModel
 import it.polito.timebanking.model.chat.MessageViewModel
-import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.ProfileData
+import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.TimeslotData
+import it.polito.timebanking.model.timeslot.TimeslotViewModel
 import it.polito.timebanking.model.timeslot.toTimeslotData
-
 
 class MessageListFragment : Fragment() {
     private var _binding: FragmentMessagesBinding? = null
     private val binding get() = _binding!!
-    private val vm by viewModels<MessageViewModel>()
+    private val vmMessages by viewModels<MessageViewModel>()
+    private val vmJob by viewModels<JobViewModel>()
+    private val vmTimeslot by viewModels<TimeslotViewModel>()
+    private val vmProfile by viewModels<ProfileViewModel>()
     private val messageListAdapter = MessageListAdapter()
     private lateinit var jobID: String
     private lateinit var drawerListener: NavBarUpdater
     private lateinit var job: JobData
     private lateinit var timeslot: TimeslotData
     private lateinit var userConsumer: ProfileData
+    var userIsProducer = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,53 +60,44 @@ class MessageListFragment : Fragment() {
         )
 
         val userID = FirebaseAuth.getInstance().currentUser!!.uid
-        var userIsProducer:Boolean
 
-        FirebaseFirestore.getInstance().collection("jobs")
-            .document(jobID).get().addOnSuccessListener { jobIt ->
-                job = jobIt.toJobData()
+        vmJob.get(jobID).observe(viewLifecycleOwner) { jobIt ->
+            if (jobIt != null) {
+                job = jobIt
+                userIsProducer = (userID == job.userProducerID)
+                Log.d("test", "user is producer? $userIsProducer")
 
-                FirebaseFirestore.getInstance().collection("timeslots")
-                    .document(job.timeslotID).get().addOnSuccessListener { timeslotIt ->
-                        timeslot = timeslotIt.toTimeslotData()
+                vmTimeslot.get(job.timeslotID).observe(viewLifecycleOwner) { timeslotIt ->
+                    if (timeslotIt != null) {
+                        timeslot = timeslotIt
 
-                        FirebaseFirestore.getInstance().collection("users")
-                            .document(job.userConsumerID).get()
-                            .addOnSuccessListener { userIt ->
-                                userConsumer = userIt.toUserProfileData()
+                        vmProfile.get(job.userConsumerID).observe(viewLifecycleOwner) { profileIt ->
+                            if (profileIt != null) {
+                                userConsumer = profileIt
 
-                                userIsProducer = (userID == job.userProducerID)
-                                if (userIsProducer) {
-                                    if (job.jobStatus == "REQUESTED") {
-                                        binding.buttonAccept.isVisible = true
-                                        binding.buttonReject.isVisible = true
-                                    }
-                                } else {
-                                    if (job.jobStatus == "INIT") {
-                                        if (userConsumer.time >= timeslot.duration) {
-                                            binding.buttonRequest.isVisible = true
-                                        }
-                                    }
-                                }
+                                updateButtons()
                             }
+                        }
                     }
+                }
             }
+        }
 
         binding.messageListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.messageListRecycler.adapter = messageListAdapter
 
-        vm.getMessages(jobID).observe(viewLifecycleOwner) {
+        vmMessages.getMessages(jobID).observe(viewLifecycleOwner) {
             binding.messageListRecycler.scrollToPosition(messageListAdapter.itemCount)
             messageListAdapter.setMessages(it.sortedBy { a -> a.sentAt }.toMutableList())
         }
 
-
         binding.buttonSend.setOnClickListener {
-            vm.addMessage(
+            vmMessages.addMessage(
+                userID,
                 jobID,
                 binding.writeMessage.text.toString(),
-                userID,
-                System.currentTimeMillis()
+                System.currentTimeMillis(),
+                false
             )
             binding.writeMessage.setText("")
         }
@@ -122,6 +116,13 @@ class MessageListFragment : Fragment() {
                 .addOnSuccessListener {
                     binding.buttonRequest.visibility = View.GONE
                 }
+            vmMessages.addMessage(
+                userID,
+                jobID,
+                "Request for Job was Sent",
+                System.currentTimeMillis(),
+                true
+            )
         }
 
         binding.buttonAccept.setOnClickListener {
@@ -140,8 +141,13 @@ class MessageListFragment : Fragment() {
                                 FirebaseFirestore.getInstance().collection("jobs")
                                     .document(jobID)
                                     .update("jobStatus", "ACCEPTED").addOnSuccessListener {
-                                        binding.buttonAccept.visibility = View.GONE
-                                        binding.buttonReject.visibility = View.GONE
+                                        vmMessages.addMessage(
+                                            userID,
+                                            jobID,
+                                            "Job Request was Accepted",
+                                            System.currentTimeMillis(),
+                                            true
+                                        )
                                     }
                             }
                     }
@@ -150,41 +156,34 @@ class MessageListFragment : Fragment() {
                 // TODO Error message
             }
 
-
             // TODO error handling
-
-//            FirebaseFirestore.getInstance().collection("users")
-//                .document(job.userConsumerID!!).get()
-//                .addOnSuccessListener { userIt ->
-//
-//                    FirebaseFirestore.getInstance().collection("timeslots")
-//                        .document(job.timeslotID!!).get()
-//                        .addOnSuccessListener { ts ->
-//                            val timeRequired = ts.get("duration").toString().toInt()
-//                            val time = userIt.get("time").toString().toInt()
-//                            Log.d("test", "QUI $time vs $timeRequired")
-//                            if (time >= timeRequired) {
-//                                val data: MutableMap<String, Any> = mutableMapOf()
-//                                data["available"] = false
-//                                FirebaseFirestore.getInstance().collection("timeslots")
-//                                    .document(job.timeslotID!!)
-//                                    .update(data)
-//                            } else {
-//                                Toast.makeText(
-//                                    context,
-//                                    "You don't have enough time to spend!",
-//                                    Toast.LENGTH_LONG
-//                                ).show()
-//                            }
-//                        }
-//                }
         }
 
         binding.buttonReject.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("jobStatus", "REJECTED")
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+                .update("jobStatus", "REJECTED")
                 .addOnSuccessListener {
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
+                    vmMessages.addMessage(
+                        userID,
+                        jobID,
+                        "Job Request was Rejected",
+                        System.currentTimeMillis(),
+                        true
+                    )
+                }
+        }
+
+        binding.buttonJobStart.setOnClickListener {
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+                .update("jobStatus", "STARTED")
+                .addOnSuccessListener {
+                    vmMessages.addMessage(
+                        userID,
+                        jobID,
+                        "Job has Started",
+                        System.currentTimeMillis(),
+                        true
+                    )
                 }
         }
     }
@@ -192,5 +191,96 @@ class MessageListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun updateButtons() {
+        when (job.jobStatus) {
+            "INIT" -> {
+                if (userIsProducer) {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                } else {
+                    // TODO calculate if user has money
+                    binding.buttonRequest.visibility = View.VISIBLE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                }
+            }
+            "REQUESTED" -> {
+                if (userIsProducer) {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.VISIBLE
+                    binding.buttonReject.visibility = View.VISIBLE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                } else {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                }
+            }
+            "ACCEPTED" -> {
+                if (userIsProducer) {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                } else {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.VISIBLE
+                    binding.buttonRate.visibility = View.GONE
+                }
+            }
+            "STARTED" -> {
+                if (userIsProducer) {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.VISIBLE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                } else {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.VISIBLE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.GONE
+                }
+            }
+            "FINISHED" -> {
+                if (userIsProducer) {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.VISIBLE
+                } else {
+                    binding.buttonRequest.visibility = View.GONE
+                    binding.buttonAccept.visibility = View.GONE
+                    binding.buttonReject.visibility = View.GONE
+                    binding.buttonJobEnd.visibility = View.GONE
+                    binding.buttonJobStart.visibility = View.GONE
+                    binding.buttonRate.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }

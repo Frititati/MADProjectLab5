@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    android:layout_marginTop="16dp">
+    android:layout_marginTop="6dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_message_other"
@@ -45,8 +45,10 @@
         android:id="@+id/message_hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="@string/hour"
         android:textColor="#C0C0C0"
+        android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@+id/card_message_other"
         app:layout_constraintStart_toEndOf="@+id/card_message_other" />
 

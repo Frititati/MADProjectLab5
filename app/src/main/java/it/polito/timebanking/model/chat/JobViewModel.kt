@@ -46,4 +46,15 @@ class JobViewModel(application: Application) : AndroidViewModel(application) {
             }
         return jobs
     }
+
+    fun get(jobID: String) : LiveData<JobData> {
+        val job = MutableLiveData<JobData>()
+        FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+            .addSnapshotListener { r, _ ->
+                if (r != null) {
+                    job.value = r.toJobData()
+                }
+            }
+        return job
+    }
 }

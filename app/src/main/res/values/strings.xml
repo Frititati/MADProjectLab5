@@ -96,4 +96,6 @@
     <string name="optional_comment">Optional comment…</string>
     <string name="rate">Rate</string>
     <string name="rating">Rating</string>
+    <string name="jobStart">Job Start</string>
+    <string name="jobEnd">Job End</string>
 </resources>

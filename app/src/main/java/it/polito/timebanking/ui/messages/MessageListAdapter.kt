@@ -1,7 +1,7 @@
-
 package it.polito.timebanking.ui.messages
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,17 +18,35 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val mSent = 1
     private val mReceived = 2
+    private val mSystem = 3
     private var messageList: MutableList<MessageData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == mSent)
-            SentMessageHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_message_sent, parent, false))
-         else
-            ReceivedMessageHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_message_received, parent, false))
+        return when (viewType) {
+            mSent -> {
+                SentMessageHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.widget_message_sent, parent, false)
+                )
+            }
+            mReceived -> {
+                ReceivedMessageHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.widget_message_received, parent, false)
+                )
+            }
+            else -> {
+                SystemMessageHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.widget_message_system, parent, false)
+                )
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
         val message: MessageData = messageList[position]
+        if (message.system) return mSystem
         return if (message.senderID == FirebaseAuth.getInstance().currentUser!!.uid) {
             mSent
         } else {
@@ -42,6 +60,7 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder.itemViewType) {
             mSent -> (holder as SentMessageHolder).bind(message)
             mReceived -> (holder as ReceivedMessageHolder).bind(message)
+            mSystem -> (holder as SystemMessageHolder).bind(message)
         }
     }
 
@@ -50,35 +69,32 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setMessages(list:MutableList<MessageData>){
+    fun setMessages(list: MutableList<MessageData>) {
         messageList = list
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun clear() {
-        messageList.clear()
-        notifyDataSetChanged()
-    }
     private class SentMessageHolder constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bind(message: MessageData) {
             itemView.findViewById<TextView>(R.id.message_text)!!.text = message.message
-            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt)
+            itemView.findViewById<TextView>(R.id.message_hour)!!.text =
+                timeFormatter(message.sentAt)
         }
+
         private fun timeFormatter(time: Long): String {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time
             return SimpleDateFormat("hh:mm a", Locale.ITALIAN).format(calendar.time)
         }
-
     }
 
     private class ReceivedMessageHolder constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bind(message: MessageData) {
             itemView.findViewById<TextView>(R.id.message_text)!!.text = message.message
-            itemView.findViewById<TextView>(R.id.message_hour)!!.text = timeFormatter(message.sentAt)
+            itemView.findViewById<TextView>(R.id.message_hour)!!.text =
+                timeFormatter(message.sentAt)
         }
 
         private fun timeFormatter(time: Long): String {
@@ -88,6 +104,20 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    private class SystemMessageHolder constructor(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+        fun bind(message: MessageData) {
+            itemView.findViewById<TextView>(R.id.message_text)!!.text = message.message
+//            itemView.findViewById<TextView>(R.id.message_hour)!!.text =
+//                timeFormatter(message.sentAt)
+        }
+
+        private fun timeFormatter(time: Long): String {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = time
+            return SimpleDateFormat("hh:mm a", Locale.ITALIAN).format(calendar.time)
+        }
+    }
 
 
 }

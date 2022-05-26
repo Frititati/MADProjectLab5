@@ -18,7 +18,8 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                 if (r != null) {
                     val messagesList: MutableList<MessageData> = mutableListOf()
                     (r.get("messagesList") as List<*>?)?.forEach {
-                        FirebaseFirestore.getInstance().collection("messages").document(it.toString())
+                        FirebaseFirestore.getInstance().collection("messages")
+                            .document(it.toString())
                             .addSnapshotListener { m, _ ->
                                 if (m != null) {
                                     messagesList.add(messagesList.size, m.toMessageData())
@@ -41,17 +42,22 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         return messages
     }
 
-    fun addMessage(chatID: String, message: String, senderID: String, time: Long) {
-        val data = mutableMapOf<String, Any>()
-        data["message"] = message
-        data["chatID"] = chatID
-        data["senderID"] = senderID
-        data["sentAt"] = time
-        FirebaseFirestore.getInstance().collection("messages").add(data).addOnSuccessListener {
-            FirebaseFirestore.getInstance().collection("jobs").document(chatID)
-                .update("messagesList", FieldValue.arrayUnion(it.id),
-                    "lastMessage",System.currentTimeMillis())
-        }
+    fun addMessage(senderID: String, jobID: String, message: String, time: Long, system: Boolean) {
+        val messageData = MessageData(
+            senderID,
+            jobID,
+            message,
+            time,
+            system
+        )
+        FirebaseFirestore.getInstance().collection("messages").add(messageData)
+            .addOnSuccessListener {
+                FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+                    .update(
+                        "messagesList", FieldValue.arrayUnion(it.id),
+                        "lastMessage", System.currentTimeMillis()
+                    )
+            }
 
     }
 }

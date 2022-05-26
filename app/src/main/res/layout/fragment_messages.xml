@@ -36,7 +36,6 @@
                 android:text="@string/request"
                 android:visibility="gone" />
 
-
             <Button
                 android:id="@+id/buttonAccept"
                 android:layout_width="wrap_content"
@@ -45,7 +44,6 @@
                 android:backgroundTint="@color/Green_Onion"
                 android:text="@string/accept"
                 android:visibility="gone" />
-
 
             <Button
                 android:id="@+id/buttonReject"
@@ -56,6 +54,32 @@
                 android:text="@string/reject"
                 android:visibility="gone" />
 
+            <Button
+                android:id="@+id/buttonJobStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/Green_Onion"
+                android:text="@string/jobStart"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonJobEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/Green_Onion"
+                android:text="@string/jobEnd"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/Green_Onion"
+                android:text="@string/rate"
+                android:visibility="gone" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
