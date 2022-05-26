@@ -36,7 +36,7 @@ class EditProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentEditProfileBinding? = null
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-    private lateinit var listener: NavBarUpdater
+    private lateinit var drawerListener: NavBarUpdater
     private var firestoreUser = FirebaseAuth.getInstance().currentUser
     private var favList = listOf<String>()
 
@@ -52,7 +52,7 @@ class EditProfileFragment : Fragment() {
             DrawerLayout.LOCK_MODE_LOCKED_CLOSED
         )
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-        listener = context as NavBarUpdater
+        drawerListener = context as NavBarUpdater
         return binding.root
     }
 
@@ -105,10 +105,8 @@ class EditProfileFragment : Fragment() {
                 favList
             )
         }
-        if (binding.email.text.toString().isNotEmpty())
-            listener.updateEmail(binding.email.text.toString())
         if (binding.fullName.text.toString().isNotEmpty())
-            listener.updateFName(binding.fullName.text.toString())
+            drawerListener.updateFName(binding.fullName.text.toString())
     }
 
     override fun onDestroyView() {
@@ -181,7 +179,7 @@ class EditProfileFragment : Fragment() {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(baos.toByteArray())
                 .addOnSuccessListener {
-                    listener.updateIMG(userProfilePath)
+                    drawerListener.updateIMG(userProfilePath)
                 }
         }
     }

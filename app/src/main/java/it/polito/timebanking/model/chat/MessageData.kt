@@ -15,7 +15,7 @@ fun DocumentSnapshot.toMessageData(): MessageData {
         this.getString("senderID") ?: "",
         this.getString("chatID") ?: "",
         this.getString("message") ?: "",
-        this.getLong("sentAt") ?: 0L,
+        this.getLong("sentAt") ?: 0,
         this.getBoolean("system") ?: false
     )
 }

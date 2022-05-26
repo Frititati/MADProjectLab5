@@ -22,11 +22,11 @@
             android:title="@string/favorites" />
         <item
             android:id="@+id/consumingJobsFragment"
-            android:icon="@drawable/ic_chat"
+            android:icon="@drawable/ic_requested_job"
             android:title="@string/requestedJobs" />
         <item
             android:id="@+id/producingJobFragment"
-            android:icon="@drawable/ic_chat"
-            android:title="@string/offeredJobs" />
+            android:icon="@drawable/ic_job_request"
+            android:title="@string/jobRequest" />
     </group>
 </menu>

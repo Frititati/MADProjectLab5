@@ -131,7 +131,7 @@
     <fragment
         android:id="@+id/consumingJobsFragment"
         android:name="it.polito.timebanking.ui.messages.ConsumingJobsFragment"
-        android:label="Your Chats"
+        android:label="Your Requested Jobs"
         tools:layout="@layout/fragment_consuming_jobs">
         <action
             android:id="@+id/consuming_to_job"
@@ -156,7 +156,7 @@
     <fragment
         android:id="@+id/producingJobFragment"
         android:name="it.polito.timebanking.ui.messages.ProducingJobsFragment"
-        android:label="fragment_personal_active_jobs"
+        android:label="Your Job Requests"
         tools:layout="@layout/fragment_producing_jobs">
         <action
             android:id="@+id/producing_to_job"

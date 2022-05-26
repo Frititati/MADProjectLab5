@@ -15,27 +15,21 @@ data class TimeslotData(
     var duration: Long,
     var location: String,
     var ownedBy: String,
-    var available: Boolean,
-    var booked: Boolean
+    var available: Boolean
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
-    return try {
-        TimeslotData(
-            this.get("createdAt").toString().toLong(),
-            this.get("editedAt").toString().toLong(),
-            this.get("title").toString(),
-            this.get("description").toString(),
-            this.get("date").toString().toLong(),
-            this.get("duration").toString().toLong(),
-            this.get("location").toString(),
-            this.get("ownedBy").toString(),
-            this.get("available").toString().toBoolean(),
-            this.get("booked").toString().toBoolean()
-        )
-    } catch (e: NumberFormatException) {
-        TimeslotData(0, 0, "", "", 0, 0, "", "", available = false, booked = false)
-    }
+    return TimeslotData(
+        this.getLong("createdAt") ?: 0L,
+        this.getLong("editedAt") ?: 0L,
+        this.getString("title") ?: "",
+        this.getString("description") ?: "",
+        this.getLong("date") ?: 0L,
+        this.getLong("duration") ?: 0L,
+        this.getString("location") ?: "",
+        this.getString("ownedBy") ?: "",
+        this.getBoolean("available") ?: false
+    )
 }
 
 fun titleFormatter(title: String?): String {

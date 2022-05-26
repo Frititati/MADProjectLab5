@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.RatingBar
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,8 +14,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentSkillListBinding
-import it.polito.timebanking.model.skill.SkillViewModel
 import it.polito.timebanking.model.skill.SkillData
+import it.polito.timebanking.model.skill.SkillViewModel
 
 class AllSkillsFragment : Fragment() {
 
@@ -72,19 +70,6 @@ class AllSkillsFragment : Fragment() {
             skillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
             binding.nothingToShow.isVisible = it.isEmpty()
             binding.nothingToShow.text = resources.getString(R.string.no_skills)
-        }
-        binding.buttonRate!!.setOnClickListener {
-            val dialog = AlertDialog.Builder(context)
-            val dialogView = layoutInflater.inflate(R.layout.dialog_rate_user, null)
-            dialog.setTitle("Rating")
-            dialog.setView(dialogView)
-
-            dialog.setPositiveButton("Confirm") { _, _ ->
-                val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toInt()
-                val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
-            }
-            dialog.setNegativeButton("Cancel") { _, _ -> }
-            dialog.create().show()
         }
     }
 

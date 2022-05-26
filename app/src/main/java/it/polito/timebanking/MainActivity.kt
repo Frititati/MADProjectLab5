@@ -1,14 +1,21 @@
 package it.polito.timebanking
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.AttributeSet
+import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,6 +32,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.ActivityMainBinding
 import it.polito.timebanking.model.profile.ProfileData
+import it.polito.timebanking.ui.TimeViewModel
 
 
 class MainActivity : AppCompatActivity(), NavBarUpdater {
@@ -33,6 +41,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     private lateinit var binding: ActivityMainBinding
     private val defaultAge = 18L
     private val startingTime = 120L
+    private val timeVM by viewModels<TimeViewModel>()
     private val firestoreUser = FirebaseAuth.getInstance().currentUser
     private val defaultProfilePath = "gs://madproject-3381c.appspot.com/user.png"
 
@@ -102,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                             )
                         )
                     binding.navView.getHeaderView(0)
-                        .findViewById<TextView>(R.id.userEmailOnDrawer).text =
+                        .findViewById<TextView>(R.id.userTimeOnDrawer).text =
                         getSharedPreferences(
                             "group21.lab5.PREFERENCES",
                             MODE_PRIVATE
@@ -112,11 +121,21 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     updateIMG("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser.uid}.png")
                     FirebaseFirestore.getInstance().collection("users").document(firestoreUser.uid)
                         .get().addOnSuccessListener {
-                            updateEmail(it.get("email").toString())
+                            updateTime(
+                                String.format(
+                                    resources.getString(
+                                        R.string.minutes,
+                                        it.get("time").toString().toLong()
+                                    )
+                                )
+                            )
                             updateFName(it.get("fullName").toString())
                         }
                 }
             }
+        timeVM.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(this) {
+            updateTime(String.format(resources.getString(R.string.minutes), it))
+        }
 
         /*
           when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -136,8 +155,8 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         supportActionBar!!.title = title
     }
 
-    override fun updateEmail(email: String) {
-        binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userEmailOnDrawer).text = email
+    override fun updateTime(time: String) {
+        binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = time
     }
 
     override fun updateFName(name: String) {

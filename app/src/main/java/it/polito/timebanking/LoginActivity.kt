@@ -98,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
             try {
                 progressDialog.dismiss()
             } catch (t: Throwable) {
-                Log.d("test", "SignIn result failed with code ${e.statusCode}")
+                Log.w("warn", "SignIn result failed with code ${e.statusCode}")
                 Toast.makeText(
                     this,
                     "Authentication failed with code ${e.statusCode}",
@@ -123,7 +123,7 @@ class LoginActivity : AppCompatActivity() {
                     progressDialog.dismiss()
                     finish()
                 } else {
-                    Log.d("test", "Sign in failed")
+                    Log.w("warn", "Sign in failed")
                 }
             }
     }

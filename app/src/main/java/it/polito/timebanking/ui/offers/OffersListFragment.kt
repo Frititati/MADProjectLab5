@@ -12,13 +12,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOffersBinding
 import it.polito.timebanking.model.timeslot.TimeslotData
-import it.polito.timebanking.model.timeslot.toTimeslotData
+import it.polito.timebanking.model.timeslot.TimeslotViewModel
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -26,9 +26,9 @@ import java.util.*
 class OffersListFragment : Fragment() {
 
     private var _binding: FragmentOffersBinding? = null
-    private var counter = 0
     private val offersListAdapter = OffersListAdapter("Watch")
     private val binding get() = _binding!!
+    private val vmTimeslot by viewModels<TimeslotViewModel>()
     private lateinit var listener: NavBarUpdater
 
     override fun onCreateView(
@@ -50,31 +50,22 @@ class OffersListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val selectedSkill: String = requireArguments().getString("skill_select")!!
-        val usersAvailable = mutableListOf<String>()
-        val offerList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
         binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
 
-        FirebaseFirestore.getInstance().collection("users").get().addOnSuccessListener { userList ->
-            for (user in userList) {
-                val list: List<*> = user.get("skills") as List<*>
-                if (list.contains(selectedSkill)) {
-                    usersAvailable.add(user.id)
-                }
-            }
-            FirebaseFirestore.getInstance().collection("timeslots").get().addOnSuccessListener {
-                for (t in it) {
-                    if (usersAvailable.contains(t.get("ownedBy"))) {
-                        offerList.add(Pair(t.id, t.toTimeslotData()))
-                    }
-                }
-                offersListAdapter.setTimeslots(offerList)
-                counter = offerList.size
-                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_found,requireArguments().getString("offerName")))
-                binding.nothingToShow.isVisible = counter == 0
-            }
+        vmTimeslot.getTimeslotForSkill(selectedSkill).observe(viewLifecycleOwner) {
+
+            offersListAdapter.setTimeslots(it as MutableList<Pair<String, TimeslotData>>)
+            binding.nothingToShow.text = String.format(
+                resources.getString(
+                    R.string.no_offers_found,
+                    requireArguments().getString("offerName")
+                )
+            )
+            binding.nothingToShow.isVisible = it.isEmpty()
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,7 +157,10 @@ class OffersListFragment : Fragment() {
             val n = offersListAdapter.filterByDuration(numberPicker.value)
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_duration),numberPicker.value)
+                binding.nothingToShow.text = String.format(
+                    resources.getString(R.string.no_offers_duration),
+                    numberPicker.value
+                )
             }
         }
         d.setNegativeButton("Cancel") { _, _ -> }
@@ -186,7 +180,8 @@ class OffersListFragment : Fragment() {
             )
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text = String.format(resources.getString(R.string.no_offers_date))
+                binding.nothingToShow.text =
+                    String.format(resources.getString(R.string.no_offers_date))
 
             }
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))

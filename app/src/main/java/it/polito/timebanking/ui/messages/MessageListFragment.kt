@@ -1,18 +1,23 @@
 package it.polito.timebanking.ui.messages
 
+import JobStatus
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.RatingBar
+import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
@@ -22,10 +27,8 @@ import it.polito.timebanking.model.chat.JobViewModel
 import it.polito.timebanking.model.chat.MessageViewModel
 import it.polito.timebanking.model.profile.ProfileData
 import it.polito.timebanking.model.profile.ProfileViewModel
-import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.TimeslotViewModel
-import it.polito.timebanking.model.timeslot.toTimeslotData
 
 class MessageListFragment : Fragment() {
     private var _binding: FragmentMessagesBinding? = null
@@ -35,12 +38,15 @@ class MessageListFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()
     private val vmProfile by viewModels<ProfileViewModel>()
     private val messageListAdapter = MessageListAdapter()
+    private val userID = FirebaseAuth.getInstance().currentUser!!.uid
+    private var ratedByProducer = false
+    private var ratedByConsumer = false
+    private var userIsProducer = false
     private lateinit var jobID: String
     private lateinit var drawerListener: NavBarUpdater
     private lateinit var job: JobData
     private lateinit var timeslot: TimeslotData
     private lateinit var userConsumer: ProfileData
-    var userIsProducer = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,13 +65,10 @@ class MessageListFragment : Fragment() {
             DrawerLayout.LOCK_MODE_LOCKED_CLOSED
         )
 
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
-
         vmJob.get(jobID).observe(viewLifecycleOwner) { jobIt ->
             if (jobIt != null) {
                 job = jobIt
                 userIsProducer = (userID == job.userProducerID)
-                Log.d("test", "user is producer? $userIsProducer")
 
                 vmTimeslot.get(job.timeslotID).observe(viewLifecycleOwner) { timeslotIt ->
                     if (timeslotIt != null) {
@@ -74,7 +77,6 @@ class MessageListFragment : Fragment() {
                         vmProfile.get(job.userConsumerID).observe(viewLifecycleOwner) { profileIt ->
                             if (profileIt != null) {
                                 userConsumer = profileIt
-
                                 updateButtons()
                             }
                         }
@@ -92,14 +94,19 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonSend.setOnClickListener {
-            vmMessages.addMessage(
-                userID,
-                jobID,
-                binding.writeMessage.text.toString(),
-                System.currentTimeMillis(),
-                false
-            )
-            binding.writeMessage.setText("")
+            val message = binding.writeMessage.text.toString()
+            if (message.isNotEmpty()) {
+                vmMessages.addMessage(
+                    userID,
+                    jobID,
+                    message,
+                    System.currentTimeMillis(),
+                    false
+                )
+                binding.writeMessage.setText("")
+            } else
+                Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
+
         }
 
         binding.buttonOffer.setOnClickListener {
@@ -111,43 +118,23 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonRequest.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
-                .update("jobStatus", "REQUESTED")
-                .addOnSuccessListener {
-                    binding.buttonRequest.visibility = View.GONE
-                }
-            vmMessages.addMessage(
-                userID,
-                jobID,
-                "Request for Job was Sent",
-                System.currentTimeMillis(),
-                true
-            )
+            updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
         }
 
         binding.buttonAccept.setOnClickListener {
             if (userConsumer.time >= timeslot.duration) {
-                // userconsumer does not have enough time
-                userConsumer.time = userConsumer.time - timeslot.duration
-                FirebaseFirestore.getInstance().collection("users")
-                    .document(job.userConsumerID)
-                    .set(userConsumer).addOnSuccessListener {
-
-                        timeslot.booked = true
-                        FirebaseFirestore.getInstance().collection("timeslots")
-                            .document(job.timeslotID)
-                            .set(timeslot).addOnSuccessListener {
-
-                                FirebaseFirestore.getInstance().collection("jobs")
-                                    .document(jobID)
-                                    .update("jobStatus", "ACCEPTED").addOnSuccessListener {
-                                        vmMessages.addMessage(
-                                            userID,
-                                            jobID,
-                                            "Job Request was Accepted",
-                                            System.currentTimeMillis(),
-                                            true
-                                        )
+                FirebaseFirestore.getInstance().collection("users").document(userID)
+                    .update("time", FieldValue.increment(timeslot.duration))
+                    .addOnSuccessListener {
+                        FirebaseFirestore.getInstance().collection("users")
+                            .document(job.userConsumerID)
+                            .update("time", FieldValue.increment(-timeslot.duration))
+                            .addOnSuccessListener {
+                                timeslot.available = false
+                                FirebaseFirestore.getInstance().collection("timeslots")
+                                    .document(job.timeslotID)
+                                    .set(timeslot).addOnSuccessListener {
+                                        updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
                                     }
                             }
                     }
@@ -160,31 +147,44 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonReject.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
-                .update("jobStatus", "REJECTED")
-                .addOnSuccessListener {
-                    vmMessages.addMessage(
-                        userID,
-                        jobID,
-                        "Job Request was Rejected",
-                        System.currentTimeMillis(),
-                        true
-                    )
+            FirebaseFirestore.getInstance().collection("timeslots")
+                .document(job.timeslotID)
+                .set(timeslot).addOnSuccessListener {
+                    updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
                 }
         }
 
         binding.buttonJobStart.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID)
-                .update("jobStatus", "STARTED")
-                .addOnSuccessListener {
-                    vmMessages.addMessage(
-                        userID,
-                        jobID,
-                        "Job has Started",
-                        System.currentTimeMillis(),
-                        true
-                    )
+            updateJobStatus(JobStatus.STARTED, "Job is STARTED")
+        }
+        binding.buttonJobEnd.setOnClickListener {
+            timeslot.available = true
+            FirebaseFirestore.getInstance().collection("timeslots")
+            .document(job.timeslotID)
+            .set(timeslot).addOnSuccessListener {
+                updateJobStatus(JobStatus.REJECTED, "Job is FINISHED")
+            }
+        }
+
+        binding.buttonRate.setOnClickListener {
+            val dialog = AlertDialog.Builder(context)
+            val dialogView = layoutInflater.inflate(R.layout.dialog_rate_user, null)
+            dialog.setTitle("Rating")
+            dialog.setView(dialogView)
+
+            dialog.setPositiveButton("Confirm") { _, _ ->
+                val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toInt()
+                val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
+                if (userIsProducer) {
+                    ratedByProducer = true
+                    updateJobStatus(JobStatus.RATED, "Job was RATED (by producer)")
+                } else {
+                    ratedByConsumer = true
+                    updateJobStatus(JobStatus.RATED, "Job was RATED (by consumer)")
                 }
+            }
+            dialog.setNegativeButton("Cancel") { _, _ -> }
+            dialog.create().show()
         }
     }
 
@@ -193,94 +193,136 @@ class MessageListFragment : Fragment() {
         _binding = null
     }
 
+    private fun updateJobStatus(status: JobStatus, message: String) {
+        FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+            .update("jobStatus", status).addOnSuccessListener {
+                vmMessages.addMessage(
+                    userID,
+                    jobID,
+                    message,
+                    System.currentTimeMillis(),
+                    true
+                )
+            }
+    }
+
     private fun updateButtons() {
         when (job.jobStatus) {
-            "INIT" -> {
+            JobStatus.INIT -> {
                 if (userIsProducer) {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
+                    updateButtonStatus(
+                        requested = false,
+                        accept = false,
+                        reject = false,
+                        start = false,
+                        end = false,
+                        rate = false
+                    )
                 } else {
                     // TODO calculate if user has money
-                    binding.buttonRequest.visibility = View.VISIBLE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
+                    updateButtonStatus(
+                        requested = true,
+                        accept = false,
+                        reject = false,
+                        start = false,
+                        end = false,
+                        rate = false
+                    )
                 }
             }
-            "REQUESTED" -> {
+            JobStatus.REQUESTED -> {
                 if (userIsProducer) {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.VISIBLE
-                    binding.buttonReject.visibility = View.VISIBLE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
+                    updateButtonStatus(
+                        requested = false,
+                        accept = true,
+                        reject = true,
+                        start = false,
+                        end = false,
+                        rate = false
+                    )
                 } else {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
+                    updateButtonStatus(
+                        requested = false,
+                        accept = false,
+                        reject = false,
+                        start = false,
+                        end = false,
+                        rate = false
+                    )
                 }
             }
-            "ACCEPTED" -> {
-                if (userIsProducer) {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
-                } else {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.VISIBLE
-                    binding.buttonRate.visibility = View.GONE
-                }
+            JobStatus.ACCEPTED -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = !userIsProducer,
+                    end = false,
+                    rate = false
+                )
             }
-            "STARTED" -> {
-                if (userIsProducer) {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.VISIBLE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
-                } else {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.VISIBLE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.GONE
-                }
+            JobStatus.STARTED -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = false,
+                    end = true,
+                    rate = false
+                )
             }
-            "FINISHED" -> {
-                if (userIsProducer) {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.VISIBLE
-                } else {
-                    binding.buttonRequest.visibility = View.GONE
-                    binding.buttonAccept.visibility = View.GONE
-                    binding.buttonReject.visibility = View.GONE
-                    binding.buttonJobEnd.visibility = View.GONE
-                    binding.buttonJobStart.visibility = View.GONE
-                    binding.buttonRate.visibility = View.VISIBLE
-                }
+            JobStatus.FINISHED -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = false,
+                    end = false,
+                    rate = true
+                )
+            }
+            JobStatus.RATED -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = false,
+                    end = false,
+                    rate = showRateButton()
+                )
+            }
+            JobStatus.REJECTED -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = false,
+                    end = false,
+                    rate = false
+                )
             }
         }
     }
+
+    private fun updateButtonStatus(
+        requested: Boolean,
+        accept: Boolean,
+        reject: Boolean,
+        start: Boolean,
+        end: Boolean,
+        rate: Boolean
+    ) {
+
+        binding.buttonRequest.visibility = if (requested) View.VISIBLE else View.GONE
+        binding.buttonAccept.visibility = if (accept) View.VISIBLE else View.GONE
+        binding.buttonReject.visibility = if (reject) View.VISIBLE else View.GONE
+        binding.buttonJobStart.visibility = if (start) View.VISIBLE else View.GONE
+        binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
+        binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
+    }
+
+    private fun showRateButton(): Boolean {
+        return (userIsProducer && !ratedByProducer) || (!userIsProducer && !ratedByConsumer)
+    }
+
 }

@@ -19,7 +19,7 @@ import it.polito.timebanking.model.profile.fullNameFormatter
 import it.polito.timebanking.model.timeslot.*
 
 class OfferDetailFragment : Fragment() {
-    private val timeslotVM by viewModels<TimeslotViewModel>()
+    private val vmTimeslot by viewModels<TimeslotViewModel>()
     private var _binding: FragmentOfferDetailBinding? = null
     private var favList = mutableListOf<String>()
     private val binding get() = _binding!!
@@ -48,7 +48,7 @@ class OfferDetailFragment : Fragment() {
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
                 binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
 
-                timeslotVM.get(idTimeslot).observe(viewLifecycleOwner) {
+                vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                     binding.Title.text = titleFormatter(it.title)
                     binding.Description.text = descriptionFormatter(it.description)
                     binding.Date.text = dateFormatter(it.date)
@@ -87,7 +87,7 @@ class OfferDetailFragment : Fragment() {
                                 otherUserID,
                                 userID
                             ),
-                            "INIT",
+                            JobStatus.INIT,
                             "",
                             ""
                         )

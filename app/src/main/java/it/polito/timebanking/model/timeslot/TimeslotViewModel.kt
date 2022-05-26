@@ -23,6 +23,30 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         return timeslot
     }
 
+    fun getTimeslotForSkill(skill: String): LiveData<List<Pair<String, TimeslotData>>> {
+        val offersList = mutableListOf<Pair<String, TimeslotData>>()
+        val offers = MutableLiveData<List<Pair<String, TimeslotData>>>()
+        val userWithSkill = mutableListOf<String>()
+
+        FirebaseFirestore.getInstance().collection("users").addSnapshotListener { userList, _ ->
+            for (user in userList!!) {
+                val skillsList: List<*> = user.get("skills") as List<*>
+                if (skillsList.contains(skill)) {
+                    userWithSkill.add(user.id)
+                }
+            }
+            FirebaseFirestore.getInstance().collection("timeslots").get().addOnSuccessListener { ts ->
+                ts.forEach {
+                    if(userWithSkill.contains(it.get("ownedBy"))){
+                        offersList.add(Pair(it.id,it.toTimeslotData()))
+                        offers.value = offersList
+                    }
+                }
+            }
+        }
+        return offers
+    }
+
     fun getUserTimeslots(): LiveData<List<Pair<String, TimeslotData>>> {
         val timeslots = MutableLiveData<List<Pair<String, TimeslotData>>>()
 
@@ -31,7 +55,8 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
             .addSnapshotListener { ut, _ ->
                 val timeslotsList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
                 (ut?.get("timeslots") as List<*>).forEach {
-                    FirebaseFirestore.getInstance().collection("timeslots").document(it.toString())
+                    FirebaseFirestore.getInstance().collection("timeslots")
+                        .document(it.toString())
                         .addSnapshotListener { t, _ ->
                             if (t != null) {
                                 timeslotsList.add(Pair(t.id, t.toTimeslotData()))
@@ -40,14 +65,6 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
                         }
                 }
             }
-        /*FirebaseFirestore.getInstance().collection("timeslots").whereEqualTo("ownedBy", id)
-            .addSnapshotListener { r, e ->
-                if (r != null) {
-                    timeslots.value = if (e != null)
-                        emptyList()
-                    else r.mapNotNull { Pair(it.id, it.toTimeslotData()) }
-                }
-            }*/
         return timeslots
     }
 
@@ -95,7 +112,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
 
     fun delete(id: String) {
         FirebaseFirestore.getInstance().collection("timeslots").document(id).delete()
-            .addOnSuccessListener {  }
+            .addOnSuccessListener { }
             .addOnFailureListener { e -> Log.w("test", "Error deleting document", e) }
     }
 

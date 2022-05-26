@@ -44,7 +44,6 @@ class EditSkillAdapter :
 
     @SuppressLint("NotifyDataSetChanged")
     fun setUserSkills(inUserSkills: List<String>) {
-        Log.d("test","$inUserSkills")
         userSkills = inUserSkills as MutableList<String>
         notifyDataSetChanged()
     }

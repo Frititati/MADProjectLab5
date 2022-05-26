@@ -91,11 +91,12 @@
     <string name="request">Request</string>
     <string name="activeJobs">Active Jobs</string>
     <string name="interestedJobs">Interested Jobs</string>
-    <string name="offeredJobs">Offered Jobs</string>
+    <string name="jobRequest">Job Requests</string>
     <string name="requestedJobs">Requested Jobs</string>
     <string name="optional_comment">Optional comment…</string>
     <string name="rate">Rate</string>
     <string name="rating">Rating</string>
     <string name="jobStart">Job Start</string>
     <string name="jobEnd">Job End</string>
+    <string name="time">Your time</string>
 </resources>

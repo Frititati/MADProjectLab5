@@ -14,7 +14,7 @@ import it.polito.timebanking.databinding.FragmentTimeslotDetailBinding
 import it.polito.timebanking.model.timeslot.*
 
 class TimeslotDetailFragment : Fragment() {
-    private val vm by viewModels<TimeslotViewModel>()
+    private val timeslotVM by viewModels<TimeslotViewModel>()
     private var _binding: FragmentTimeslotDetailBinding? = null
 
     private val binding get() = _binding!!
@@ -32,8 +32,8 @@ class TimeslotDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val idTimeslot: String? = requireArguments().getString("id_timeslot")
-        vm.get(idTimeslot!!).observe(viewLifecycleOwner) {
+        val idTimeslot = requireArguments().getString("id_timeslot")!!
+        timeslotVM.get(idTimeslot).observe(viewLifecycleOwner) {
             binding.Title.text = titleFormatter(it.title)
             binding.Description.text = descriptionFormatter(it.description)
             binding.Date.text = dateFormatter(it.date)
