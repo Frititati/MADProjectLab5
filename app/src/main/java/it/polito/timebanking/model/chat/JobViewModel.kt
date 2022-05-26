@@ -15,7 +15,7 @@ class JobViewModel(application: Application) : AndroidViewModel(application) {
                 if (j != null) {
                     jobs.value = if (e != null)
                         emptyList()
-                    else j.mapNotNull { Pair(it.id, it.toJobData()) }
+                    else j.map { Pair(it.id, it.toJobData()) }
                 }
             }
         return jobs
@@ -28,7 +28,7 @@ class JobViewModel(application: Application) : AndroidViewModel(application) {
                 if (r != null) {
                     jobs.value = if (e != null)
                         emptyList()
-                    else r.mapNotNull { Pair(it.id, it.toJobData()) }
+                    else r.map { Pair(it.id, it.toJobData()) }
                 }
             }
         return jobs

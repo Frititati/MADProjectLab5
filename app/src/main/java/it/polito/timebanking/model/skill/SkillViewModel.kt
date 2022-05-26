@@ -16,7 +16,7 @@ class SkillViewModel(application: Application) : AndroidViewModel(application) {
                 if (s != null) {
                     skills.value = if (e != null)
                         emptyList()
-                    else s.mapNotNull { Pair(it.id, it.toSkillData()) }
+                    else s.map { Pair(it.id, it.toSkillData()) }
                 }
             }
         return skills

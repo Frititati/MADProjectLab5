@@ -36,7 +36,7 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
 //                if (m != null) {
 //                    messages.value = if (e != null)
 //                        emptyList()
-//                    else m.mapNotNull { it.toMessageData() }
+//                    else m.map { it.toMessageData() }
 //                }
 //            }
         return messages

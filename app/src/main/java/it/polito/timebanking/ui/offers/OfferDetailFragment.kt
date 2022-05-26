@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf

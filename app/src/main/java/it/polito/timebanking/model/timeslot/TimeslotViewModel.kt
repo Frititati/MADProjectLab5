@@ -29,12 +29,12 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         FirebaseFirestore.getInstance().collection("users").whereArrayContains("skills", skill)
             .addSnapshotListener { u, _ ->
                 if (u != null) {
-                    val userListID = u.mapNotNull { it.id }
+                    val userListID = u.map { it.id }
                     FirebaseFirestore.getInstance().collection("timeslots")
                         .whereIn("ownedBy", userListID).addSnapshotListener { ts, _ ->
                             if (ts != null) {
                                 offers.value = ts.filter { it.toTimeslotData().available }
-                                    .mapNotNull { Pair(it.id, it.toTimeslotData()) }
+                                    .map { Pair(it.id, it.toTimeslotData()) }
                             }
                         }
                 }

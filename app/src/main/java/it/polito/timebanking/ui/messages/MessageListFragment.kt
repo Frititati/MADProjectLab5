@@ -162,7 +162,7 @@ class MessageListFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("timeslots")
             .document(job.timeslotID)
             .set(timeslot).addOnSuccessListener {
-                updateJobStatus(JobStatus.REJECTED, "Job is FINISHED")
+                updateJobStatus(JobStatus.FINISHED, "Job is FINISHED")
             }
         }
 
