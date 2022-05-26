@@ -63,8 +63,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         description: String,
         date: Long,
         duration: String,
-        location: String,
-        available: Boolean
+        location: String
     ) {
         val data: MutableMap<String, Any> = mutableMapOf()
         if (title.isNotEmpty()) {
@@ -87,7 +86,6 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
         }
 
         data["editedAt"] = System.currentTimeMillis()
-        data["available"] = available
 
         FirebaseFirestore.getInstance().collection("timeslots").document(id).update(
             data as Map<String, Any>

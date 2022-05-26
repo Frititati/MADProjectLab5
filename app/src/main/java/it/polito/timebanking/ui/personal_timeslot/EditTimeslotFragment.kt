@@ -142,8 +142,7 @@ class EditTimeslotFragment : Fragment() {
                     binding.editDescription.text.toString(),
                     dateMilli,
                     binding.editDuration.text.toString(),
-                    binding.editLocation.text.toString(),
-                    true
+                    binding.editLocation.text.toString()
                 )
                 Snackbar.make(binding.root, "Updated Timeslot", 1500).show()
             }
