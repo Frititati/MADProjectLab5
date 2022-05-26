@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -77,7 +76,7 @@ class OfferDetailFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("jobs")
                 .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
                 .addOnSuccessListener { ext ->
-                    if (ext.isEmpty) {
+                    if (ext.isEmpty || JobStatus.valueOf(ext.first().getString("jobStatus")?:"INIT") == JobStatus.FINISHED) {
                         val jobData = JobData(
                             idTimeslot,
                             emptyList<String>(),
@@ -93,12 +92,12 @@ class OfferDetailFragment : Fragment() {
                             ""
                         )
                         FirebaseFirestore.getInstance().collection("jobs").add(jobData)
-                            .addOnSuccessListener { int ->
+                            .addOnSuccessListener {
                                 findNavController().navigate(
                                     R.id.offer_to_job,
                                     bundleOf(
                                         "otherUserName" to binding.UserFullName.text,
-                                        "jobID" to int.id
+                                        "jobID" to it.id
                                     )
                                 )
                             }
