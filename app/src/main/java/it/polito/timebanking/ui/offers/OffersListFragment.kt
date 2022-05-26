@@ -54,7 +54,7 @@ class OffersListFragment : Fragment() {
         binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
 
-        vmTimeslot.getTimeslotForSkill(selectedSkill).observe(viewLifecycleOwner) {
+        vmTimeslot.getTimeslotsForSkill(selectedSkill).observe(viewLifecycleOwner) {
 
             offersListAdapter.setTimeslots(it as MutableList<Pair<String, TimeslotData>>)
             binding.nothingToShow.text = String.format(
