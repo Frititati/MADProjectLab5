@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
 import it.polito.timebanking.model.chat.JobData
+import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
@@ -47,7 +49,8 @@ class OfferDetailFragment : Fragment() {
             .document(otherUserID).get().addOnSuccessListener { user ->
                 binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
-                binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
+                binding.UserDescription.text =
+                    descriptionFormatter(user.get("description").toString())
 
                 vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                     binding.Title.text = titleFormatter(it.title)
@@ -74,10 +77,16 @@ class OfferDetailFragment : Fragment() {
         binding.chatStartButton.isVisible = userID != otherUserID
 
         binding.chatStartButton.setOnClickListener {
+            var jobExists = false
             FirebaseFirestore.getInstance().collection("jobs")
                 .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
                 .addOnSuccessListener { ext ->
-                    if (ext.isEmpty || JobStatus.valueOf(ext.first().getString("jobStatus")?:"INIT") == JobStatus.CONCLUDED) {
+                    ext.forEach {
+                        if (it.getString("jobStatus") != JobStatus.CONCLUDED.toString()) {
+                            jobExists = true
+                        }
+                    }
+                    if (!jobExists) {
                         val jobData = JobData(
                             idTimeslot,
                             emptyList<String>(),

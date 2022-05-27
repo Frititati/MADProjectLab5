@@ -22,10 +22,10 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.getString("email") ?: "",
         this.getLong("age") ?: 0,
         this.getString("location") ?: "",
-        this.get("skills") as List<*>,
+        this.get("skills") as List<*> ? ?: emptyList<String>(),
         this.get("timeslots") as List<*>? ?: emptyList<String>(),
         this.getString("description") ?: "",
-        this.get("favorites") as List<*>,
+        this.get("favorites") as List<*> ? ?: emptyList<String>(),
         this.getLong("time") ?: 0
     )
 }

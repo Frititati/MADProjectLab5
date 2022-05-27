@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,7 +32,7 @@ class EditTimeslotFragment : Fragment() {
     private val binding get() = _binding!!
     private val vm by viewModels<TimeslotViewModel>()
     private var editableSkillListAdapter = EditTimeslotSkillAdapter()
-
+    private var initialDate = ""
     private var idTimeslot: String = ""
     private var toUpdate: Boolean = true
 
@@ -61,10 +63,13 @@ class EditTimeslotFragment : Fragment() {
             binding.editTitle.hint = titleFormatter(it.title)
             binding.editDescription.hint = descriptionFormatter(it.description)
             binding.editDate.hint = dateFormatter(it.date)
+            initialDate = dateFormatter(it.date)
             binding.editDuration.hint = durationFormatter(it.duration).toString() + " minutes"
             binding.editLocation.hint = locationFormatter(it.location)
-            
-            editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map{l -> l.toString()})
+
+            editableSkillListAdapter.setTimeslotSkills(
+                idTimeslot,
+                it.skills.map { l -> l.toString() })
 
             if (it.available) {
                 binding.activateButton!!.visibility = View.GONE
@@ -79,25 +84,46 @@ class EditTimeslotFragment : Fragment() {
             .document(FirebaseAuth.getInstance().uid!!).get()
             .addOnSuccessListener { userIt ->
                 val user = userIt.toUserProfileData()
-                editableSkillListAdapter.setAvailableSkills(user.skills.map{it.toString()})
+                editableSkillListAdapter.setAvailableSkills(user.skills.map { it.toString() })
             }
 
         val cal = Calendar.getInstance()
         binding.editDateButton.setOnClickListener {
-            DatePickerDialog(requireContext(), { _, y, m, d ->
+            val dpd = DatePickerDialog(requireContext(), { _, y, m, d ->
                 val date =
                     LocalDateTime.parse("$y-${"%02d".format(m + 1)}-${"%02d".format(d)}T00:00:00")
                 dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
                 binding.editDate.text = dateFormatter(dateMilli)
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
-                .show()
+            dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+            dpd.show()
         }
 
         binding.activateButton!!.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
-                .update("available", true).addOnSuccessListener {
-                    Snackbar.make(binding.root, "Timeslot now active", 1500).show()
-                }
+            val y: Int
+            val m: Int
+            val d: Int
+            if (binding.editDate.text.isEmpty()) {
+                y = getYear(initialDate)
+                m = getMonth(initialDate)
+                d = getDay(initialDate)
+            } else {
+                y = getYear(binding.editDate.text.toString())
+                m = getMonth(binding.editDate.text.toString())
+                d = getDay(binding.editDate.text.toString())
+            }
+            val date = LocalDateTime.parse("$y-${"%02d".format(m)}-${"%02d".format(d)}T00:00:00")
+            dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+            binding.editDate.hint = dateFormatter(dateMilli)
+            if (dateMilli + 86399999 >= System.currentTimeMillis()) {
+                FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
+                    .update("available", true).addOnSuccessListener {
+                        Snackbar.make(binding.root, "Timeslot now active", 1500).show()
+                    }
+            }
+            else{
+                Toast.makeText(context,"Date should be today or after",Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.deactivateButton!!.setOnClickListener {
@@ -128,6 +154,18 @@ class EditTimeslotFragment : Fragment() {
             }
             dialog.create().show()
         }
+    }
+
+    private fun getYear(text: String): Int {
+        return text.substring(6).toInt()
+    }
+
+    private fun getMonth(text: String): Int {
+        return text.substring(3, 5).toInt()
+    }
+
+    private fun getDay(text: String): Int {
+        return text.substring(0, 2).toInt()
     }
 
     override fun onPause() {

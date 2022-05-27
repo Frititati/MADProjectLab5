@@ -30,7 +30,7 @@ fun DocumentSnapshot.toTimeslotData(): TimeslotData {
         this.getString("location") ?: "",
         this.getString("ownedBy") ?: "",
         this.getBoolean("available") ?: false,
-        this.get("skills") as List<*>
+        this.get("skills") as List<*>? ?: emptyList<String>()
     )
 }
 

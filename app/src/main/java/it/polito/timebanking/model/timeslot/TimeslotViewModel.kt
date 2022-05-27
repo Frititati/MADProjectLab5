@@ -30,7 +30,8 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
             .whereEqualTo("available", true)
             .addSnapshotListener { u, _ ->
                 if (u != null) {
-                    offers.value = u.map { Pair(it.id, it.toTimeslotData()) }
+                    offers.value = u.filter { it.toTimeslotData().date + 86399999 >= System.currentTimeMillis() }
+                        .map { Pair(it.id, it.toTimeslotData()) }
                 }
             }
         return offers

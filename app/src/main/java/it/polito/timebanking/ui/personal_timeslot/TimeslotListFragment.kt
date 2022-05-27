@@ -66,7 +66,7 @@ class TimeslotListFragment : Fragment() {
                     System.currentTimeMillis(),
                     "",
                     "",
-                    0,
+                    System.currentTimeMillis(),
                     0,
                     "",
                     FirebaseAuth.getInstance().currentUser!!.uid,

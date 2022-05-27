@@ -173,7 +173,6 @@ class MessageListFragment : Fragment() {
             updateJobStatus(JobStatus.STARTED, "Job is STARTED")
         }
         binding.buttonJobEnd.setOnClickListener{
-            timeslot.available = true
             FirebaseFirestore.getInstance().collection("timeslots")
                 .document(job.timeslotID)
                 .set(timeslot).addOnSuccessListener {
@@ -192,20 +191,14 @@ class MessageListFragment : Fragment() {
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
                 if (userIsProducer) {
                     if (job.jobStatus == JobStatus.DONE)
-                        updateJobStatus(
-                            JobStatus.RATED_BY_PRODUCER,
-                            "Job was RATED (by producer)"
-                        )
+                        updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                     else {
                         updateJobStatus(JobStatus.RATED_BY_PRODUCER,"Job was RATED (by producer)")
                         updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
                     }
                 } else {
                     if (job.jobStatus == JobStatus.DONE)
-                        updateJobStatus(
-                            JobStatus.RATED_BY_CONSUMER,
-                            "Job was RATED (by consumer)"
-                        )
+                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
                         updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
