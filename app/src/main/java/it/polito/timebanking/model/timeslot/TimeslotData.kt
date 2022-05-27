@@ -16,7 +16,7 @@ data class TimeslotData(
     var location: String,
     var ownedBy: String,
     var available: Boolean,
-    var skills: List<String>
+    var skills: List<*>
 )
 
 fun DocumentSnapshot.toTimeslotData(): TimeslotData {
@@ -30,7 +30,7 @@ fun DocumentSnapshot.toTimeslotData(): TimeslotData {
         this.getString("location") ?: "",
         this.getString("ownedBy") ?: "",
         this.getBoolean("available") ?: false,
-        this.get("skills") as List<String>
+        this.get("skills") as List<*>
     )
 }
 

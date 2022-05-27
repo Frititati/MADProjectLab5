@@ -34,8 +34,6 @@ class EditTimeslotFragment : Fragment() {
     private var idTimeslot: String = ""
     private var toUpdate: Boolean = true
 
-    private lateinit var userSkills: List<String>
-
     private var dateMilli: Long = 0
 
     override fun onCreateView(
@@ -66,7 +64,7 @@ class EditTimeslotFragment : Fragment() {
             binding.editDuration.hint = durationFormatter(it.duration).toString() + " minutes"
             binding.editLocation.hint = locationFormatter(it.location)
             
-            editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills)
+            editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map{l -> l.toString()})
 
             if (it.available) {
                 binding.activateButton!!.visibility = View.GONE
@@ -81,7 +79,7 @@ class EditTimeslotFragment : Fragment() {
             .document(FirebaseAuth.getInstance().uid!!).get()
             .addOnSuccessListener { userIt ->
                 val user = userIt.toUserProfileData()
-                editableSkillListAdapter.setAvailableSkills(user.skills)
+                editableSkillListAdapter.setAvailableSkills(user.skills.map{it.toString()})
             }
 
         val cal = Calendar.getInstance()

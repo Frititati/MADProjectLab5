@@ -17,6 +17,7 @@ import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
 import it.polito.timebanking.model.timeslot.*
+import it.polito.timebanking.ui.messages.JobStatus
 
 class OfferDetailFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()

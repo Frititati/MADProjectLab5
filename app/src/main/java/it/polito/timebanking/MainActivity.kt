@@ -1,21 +1,17 @@
 package it.polito.timebanking
 
-import android.content.Context
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
 import android.view.Menu
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -71,16 +67,26 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
         binding.navView.getHeaderView(0).findViewById<Button>(R.id.buttonLogout)
             .setOnClickListener {
-                Firebase.auth.signOut()
-                GoogleSignIn.getClient(
-                    this, GoogleSignInOptions
-                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .build()
-                )
-                    .signOut()
-                Toast.makeText(this, "Logout successfully", Toast.LENGTH_LONG).show()
-                startActivity(Intent(this, EntryPointActivity::class.java))
-                finish()
+                findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                val dialog = AlertDialog.Builder(this)
+                dialog.setTitle("Are you sure you want to log out?")
+                dialog.setView(this.layoutInflater.inflate(R.layout.dialog_generic,findViewById(android.R.id.content), false))
+                dialog.setNegativeButton("No") { _, _ ->
+                    findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+                dialog.setPositiveButton("Yes") { _, _ ->
+                    Firebase.auth.signOut()
+                    GoogleSignIn.getClient(
+                        this, GoogleSignInOptions
+                            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .build()
+                    )
+                        .signOut()
+                    Toast.makeText(this, "See you soon!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, EntryPointActivity::class.java))
+                    finish()
+                }
+                dialog.create().show()
             }
 
         FirebaseFirestore.getInstance().collection("users")
@@ -103,10 +109,10 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 ).getString("email", "unknown email")!!,
                                 defaultAge,
                                 "Empty location",
-                                listOf(),
-                                listOf<Any>(),
+                                listOf<String>(),
+                                listOf<String>(),
                                 "Empty description",
-                                listOf<Any>(),
+                                listOf<String>(),
                                 startingTime
                             )
                         )

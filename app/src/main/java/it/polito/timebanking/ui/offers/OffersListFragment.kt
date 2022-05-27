@@ -145,15 +145,15 @@ class OffersListFragment : Fragment() {
     }
 
     private fun numberPickerCustom() {
-        val d = AlertDialog.Builder(context)
+        val dialog = AlertDialog.Builder(context)
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_filter, null)
-        d.setTitle("Choose minimum duration")
-        d.setView(dialogView)
+        dialog.setTitle("Choose minimum duration")
+        dialog.setView(dialogView)
         val numberPicker = dialogView.findViewById<NumberPicker>(R.id.dialog_number_picker)
         numberPicker.minValue = 1
         numberPicker.maxValue = 240
         numberPicker.wrapSelectorWheel = false
-        d.setPositiveButton("Done") { _, _ ->
+        dialog.setPositiveButton("Done") { _, _ ->
             val n = offersListAdapter.filterByDuration(numberPicker.value)
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
@@ -163,8 +163,8 @@ class OffersListFragment : Fragment() {
                 )
             }
         }
-        d.setNegativeButton("Cancel") { _, _ -> }
-        d.create().show()
+        dialog.setNegativeButton("Cancel") { _, _ -> }
+        dialog.create().show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

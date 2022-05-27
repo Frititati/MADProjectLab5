@@ -1,11 +1,12 @@
 package it.polito.timebanking
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -21,20 +22,19 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private var signIn = 2
     private val mAuth = Firebase.auth
-    private lateinit var progressDialog: ProgressDialog
+    private lateinit var progressDialog: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         FirebaseApp.initializeApp(this)
-        progressDialog =
-            ProgressDialog(this, androidx.transition.R.style.AlertDialog_AppCompat_Light)
         signInRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
@@ -67,19 +67,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signIn() {
         try {
+            progressDialog = findViewById(R.id.progressBar)
             progressDialog.isIndeterminate = true
-            progressDialog.setMessage("Authentication, please wait...")
-            progressDialog.show()
+            progressDialog.visibility = View.VISIBLE
         } catch (t: Throwable) {
             t.printStackTrace()
         }
-        android.os.Handler().postDelayed(
-            {
-                startActivityForResult(googleSignInClient.signInIntent, signIn)
-            }, 1500
-        )
+        startActivityForResult(googleSignInClient.signInIntent, signIn)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -96,7 +93,7 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: ApiException) {
             e.printStackTrace()
             try {
-                progressDialog.dismiss()
+                progressDialog.visibility = View.GONE
             } catch (t: Throwable) {
                 Log.w("warn", "SignIn result failed with code ${e.statusCode}")
                 Toast.makeText(
@@ -114,13 +111,13 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     Toast.makeText(
                         this,
-                        "Welcome, ${mAuth.currentUser!!.displayName}",
+                        "Welcome back, ${mAuth.currentUser!!.displayName}",
                         Toast.LENGTH_LONG
                     ).show()
                     getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).edit()
                         .putString("email", account.email).apply()
                     startActivity(Intent(this, MainActivity::class.java))
-                    progressDialog.dismiss()
+                    progressDialog.visibility = View.GONE
                     finish()
                 } else {
                     Log.w("warn", "Sign in failed")
