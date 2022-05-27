@@ -18,7 +18,7 @@ class RatingsFragment : Fragment() {
     private var _binding: FragmentRatingsBinding? = null
     private val binding get() = _binding!!
     private var ratingsListAdapter = RatingsAdapter()
-    private var showReceivedOption = false
+    private var showingReceived = true
     private var ratingList = emptyList<Pair<String, RateData>>()
     private val rateVM by viewModels<RateViewModel>()
 
@@ -42,7 +42,7 @@ class RatingsFragment : Fragment() {
                 ratingList = it
                 ratingsListAdapter.setRatings(
                     it as MutableList<Pair<String, RateData>>,
-                    !showReceivedOption
+                    showingReceived
                 )
             }
     }
@@ -54,27 +54,28 @@ class RatingsFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_given_ratings).isVisible = showReceivedOption
-        menu.findItem(R.id.action_received_ratings).isVisible = !showReceivedOption
+        menu.findItem(R.id.action_given_ratings).isVisible = showingReceived
+        menu.findItem(R.id.action_received_ratings).isVisible = !showingReceived
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_received_ratings -> {
+                showingReceived = true
                 ratingsListAdapter.setRatings(
                     ratingList as MutableList<Pair<String, RateData>>,
-                    showReceivedOption
+                    showingReceived
                 )
-                showReceivedOption = true
                 requireActivity().invalidateOptionsMenu()
                 true
             }
             R.id.action_given_ratings -> {
+                Log.d("test","TOCCATO G")
+                showingReceived = false
                 ratingsListAdapter.setRatings(
                     ratingList as MutableList<Pair<String, RateData>>,
-                    showReceivedOption
+                    showingReceived
                 )
-                showReceivedOption = false
                 requireActivity().invalidateOptionsMenu()
                 true
             }
