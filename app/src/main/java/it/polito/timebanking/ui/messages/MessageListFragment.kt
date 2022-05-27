@@ -2,7 +2,6 @@ package it.polito.timebanking.ui.messages
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,8 +37,6 @@ class MessageListFragment : Fragment() {
     private val vmProfile by viewModels<ProfileViewModel>()
     private val messageListAdapter = MessageListAdapter()
     private val userID = FirebaseAuth.getInstance().currentUser!!.uid
-    private var ratedByProducer = false
-    private var ratedByConsumer = false
     private var userIsProducer = false
     private lateinit var jobID: String
     private lateinit var drawerListener: NavBarUpdater
@@ -117,35 +114,54 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonRequest.setOnClickListener {
-            updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
+            FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get()
+                .addOnSuccessListener {
+                    if (enoughTime(it.getLong("time") ?: 0))
+                        updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
+                    else
+                        Toast.makeText(
+                            context,
+                            "Sorry, you don't have enough time",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                }
         }
 
         binding.buttonAccept.setOnClickListener {
-            if (userConsumer.time >= timeslot.duration) {
-                FirebaseFirestore.getInstance().collection("users").document(userID)
-                    .update("time", FieldValue.increment(timeslot.duration))
-                    .addOnSuccessListener {
-                        FirebaseFirestore.getInstance().collection("users")
-                            .document(job.userConsumerID)
-                            .update("time", FieldValue.increment(-timeslot.duration))
+
+            FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get()
+                .addOnSuccessListener {
+                    if (enoughTime(it.getLong("time") ?: 0L)) {
+                        FirebaseFirestore.getInstance().collection("users").document(userID)
+                            .update("time", FieldValue.increment(timeslot.duration))
                             .addOnSuccessListener {
-                                timeslot.available = false
-                                FirebaseFirestore.getInstance().collection("timeslots")
-                                    .document(job.timeslotID)
-                                    .set(timeslot).addOnSuccessListener {
-                                        updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
+                                FirebaseFirestore.getInstance().collection("users")
+                                    .document(job.userConsumerID)
+                                    .update("time", FieldValue.increment(-timeslot.duration))
+                                    .addOnSuccessListener {
+                                        timeslot.available = false
+                                        FirebaseFirestore.getInstance().collection("timeslots")
+                                            .document(job.timeslotID)
+                                            .set(timeslot).addOnSuccessListener {
+                                                updateJobStatus(
+                                                    JobStatus.ACCEPTED,
+                                                    "Job was ACCEPTED"
+                                                )
+                                            }
                                     }
                             }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Couldn't accept. Consumer is out of time",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-            } else {
-                Log.d("test", "there is a problem with the time and durations2")
-                // TODO Error message
-            }
-
-            // TODO error handling
+                }
         }
 
-        binding.buttonReject.setOnClickListener {
+        binding.buttonReject.setOnClickListener{
             FirebaseFirestore.getInstance().collection("timeslots")
                 .document(job.timeslotID)
                 .set(timeslot).addOnSuccessListener {
@@ -153,19 +169,19 @@ class MessageListFragment : Fragment() {
                 }
         }
 
-        binding.buttonJobStart.setOnClickListener {
+        binding.buttonJobStart.setOnClickListener{
             updateJobStatus(JobStatus.STARTED, "Job is STARTED")
         }
-        binding.buttonJobEnd.setOnClickListener {
+        binding.buttonJobEnd.setOnClickListener{
             timeslot.available = true
             FirebaseFirestore.getInstance().collection("timeslots")
-            .document(job.timeslotID)
-            .set(timeslot).addOnSuccessListener {
-                updateJobStatus(JobStatus.FINISHED, "Job is FINISHED")
-            }
+                .document(job.timeslotID)
+                .set(timeslot).addOnSuccessListener {
+                    updateJobStatus(JobStatus.DONE, "Job is DONE")
+                }
         }
 
-        binding.buttonRate.setOnClickListener {
+        binding.buttonRate.setOnClickListener{
             val dialog = AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dialog_rate_user, null)
             dialog.setTitle("Rating")
@@ -175,16 +191,34 @@ class MessageListFragment : Fragment() {
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toInt()
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
                 if (userIsProducer) {
-                    ratedByProducer = true
-                    updateJobStatus(JobStatus.RATED, "Job was RATED (by producer)")
+                    if (job.jobStatus == JobStatus.DONE)
+                        updateJobStatus(
+                            JobStatus.RATED_BY_PRODUCER,
+                            "Job was RATED (by producer)"
+                        )
+                    else {
+                        updateJobStatus(JobStatus.RATED_BY_PRODUCER,"Job was RATED (by producer)")
+                        updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                    }
                 } else {
-                    ratedByConsumer = true
-                    updateJobStatus(JobStatus.RATED, "Job was RATED (by consumer)")
+                    if (job.jobStatus == JobStatus.DONE)
+                        updateJobStatus(
+                            JobStatus.RATED_BY_CONSUMER,
+                            "Job was RATED (by consumer)"
+                        )
+                    else {
+                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
+                        updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                    }
                 }
             }
             dialog.setNegativeButton("Cancel") { _, _ -> }
             dialog.create().show()
         }
+    }
+
+    private fun enoughTime(userTime: Long): Boolean {
+        return timeslot.duration <= userTime
     }
 
     override fun onDestroyView() {
@@ -270,7 +304,7 @@ class MessageListFragment : Fragment() {
                     rate = false
                 )
             }
-            JobStatus.FINISHED -> {
+            JobStatus.DONE -> {
                 updateButtonStatus(
                     requested = false,
                     accept = false,
@@ -280,17 +314,27 @@ class MessageListFragment : Fragment() {
                     rate = true
                 )
             }
-            JobStatus.RATED -> {
+            JobStatus.RATED_BY_CONSUMER -> {
                 updateButtonStatus(
                     requested = false,
                     accept = false,
                     reject = false,
                     start = false,
                     end = false,
-                    rate = showRateButton()
+                    rate = userIsProducer
                 )
             }
-            JobStatus.REJECTED -> {
+            JobStatus.RATED_BY_PRODUCER -> {
+                updateButtonStatus(
+                    requested = false,
+                    accept = false,
+                    reject = false,
+                    start = false,
+                    end = false,
+                    rate = !userIsProducer
+                )
+            }
+            else -> {
                 updateButtonStatus(
                     requested = false,
                     accept = false,
@@ -318,10 +362,6 @@ class MessageListFragment : Fragment() {
         binding.buttonJobStart.visibility = if (start) View.VISIBLE else View.GONE
         binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
         binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
-    }
-
-    private fun showRateButton(): Boolean {
-        return (userIsProducer && !ratedByProducer) || (!userIsProducer && !ratedByConsumer)
     }
 
 }

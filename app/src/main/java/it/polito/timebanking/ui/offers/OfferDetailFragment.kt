@@ -77,7 +77,7 @@ class OfferDetailFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("jobs")
                 .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
                 .addOnSuccessListener { ext ->
-                    if (ext.isEmpty || JobStatus.valueOf(ext.first().getString("jobStatus")?:"INIT") == JobStatus.FINISHED) {
+                    if (ext.isEmpty || JobStatus.valueOf(ext.first().getString("jobStatus")?:"INIT") == JobStatus.CONCLUDED) {
                         val jobData = JobData(
                             idTimeslot,
                             emptyList<String>(),
