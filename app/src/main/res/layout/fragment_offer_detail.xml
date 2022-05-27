@@ -173,6 +173,25 @@
                 android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/RatingTooltip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/rating"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:drawableLeftCompat="@drawable/ic_rating"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
+
+            <TextView
+                android:id="@+id/userRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_info"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/RatingTooltip" />
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

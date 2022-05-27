@@ -7,17 +7,18 @@
         android:visible="false"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_search"
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         android:visible="false"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
     <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort_and_filter"
-        app:showAsAction="ifRoom"
-        android:visible="false">
+        android:visible="false"
+        app:showAsAction="ifRoom">
         <menu />
     </item>
     <item
@@ -30,4 +31,14 @@
         android:icon="@drawable/ic_favorite_on"
         android:visible="false"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_received_ratings"
+        android:title="@string/action_received_ratings"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_given_ratings"
+        android:title="@string/action_given_ratings"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

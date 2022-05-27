@@ -18,8 +18,8 @@ import it.polito.timebanking.model.chat.JobViewModel
 class ConsumingJobsFragment : Fragment() {
     private var _binding: FragmentConsumingJobsBinding? = null
     private val binding get() = _binding!!
-    private var chatListAdapter = ConsumingListAdapter()
-    private val vm by viewModels<JobViewModel>()
+    private var chatListAdapter = ConsumingJobsAdapter()
+    private val jobVM by viewModels<JobViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,15 +31,13 @@ class ConsumingJobsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_UNLOCKED
-        )
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.chatListRecycler.adapter = chatListAdapter
         binding.nothingToShow.text = resources.getString(R.string.no_consuming_jobs)
 
-        vm.getConsumingJobs(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+        jobVM.getConsumingJobs(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
             chatListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
             binding.nothingToShow.isVisible = it.isEmpty()
         }

@@ -113,7 +113,9 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                                 listOf<String>(),
                                 "Empty description",
                                 listOf<String>(),
-                                startingTime
+                                startingTime,
+                                0,
+                                0
                             )
                         )
                     binding.navView.getHeaderView(0)

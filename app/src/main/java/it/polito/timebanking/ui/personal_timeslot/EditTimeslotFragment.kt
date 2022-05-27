@@ -35,6 +35,7 @@ class EditTimeslotFragment : Fragment() {
     private var initialDate = ""
     private var idTimeslot: String = ""
     private var toUpdate: Boolean = true
+    private val oneDay = 86400000
 
     private var dateMilli: Long = 0
 
@@ -95,7 +96,7 @@ class EditTimeslotFragment : Fragment() {
                 dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
                 binding.editDate.text = dateFormatter(dateMilli)
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
-            dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+            dpd.datePicker.minDate = System.currentTimeMillis()
             dpd.show()
         }
 
@@ -115,7 +116,7 @@ class EditTimeslotFragment : Fragment() {
             val date = LocalDateTime.parse("$y-${"%02d".format(m)}-${"%02d".format(d)}T00:00:00")
             dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             binding.editDate.hint = dateFormatter(dateMilli)
-            if (dateMilli + 86399999 >= System.currentTimeMillis()) {
+            if (dateMilli + oneDay >= System.currentTimeMillis()) {
                 FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
                     .update("available", true).addOnSuccessListener {
                         Snackbar.make(binding.root, "Timeslot now active", 1500).show()
@@ -174,11 +175,11 @@ class EditTimeslotFragment : Fragment() {
             thread {
                 vm.update(
                     idTimeslot,
-                    binding.editTitle.text.toString(),
-                    binding.editDescription.text.toString(),
+                    binding.editTitle.text.toString().trim(),
+                    binding.editDescription.text.toString().trim(),
                     dateMilli,
-                    binding.editDuration.text.toString(),
-                    binding.editLocation.text.toString()
+                    binding.editDuration.text.toString().trim(),
+                    binding.editLocation.text.toString().trim()
                 )
                 Snackbar.make(binding.root, "Updated Timeslot", 1500).show()
             }
@@ -190,14 +191,5 @@ class EditTimeslotFragment : Fragment() {
         _binding = null
     }
 
-//    private fun updateAllSkills() {
-//        FirebaseFirestore.getInstance().collection("users")
-//            .document(FirebaseAuth.getInstance().uid!!).get()
-//            .addOnSuccessListener { r ->
-//                if (r != null) {
-//                    userSkills = r.toUserProfileData().skills.map { it.toString() }
-//                }
-//            }
-//    }
 }
 

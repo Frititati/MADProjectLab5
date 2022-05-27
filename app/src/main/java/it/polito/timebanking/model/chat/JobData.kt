@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 data class JobData(
     var timeslotID: String,
     var messagesList: List<*>,
-    var lastMessage: Long,
+    var lastUpdate: Long,
     var userProducerID: String,
     var userConsumerID: String,
     var users: List<*>,
@@ -19,7 +19,7 @@ fun DocumentSnapshot.toJobData(): JobData {
     return JobData(
         this.getString("timeslotID") ?: "",
         this.get("messagesList") as List<*>? ?: emptyList<String>(),
-        this.getLong("lastMessage") ?: 0,
+        this.getLong("lastUpdate") ?: 0,
         this.getString("userProducerID") ?: "",
         this.getString("userConsumerID") ?: "",
         this.get("users") as List<*>? ?: emptyList<String>(),

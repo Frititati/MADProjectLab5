@@ -16,10 +16,13 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.model.chat.JobData
+import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.toTimeslotData
+import java.text.SimpleDateFormat
+import java.util.*
 
-class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.ProducingListViewHolder>() {
+class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.ProducingListViewHolder>() {
     private var allJobs: MutableList<Pair<String, JobData>> = mutableListOf()
 
     override fun onCreateViewHolder(
@@ -27,7 +30,7 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
         viewType: Int
     ): ProducingListViewHolder {
         return ProducingListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_chat_list, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.widget_jobs_list, parent, false)
         )
     }
 
@@ -37,7 +40,7 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
 
     @SuppressLint("NotifyDataSetChanged")
     fun setChats(chats: MutableList<Pair<String, JobData>>) {
-        allJobs = chats.sortedBy { it.second.lastMessage }.toMutableList()
+        allJobs = chats.sortedByDescending { it.second.lastUpdate }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -48,6 +51,8 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
     class ProducingListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val userName = v.findViewById<TextView>(R.id.chatMember)
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
+        private val time = v.findViewById<TextView>(R.id.time)
+        private val jobStatus = v.findViewById<TextView>(R.id.jobStatus)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
         fun bind(jobID: String, job: JobData) {
@@ -79,6 +84,11 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
                 .addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
                 }
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
+                val jData = it.toJobData()
+                time.text = timeFormatter(jData.lastUpdate)
+                jobStatus.text = jData.jobStatus.toString()
+            }
 
             rootView.setOnClickListener {
                 rootView.findNavController()
@@ -90,6 +100,11 @@ class ProducingListAdapter : RecyclerView.Adapter<ProducingListAdapter.Producing
                         )
                     )
             }
+        }
+        private fun timeFormatter(time: Long): String {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = time
+            return SimpleDateFormat("hh:mm a", Locale.ITALIAN).format(calendar.time)
         }
     }
 }

@@ -35,17 +35,23 @@ class FavoritesListFragment : Fragment() {
         binding.buttonAdd.isVisible = false
 
         FirebaseFirestore.getInstance().collection("users")
-            .document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener {
-                favorites = it.get("favorites") as MutableList<*>
-                favorites.forEach { f ->
-                    FirebaseFirestore.getInstance().collection("timeslots").document(f.toString()).get()
-                        .addOnSuccessListener { t ->
-                            offersListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
-                        }
+            .document(FirebaseAuth.getInstance().currentUser!!.uid).addSnapshotListener { t, _ ->
+                if (t != null) {
+                    favorites = t.get("favorites") as MutableList<*>
+                    favorites.forEach { f ->
+                        FirebaseFirestore.getInstance().collection("timeslots")
+                            .document(f.toString()).get()
+                            .addOnSuccessListener { t ->
+                                offersListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
+                            }
+                    }
+                    binding.nothingToShow.text = String.format(
+                        resources.getString(
+                            R.string.no_favorites
+                        )
+                    )
+                    binding.nothingToShow.isVisible = favorites.size == 0
                 }
-                binding.nothingToShow.text = String.format(resources.getString(
-                    R.string.no_favorites))
-                binding.nothingToShow.isVisible = favorites.size == 0
             }
     }
 

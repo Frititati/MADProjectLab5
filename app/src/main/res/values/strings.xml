@@ -100,6 +100,10 @@
     <string name="jobEnd">Job End</string>
     <string name="time">Your time</string>
     <string name="activate">Activate</string>
-    <string name="disactivate">Disactivate</string>
+    <string name="deactivate">Deactivate</string>
     <string name="view">View</string>
+    <string name="all_ratings">All Ratings</string>
+    <string name="jobStatus">Status</string>
+    <string name="action_received_ratings">Show Received</string>
+    <string name="action_given_ratings">Show Given</string>
 </resources>

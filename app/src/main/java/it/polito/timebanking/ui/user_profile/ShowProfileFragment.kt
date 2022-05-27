@@ -2,8 +2,10 @@ package it.polito.timebanking.ui.user_profile
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,12 +21,15 @@ import it.polito.timebanking.databinding.FragmentShowProfileBinding
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.skill.SkillData
 import it.polito.timebanking.model.skill.toSkillData
+import java.text.DecimalFormat
+import kotlin.math.roundToLong
 
 
 class ShowProfileFragment : Fragment() {
     private var _binding: FragmentShowProfileBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<ProfileViewModel>()
+    private val div = 10.0
     private var firestoreUser = FirebaseAuth.getInstance().currentUser
     private val skillsListAdapter = SkillsListAdapter()
 
@@ -53,6 +58,10 @@ class ShowProfileFragment : Fragment() {
                         binding.age.text = String.format(resources.getString(R.string.age), it.age)
                         binding.location.text = it.location
                         binding.description.text = it.description
+                        if(it.jobsRated > 0) {
+                            val f = DecimalFormat("#.0")
+                            binding.rating.text = f.format(((it.score / div) / (it.jobsRated / div))).toString()
+                        }
                         Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser!!.uid}.png")
                             .getBytes(1024 * 1024).addOnSuccessListener { pic ->
                                 binding.userImage.setImageBitmap(
@@ -74,6 +83,11 @@ class ShowProfileFragment : Fragment() {
                 Toast.makeText(context, "Unexpected error", Toast.LENGTH_LONG).show()
             }
         updateAllSkills()
+
+        binding.buttonRate!!.setOnClickListener {
+            findNavController().navigate(R.id.show_to_ratings)
+            Snackbar.make(binding.root,"Tap on a rating to see more",Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

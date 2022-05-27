@@ -100,7 +100,7 @@ class EditSkillFragment : Fragment() {
         dialogConfirm.setView(dialogConfirmView)
 
         dialog.setPositiveButton("Done") { _, _ ->
-            newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString()
+            newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString().trim()
             if(newSkill.isEmpty()){
                 Toast.makeText(context,"Cannot create empty skill",Toast.LENGTH_SHORT).show()
                 updateAllSkills()

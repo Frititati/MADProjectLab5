@@ -96,12 +96,12 @@ class EditProfileFragment : Fragment() {
         thread {
             vm.update(
                 firestoreUser!!.uid,
-                binding.fullName.text.toString(),
-                binding.nickName.text.toString(),
+                binding.fullName.text.toString().trim().trim(),
+                binding.nickName.text.toString().trim(),
                 binding.age.text.toString().toLongOrNull(),
-                binding.email.text.toString(),
-                binding.location.text.toString(),
-                binding.description.text.toString(),
+                binding.email.text.toString().trim(),
+                binding.location.text.toString().trim(),
+                binding.description.text.toString().trim(),
                 favList
             )
         }

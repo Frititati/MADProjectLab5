@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -14,10 +13,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
 import it.polito.timebanking.model.chat.JobData
-import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
+import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.*
 import it.polito.timebanking.ui.messages.JobStatus
 
@@ -49,9 +48,11 @@ class OfferDetailFragment : Fragment() {
             .document(otherUserID).get().addOnSuccessListener { user ->
                 binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
                 binding.UserAge.text = ageFormatter(user.get("age").toString())
-                binding.UserDescription.text =
-                    descriptionFormatter(user.get("description").toString())
-
+                binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
+                val score = user.getLong("score") ?: 0
+                val jobs = user.getLong("jobsRated") ?: 0
+                if(jobs != 0L)
+                        binding.userRating.text = (score / jobs).toString()
                 vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                     binding.Title.text = titleFormatter(it.title)
                     binding.Description.text = descriptionFormatter(it.description)
@@ -90,7 +91,7 @@ class OfferDetailFragment : Fragment() {
                         val jobData = JobData(
                             idTimeslot,
                             emptyList<String>(),
-                            0,
+                            System.currentTimeMillis(),
                             otherUserID,
                             userID,
                             listOf(
@@ -122,7 +123,6 @@ class OfferDetailFragment : Fragment() {
                         )
                     }
                 }
-
         }
     }
 

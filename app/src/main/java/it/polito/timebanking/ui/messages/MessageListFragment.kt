@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentMessagesBinding
+import it.polito.timebanking.model.rating.RateData
 import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.chat.JobViewModel
 import it.polito.timebanking.model.chat.MessageViewModel
@@ -102,7 +104,7 @@ class MessageListFragment : Fragment() {
                 binding.writeMessage.setText("")
             } else
                 Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
-
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate",System.currentTimeMillis())
         }
 
         binding.buttonOffer.setOnClickListener {
@@ -161,7 +163,7 @@ class MessageListFragment : Fragment() {
                 }
         }
 
-        binding.buttonReject.setOnClickListener{
+        binding.buttonReject.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots")
                 .document(job.timeslotID)
                 .set(timeslot).addOnSuccessListener {
@@ -169,10 +171,10 @@ class MessageListFragment : Fragment() {
                 }
         }
 
-        binding.buttonJobStart.setOnClickListener{
+        binding.buttonJobStart.setOnClickListener {
             updateJobStatus(JobStatus.STARTED, "Job is STARTED")
         }
-        binding.buttonJobEnd.setOnClickListener{
+        binding.buttonJobEnd.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots")
                 .document(job.timeslotID)
                 .set(timeslot).addOnSuccessListener {
@@ -180,154 +182,127 @@ class MessageListFragment : Fragment() {
                 }
         }
 
-        binding.buttonRate.setOnClickListener{
+        binding.buttonRate.setOnClickListener {
             val dialog = AlertDialog.Builder(context)
             val dialogView = layoutInflater.inflate(R.layout.dialog_rate_user, null)
             dialog.setTitle("Rating")
             dialog.setView(dialogView)
 
             dialog.setPositiveButton("Confirm") { _, _ ->
-                val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toInt()
+                val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toLong()
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
+                val rate: RateData
                 if (userIsProducer) {
-                    if (job.jobStatus == JobStatus.DONE)
-                        updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                    else {
-                        updateJobStatus(JobStatus.RATED_BY_PRODUCER,"Job was RATED (by producer)")
-                        updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
-                    }
+                    rate = RateData(
+                        rating*10,
+                        comment,
+                        timeslot.title,
+                        job.userProducerID,
+                        job.userConsumerID,
+                        false
+                    )
+                    FirebaseFirestore.getInstance().collection("ratings").add(rate)
+                        .addOnSuccessListener {
+                            Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
+                        }
                 } else {
-                    if (job.jobStatus == JobStatus.DONE)
-                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
-                    else {
-                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
-                        updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
-                    }
+                    rate = RateData(
+                        rating*10,
+                        comment,
+                        timeslot.title,
+                        job.userConsumerID,
+                        job.userProducerID,
+                        true
+                    )
+                    FirebaseFirestore.getInstance().collection("ratings").add(rate)
+                        .addOnSuccessListener {
+                            FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update(
+                                "jobsRated",FieldValue.increment(1),"score",FieldValue.increment(rating))
+                            Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT)
+                                .show()
+                        }
                 }
             }
-            dialog.setNegativeButton("Cancel") { _, _ -> }
-            dialog.create().show()
-        }
+
+            if (userIsProducer) {
+                if (job.jobStatus == JobStatus.DONE)
+                    updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
+                else {
+                    updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
+                    updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                }
+            } else {
+                if (job.jobStatus == JobStatus.DONE)
+                    updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
+                else {
+                    updateJobStatus(
+                        JobStatus.RATED_BY_CONSUMER,
+                        "The job was RATED (by consumer)"
+                    )
+                    updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                }
+            }
+        dialog.setNegativeButton("Cancel") { _, _ -> }
+        dialog.create().show()
     }
+}
 
     private fun enoughTime(userTime: Long): Boolean {
-        return timeslot.duration <= userTime
-    }
+    return timeslot.duration <= userTime
+}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+}
 
-    private fun updateJobStatus(status: JobStatus, message: String) {
-        FirebaseFirestore.getInstance().collection("jobs").document(jobID)
-            .update("jobStatus", status).addOnSuccessListener {
-                vmMessages.addMessage(
-                    userID,
-                    jobID,
-                    message,
-                    System.currentTimeMillis(),
-                    true
-                )
-            }
-    }
+private fun updateJobStatus(status: JobStatus, message: String) {
+    FirebaseFirestore.getInstance().collection("jobs").document(jobID)
+        .update("jobStatus", status,"lastUpdate",System.currentTimeMillis()).addOnSuccessListener {
+            vmMessages.addMessage(
+                userID,
+                jobID,
+                message,
+                System.currentTimeMillis(),
+                true
+            )
+        }
+}
 
-    private fun updateButtons() {
-        when (job.jobStatus) {
-            JobStatus.INIT -> {
-                if (userIsProducer) {
-                    updateButtonStatus(
-                        requested = false,
-                        accept = false,
-                        reject = false,
-                        start = false,
-                        end = false,
-                        rate = false
-                    )
-                } else {
-                    // TODO calculate if user has money
-                    updateButtonStatus(
-                        requested = true,
-                        accept = false,
-                        reject = false,
-                        start = false,
-                        end = false,
-                        rate = false
-                    )
-                }
-            }
-            JobStatus.REQUESTED -> {
-                if (userIsProducer) {
-                    updateButtonStatus(
-                        requested = false,
-                        accept = true,
-                        reject = true,
-                        start = false,
-                        end = false,
-                        rate = false
-                    )
-                } else {
-                    updateButtonStatus(
-                        requested = false,
-                        accept = false,
-                        reject = false,
-                        start = false,
-                        end = false,
-                        rate = false
-                    )
-                }
-            }
-            JobStatus.ACCEPTED -> {
+private fun updateButtons() {
+    when (job.jobStatus) {
+        JobStatus.INIT -> {
+            if (userIsProducer) {
                 updateButtonStatus(
                     requested = false,
                     accept = false,
                     reject = false,
-                    start = !userIsProducer,
+                    start = false,
+                    end = false,
+                    rate = false
+                )
+            } else {
+                updateButtonStatus(
+                    requested = true,
+                    accept = false,
+                    reject = false,
+                    start = false,
                     end = false,
                     rate = false
                 )
             }
-            JobStatus.STARTED -> {
+        }
+        JobStatus.REQUESTED -> {
+            if (userIsProducer) {
                 updateButtonStatus(
                     requested = false,
-                    accept = false,
-                    reject = false,
+                    accept = true,
+                    reject = true,
                     start = false,
-                    end = true,
+                    end = false,
                     rate = false
                 )
-            }
-            JobStatus.DONE -> {
-                updateButtonStatus(
-                    requested = false,
-                    accept = false,
-                    reject = false,
-                    start = false,
-                    end = false,
-                    rate = true
-                )
-            }
-            JobStatus.RATED_BY_CONSUMER -> {
-                updateButtonStatus(
-                    requested = false,
-                    accept = false,
-                    reject = false,
-                    start = false,
-                    end = false,
-                    rate = userIsProducer
-                )
-            }
-            JobStatus.RATED_BY_PRODUCER -> {
-                updateButtonStatus(
-                    requested = false,
-                    accept = false,
-                    reject = false,
-                    start = false,
-                    end = false,
-                    rate = !userIsProducer
-                )
-            }
-            else -> {
+            } else {
                 updateButtonStatus(
                     requested = false,
                     accept = false,
@@ -338,23 +313,84 @@ class MessageListFragment : Fragment() {
                 )
             }
         }
+        JobStatus.ACCEPTED -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = !userIsProducer,
+                end = false,
+                rate = false
+            )
+        }
+        JobStatus.STARTED -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = false,
+                end = true,
+                rate = false
+            )
+        }
+        JobStatus.DONE -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = false,
+                end = false,
+                rate = true
+            )
+        }
+        JobStatus.RATED_BY_CONSUMER -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = false,
+                end = false,
+                rate = userIsProducer
+            )
+        }
+        JobStatus.RATED_BY_PRODUCER -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = false,
+                end = false,
+                rate = !userIsProducer
+            )
+        }
+        else -> {
+            updateButtonStatus(
+                requested = false,
+                accept = false,
+                reject = false,
+                start = false,
+                end = false,
+                rate = false
+            )
+        }
     }
+}
 
-    private fun updateButtonStatus(
-        requested: Boolean,
-        accept: Boolean,
-        reject: Boolean,
-        start: Boolean,
-        end: Boolean,
-        rate: Boolean
-    ) {
+private fun updateButtonStatus(
+    requested: Boolean,
+    accept: Boolean,
+    reject: Boolean,
+    start: Boolean,
+    end: Boolean,
+    rate: Boolean
+) {
 
-        binding.buttonRequest.visibility = if (requested) View.VISIBLE else View.GONE
-        binding.buttonAccept.visibility = if (accept) View.VISIBLE else View.GONE
-        binding.buttonReject.visibility = if (reject) View.VISIBLE else View.GONE
-        binding.buttonJobStart.visibility = if (start) View.VISIBLE else View.GONE
-        binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
-        binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
-    }
+    binding.buttonRequest.visibility = if (requested) View.VISIBLE else View.GONE
+    binding.buttonAccept.visibility = if (accept) View.VISIBLE else View.GONE
+    binding.buttonReject.visibility = if (reject) View.VISIBLE else View.GONE
+    binding.buttonJobStart.visibility = if (start) View.VISIBLE else View.GONE
+    binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
+    binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
+}
 
 }

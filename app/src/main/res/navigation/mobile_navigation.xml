@@ -71,6 +71,13 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/show_to_ratings"
+            app:destination="@id/ratingsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -79,10 +86,10 @@
         <action
             android:id="@+id/edit_profile_to_edit_skill"
             app:destination="@id/editProfileSkillFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out" />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/allSkillFragment"
@@ -126,7 +133,11 @@
         tools:layout="@layout/fragment_offer_detail">
         <action
             android:id="@+id/offer_to_job"
-            app:destination="@id/jobFragment" />
+            app:destination="@id/jobFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/consumingJobsFragment"
@@ -135,7 +146,11 @@
         tools:layout="@layout/fragment_consuming_jobs">
         <action
             android:id="@+id/consuming_to_job"
-            app:destination="@id/jobFragment" />
+            app:destination="@id/jobFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/jobFragment"
@@ -151,7 +166,11 @@
         android:label="Favorites">
         <action
             android:id="@+id/favoritesToDetail"
-            app:destination="@id/offerDetailFragment" />
+            app:destination="@id/offerDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/producingJobFragment"
@@ -160,7 +179,16 @@
         tools:layout="@layout/fragment_producing_jobs">
         <action
             android:id="@+id/producing_to_job"
-            app:destination="@id/jobFragment" />
+            app:destination="@id/jobFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/ratingsFragment"
+        android:name="it.polito.timebanking.ui.user_profile.RatingsFragment"
+        android:label="My Ratings"
+        tools:layout="@layout/fragment_ratings" />
 
 </navigation>

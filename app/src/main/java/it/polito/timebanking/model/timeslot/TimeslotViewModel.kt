@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val oneDay = 86400000
     fun get(id: String): LiveData<TimeslotData> {
         val timeslot = MutableLiveData<TimeslotData>()
 
@@ -30,7 +31,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
             .whereEqualTo("available", true)
             .addSnapshotListener { u, _ ->
                 if (u != null) {
-                    offers.value = u.filter { it.toTimeslotData().date + 86399999 >= System.currentTimeMillis() }
+                    offers.value = u.filter { it.toTimeslotData().date + oneDay >= System.currentTimeMillis() }
                         .map { Pair(it.id, it.toTimeslotData()) }
                 }
             }

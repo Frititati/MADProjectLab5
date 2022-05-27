@@ -18,7 +18,7 @@ import it.polito.timebanking.model.chat.JobViewModel
 class ProducingJobsFragment : Fragment() {
     private var _binding: FragmentProducingJobsBinding? = null
     private val binding get() = _binding!!
-    private var chatListAdapter = ProducingListAdapter()
+    private var chatListAdapter = ProducingJobsAdapter()
     private val vm by viewModels<JobViewModel>()
 
     override fun onCreateView(
