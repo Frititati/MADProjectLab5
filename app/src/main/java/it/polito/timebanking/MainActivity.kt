@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         val drawerLayout = binding.drawerLayout
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
         val navController = navHostFragment.navController
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.favoritesListFragment, R.id.consumingJobsFragment, R.id.producingJobFragment), drawerLayout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
                             Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic,firebaseUserID))).putBytes(it)
                         }
-                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", listOf<String>(), startingTime, 0, 0))
+                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, 0, 0))
                     binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")
 
                 } else {
@@ -128,8 +128,8 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     }
 
     override fun updateIMG(url: String) {
-        Firebase.storage.getReferenceFromUrl(url).getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
+        Firebase.storage.getReferenceFromUrl(url).getBytes(1024 * 1024).addOnSuccessListener {
+                binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
             }
     }
 

@@ -26,7 +26,7 @@ import java.util.*
 class OffersListFragment : Fragment() {
 
     private var _binding: FragmentOffersBinding? = null
-    private val offersListAdapter = OffersListAdapter("Watch")
+    private val offersListAdapter = OffersListAdapter()
     private val binding get() = _binding!!
     private val vmTimeslot by viewModels<TimeslotViewModel>()
     private lateinit var listener: NavBarUpdater
@@ -173,7 +173,6 @@ class OffersListFragment : Fragment() {
         dialog.setPositiveButton("Done") { _, _ ->
             val n = offersListAdapter.filterByDuration(numberPicker.value)
             if (n == 0) {
-                binding.nothingToShow.isVisible = true
                 binding.nothingToShow.text = String.format(
                     resources.getString(R.string.no_offers_duration),
                     numberPicker.value

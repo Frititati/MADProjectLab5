@@ -17,12 +17,12 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(), Filterable {
-    private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
-    private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
+class OffersListAdapter : RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(), Filterable {
+    private var timeslots = mutableListOf<Pair<String, TimeslotData>>()
+    private var timeslotsFull = mutableListOf<Pair<String, TimeslotData>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
-        return OfferListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false), mode)
+        return OfferListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false))
     }
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
@@ -38,14 +38,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun addTimeslots(inTimeslot: Pair<String, TimeslotData>) {
-        timeslots.add(inTimeslot)
-        timeslotsFull.add(inTimeslot)
-        notifyDataSetChanged()
-    }
-
-    class OfferListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
+    class OfferListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val rootView = v
         private val title = v.findViewById<TextView>(R.id.title)
         private val location = v.findViewById<TextView>(R.id.location)
@@ -60,9 +53,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
             free.isVisible = timeslot.duration == 0L
 
             button.setOnClickListener {
-                if (mode == "Watch") rootView.findNavController().navigate(R.id.offers_to_offer, bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy))
-                Snackbar.make(it, "Details about ${title.text}", 1500).show()
-                if (mode == "Fav") rootView.findNavController().navigate(R.id.favoritesToDetail, bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy))
+                rootView.findNavController().navigate(R.id.offers_to_offer, bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy))
                 Snackbar.make(it, "Details about ${title.text}", 1500).show()
             }
         }
@@ -74,7 +65,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
 
     private val exampleFilter: Filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence): FilterResults {
-            var filteredList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
+            var filteredList = mutableListOf<Pair<String, TimeslotData>>()
             if (constraint.isEmpty()) filteredList.addAll(timeslotsFull)
             else {
                 val pattern = constraint.toString().lowercase().trim()
@@ -88,7 +79,7 @@ class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersL
         @SuppressLint("NotifyDataSetChanged")
         override fun publishResults(p0: CharSequence?, results: FilterResults) {
             timeslots.clear()
-            timeslots.addAll(results.values as MutableList<Pair<String, TimeslotData>>)
+            timeslots.addAll(results.values as MutableList<Pair<String,TimeslotData>>)
             notifyDataSetChanged()
         }
     }

@@ -2,6 +2,7 @@ package it.polito.timebanking.ui.user_profile
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,6 +21,7 @@ class RatingsFragment : Fragment() {
     private var higher = 1
     private var lower = 2
     private var showingReceived = true
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
     private var ratingList = emptyList<Pair<String, RateData>>()
     private val rateVM by viewModels<RateViewModel>()
 
@@ -36,10 +38,12 @@ class RatingsFragment : Fragment() {
         binding.rateListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.rateListRecycler.adapter = ratingsListAdapter
 
-        rateVM.getRatings(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
-                ratingList = it
-                ratingsListAdapter.setRatings(it as MutableList<Pair<String, RateData>>, showingReceived)
-            }
+        rateVM.getRatings(firebaseUserID).observe(viewLifecycleOwner) {
+            ratingList = it
+            binding.nothingToShow.isVisible = it.isEmpty()
+            binding.nothingToShow.text = if (showingReceived) String.format(resources.getString(R.string.no_ratings, "Received")) else String.format(resources.getString(R.string.no_ratings, "Given"))
+            ratingsListAdapter.setRatings(it as MutableList<Pair<String, RateData>>, showingReceived)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +65,21 @@ class RatingsFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_received_ratings -> {
                 showingReceived = true
-                ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
+                val n = ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
+                if (n == 0) {
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_ratings, "Received"))
+                    binding.nothingToShow.isVisible = true
+                }
                 requireActivity().invalidateOptionsMenu()
                 true
             }
             R.id.action_given_ratings -> {
                 showingReceived = false
-                ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
+                val n = ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
+                if (n == 0) {
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_ratings, "Given"))
+                    binding.nothingToShow.isVisible = true
+                }
                 requireActivity().invalidateOptionsMenu()
                 true
             }

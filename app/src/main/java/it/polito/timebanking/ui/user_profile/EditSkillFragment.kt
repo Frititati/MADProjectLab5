@@ -24,12 +24,10 @@ import it.polito.timebanking.model.skill.toSkillData
 class EditSkillFragment : Fragment() {
     private var _binding: FragmentEditSkillBinding? = null
     private val binding get() = _binding!!
-    private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
     private val vm by viewModels<SkillViewModel>()
     private var editableSkillListAdapter = EditSkillAdapter()
     private val allSkills = mutableListOf<SkillData>()
-    private var newSkill = ""
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,6 +39,7 @@ class EditSkillFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.buttonAdd.useCompatPadding = false
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = editableSkillListAdapter
         vm.get().observe(viewLifecycleOwner) {
@@ -66,7 +65,7 @@ class EditSkillFragment : Fragment() {
 
     private fun updateAllSkills() {
         FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
-            val map: MutableList<Pair<String, SkillData>> = mutableListOf()
+            val map = mutableListOf<Pair<String, SkillData>>()
             for (document in documents) {
                 map.add(Pair(document.id, document.toSkillData()))
                 allSkills.add(SkillData(document.get("title").toString()))
@@ -82,7 +81,6 @@ class EditSkillFragment : Fragment() {
         }
     }
 
-
     private fun createDialog() {
         editableSkillListAdapter.setEmptyLists()
         val dialog = AlertDialog.Builder(context)
@@ -95,23 +93,23 @@ class EditSkillFragment : Fragment() {
         dialogConfirm.setView(dialogConfirmView)
 
         dialog.setPositiveButton("Done") { _, _ ->
-            newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString().trim()
+            val newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString().trim()
             if (newSkill.isEmpty()) {
                 Toast.makeText(context, "Cannot create empty skill", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
             } else if (isUnique(allSkills, newSkill)) {
-                Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
             } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
                 dialogConfirm.setPositiveButton("Yes") { _, _ ->
-                    createNewSkill()
+                    createNewSkill(newSkill)
                 }
                 dialogConfirm.setNegativeButton("No") { _, _ ->
                     updateAllSkills()
                 }
                 dialogConfirm.create().show()
             } else {
-                createNewSkill()
+                createNewSkill(newSkill)
             }
         }
         dialog.setNegativeButton("Cancel") { _, _ ->
@@ -124,12 +122,12 @@ class EditSkillFragment : Fragment() {
 
     }
 
-    private fun createNewSkill() {
+    private fun createNewSkill(newSkill:String) {
         FirebaseFirestore.getInstance().collection("skills").add(SkillData(newSkill)).addOnSuccessListener {
             updateAllSkills()
             Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
         }.addOnFailureListener {
-            Snackbar.make(binding.root, "Skill BAD", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "Problems with skill, please retry", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -193,7 +191,6 @@ class EditSkillFragment : Fragment() {
         var x = 0
         var tempt: String?
         val len = s!!.length
-
 
         for (i in 1..wordCount(t)) {
             tempt = splitString(t, i)
@@ -260,8 +257,7 @@ class EditSkillFragment : Fragment() {
 
     private fun splitString(s: String, n: Int): String? {
         var index: Int
-        var temp: String
-        temp = s
+        var temp = s
         var temp2: String? = null
         val temp3 = 0
         for (i in 0 until n) {

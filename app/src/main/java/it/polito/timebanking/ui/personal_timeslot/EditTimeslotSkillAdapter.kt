@@ -12,8 +12,8 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.toSkillData
 
 class EditTimeslotSkillAdapter : RecyclerView.Adapter<EditTimeslotSkillAdapter.SkillListViewHolder>() {
-    private var availableSkills: MutableList<String> = mutableListOf()
-    private var timeslotSkills: MutableList<String> = mutableListOf()
+    private var availableSkills = mutableListOf<String>()
+    private var timeslotSkills = mutableListOf<String>()
     private var timeslotID = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {

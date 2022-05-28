@@ -32,10 +32,11 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         private val image = v.findViewById<ImageView>(R.id.userImageOnRate)
         private val name = v.findViewById<TextView>(R.id.ratePerson)
         private val cardView = v.findViewById<CardView>(R.id.rating_card_view)
+        private val div = 10.0
 
         fun bind(rating: RateData, context: Context) {
-            score.text = (rating.score / 10.0).toString()
-            setCardBackground(rating.score / 10.0, cardView, context)
+            score.text = (rating.score / div).toString()
+            setCardBackground(rating.score / div, cardView, context)
             FirebaseFirestore.getInstance().collection("users").document(rating.senderID).get().addOnSuccessListener {
                     name.text = it.toUserProfileData().fullName
                 }
@@ -74,10 +75,11 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setRatings(ratings: MutableList<Pair<String, RateData>>, received: Boolean) {
+    fun setRatings(ratings: MutableList<Pair<String, RateData>>, received: Boolean):Int {
         allRates = if (received) ratings.filter { it.second.receiverID == firebaseUserID }.toMutableList()
         else ratings.filter { it.second.senderID == firebaseUserID }.toMutableList()
         notifyDataSetChanged()
+        return allRates.size
     }
 
     override fun getItemCount(): Int {

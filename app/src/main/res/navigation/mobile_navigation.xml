@@ -161,18 +161,6 @@
             app:destination="@id/offerDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/favoritesListFragment"
-        android:name="it.polito.timebanking.ui.offers.FavoritesListFragment"
-        android:label="Favorites">
-        <action
-            android:id="@+id/favoritesToDetail"
-            app:destination="@id/offerDetailFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
         android:id="@+id/producingJobFragment"
         android:name="it.polito.timebanking.ui.messages.ProducingJobsFragment"
         android:label="Your Job Requests"

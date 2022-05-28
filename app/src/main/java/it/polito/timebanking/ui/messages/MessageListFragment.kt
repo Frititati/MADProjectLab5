@@ -2,6 +2,7 @@ package it.polito.timebanking.ui.messages
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -150,14 +151,15 @@ class MessageListFragment : Fragment() {
             dialog.setPositiveButton("Confirm") { _, _ ->
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toLong()
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
-                val rate: RateData
+                val mul = 10
+                Log.d("test","${rating*mul}")
                 if (userIsProducer) {
-                    rate = RateData(rating * 10, comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
+                    val rate = RateData(rating * mul, comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                             Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                         }
                 } else {
-                    rate = RateData(rating * 10, comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
+                    val rate = RateData(rating * mul, comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                             FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
                             Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
@@ -169,13 +171,13 @@ class MessageListFragment : Fragment() {
                 if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                 else {
                     updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                    updateJobStatus(JobStatus.COMPLETED, "The job is concluded")
+                    updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
                 }
             } else {
                 if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                 else {
                     updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
-                    updateJobStatus(JobStatus.COMPLETED, "The job is concluded")
+                    updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
                 }
             }
             dialog.setNegativeButton("Cancel") { _, _ -> }

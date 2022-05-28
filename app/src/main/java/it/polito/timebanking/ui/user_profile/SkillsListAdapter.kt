@@ -11,8 +11,8 @@ import it.polito.timebanking.model.skill.SkillData
 
 
 class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewHolder>() {
-    private var allSkills: Map<String, SkillData> = emptyMap()
-    private var userSkills: MutableList<String> = mutableListOf()
+    private var allSkills = emptyMap<String, SkillData>()
+    private var userSkills = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillsListViewHolder {
         return SkillsListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_skills_list, parent, false))
@@ -44,7 +44,7 @@ class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewH
     }
 
     class SkillsListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val sv: TextView = v.findViewById(R.id.skill)
+        private val sv = v.findViewById<TextView>(R.id.skill)
         fun bind(skillName: String) {
             sv.text = skillName
         }

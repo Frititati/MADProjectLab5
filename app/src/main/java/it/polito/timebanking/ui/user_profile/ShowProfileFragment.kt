@@ -107,7 +107,7 @@ class ShowProfileFragment : Fragment() {
 
     private fun updateAllSkills() {
         FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
-                val map: MutableMap<String, SkillData> = mutableMapOf()
+                val map = mutableMapOf<String, SkillData>()
                 for (document in documents) {
                     map[document.id] = document.toSkillData()
                 }

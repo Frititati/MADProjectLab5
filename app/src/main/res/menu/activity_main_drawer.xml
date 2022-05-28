@@ -17,10 +17,6 @@
             android:icon="@android:drawable/ic_dialog_info"
             android:title="@string/my_profile" />
         <item
-            android:id="@+id/favoritesListFragment"
-            android:icon="@android:drawable/btn_star"
-            android:title="@string/favorites" />
-        <item
             android:id="@+id/consumingJobsFragment"
             android:icon="@drawable/ic_requested_job"
             android:title="@string/requestedJobs" />

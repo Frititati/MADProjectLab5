@@ -35,6 +35,9 @@ class TimeslotListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        binding.buttonAdd.useCompatPadding = false
         val timeslotListAdapter = TimeslotListAdapter()
         binding.timeslotRecycler.layoutManager = LinearLayoutManager(activity)
         binding.timeslotRecycler.adapter = timeslotListAdapter

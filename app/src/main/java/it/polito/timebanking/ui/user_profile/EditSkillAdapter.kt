@@ -15,8 +15,8 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.SkillData
 
 class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {
-    private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
-    private var userSkills: MutableList<String> = mutableListOf()
+    private var allSkills = mutableListOf<Pair<String, SkillData>> ()
+    private var userSkills = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
         return SkillListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_edit_profile_skill, parent, false))
@@ -52,7 +52,7 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
     class SkillListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
-        private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+        private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
         fun bind(id: String, skill: SkillData, is_selected: Boolean) {
             checkBox.text = skill.title

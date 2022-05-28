@@ -13,7 +13,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.SkillData
 
 class AllSkillsAdapter : RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolder>() {
-    private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
+    private var allSkills = mutableListOf<Pair<String, SkillData>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
         return SkillListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_all_skills, parent, false))

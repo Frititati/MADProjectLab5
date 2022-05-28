@@ -16,7 +16,7 @@ import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
 class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotListViewHolder>() {
-    private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
+    private var timeslots = mutableListOf<Pair<String, TimeslotData>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeslotListViewHolder {
         return TimeslotListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_timeslot_list_personal, parent, false))

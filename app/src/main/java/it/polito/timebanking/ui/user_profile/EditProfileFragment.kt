@@ -36,8 +36,7 @@ class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private lateinit var drawerListener: NavBarUpdater
-    private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
-    private var favList = listOf<String>()
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -58,7 +57,6 @@ class EditProfileFragment : Fragment() {
             binding.email.hint = emailFormatter(it.email)
             binding.location.hint = locationFormatter(it.location)
             binding.description.hint = descriptionFormatter(it.description)
-            favList = it.favorites.map { f -> f.toString() }
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                     binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                 }
@@ -79,7 +77,7 @@ class EditProfileFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         thread {
-            vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim(), favList)
+            vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim())
         }
         if (binding.fullName.text.toString().isNotEmpty()) drawerListener.updateFName(binding.fullName.text.toString())
     }

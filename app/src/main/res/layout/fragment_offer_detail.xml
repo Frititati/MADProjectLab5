@@ -6,12 +6,13 @@
     android:layout_height="wrap_content"
     tools:context=".ui.offers.OfferDetailFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/timeslotLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -19,7 +20,9 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/shape"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/TitleTooltip"
@@ -32,8 +35,8 @@
             <TextView
                 android:id="@+id/Title"
                 android:layout_width="fill_parent"
-                android:text="@string/no_info"
                 android:layout_height="wrap_content"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
             <TextView
@@ -84,9 +87,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:textStyle="bold"
                 android:text="@string/no_info"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/LocationTooltip"
@@ -109,16 +112,19 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/userLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
             android:padding="10dp"
-            android:layout_marginBottom="20dp">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeslotLayout">
 
             <TextView
                 android:id="@+id/UserNicknameTooltip"
@@ -133,8 +139,8 @@
                 android:id="@+id/UserFullName"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/no_info"
                 android:layout_marginBottom="10dp"
+                android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <TextView
@@ -162,9 +168,9 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/descriptionTooltip"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:drawableLeftCompat="@drawable/ic_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/email"
-                app:drawableLeftCompat="@drawable/ic_info" />
+                app:layout_constraintTop_toBottomOf="@+id/email" />
 
             <TextView
                 android:id="@+id/UserDescription"
@@ -173,6 +179,7 @@
                 android:text="@string/no_info"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toStartOf="parent" />
+
             <TextView
                 android:id="@+id/RatingTooltip"
                 android:layout_width="match_parent"
@@ -196,18 +203,18 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/chatStartButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="@color/Blue_Orchid"
             android:contentDescription="@string/myChat"
-            android:focusable="true"
-            app:tint="@color/AntiqueWhite"
-            android:src="@drawable/ic_chat_bubble"
-            app:backgroundTint="@color/Ocean_Blue" />
+            app:srcCompat="@drawable/ic_chat"
+            app:tint="@color/White"
+            app:useCompatPadding="true" />
 
-    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+    </ScrollView>

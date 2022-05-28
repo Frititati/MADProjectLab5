@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.ProducingListViewHolder>() {
-    private var allJobs: MutableList<Pair<String, JobData>> = mutableListOf()
+    private var allJobs = mutableListOf<Pair<String, JobData>>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int

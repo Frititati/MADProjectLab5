@@ -42,11 +42,10 @@
     <string name="enter_location">Enter location…</string>
     <string name="enter_message">Message…</string>
     <string name="enter_nickname">Enter nickname…</string>
-    <string name="favorites">Favorites</string>
     <string name="filterBy">Filter by…</string>
     <string name="firebaseClientId">725588390853-r6vjbmnnf5aj4j4vj25qj3n4pmmve1o2.apps.googleusercontent.com</string>
-    <string name="firebaseDefaultPic">gs://madproject-3381c.appspot.com/user.png></string>
-    <string name="firebaseUserPic">gs://madproject-3381c.appspot.com/user_profile_picture/%s.png</string>
+    <string name="firebaseDefaultPic">gs://madproject-3381c.appspot.com/user.png</string>
+    <string name="firebaseUserPic">gs://madproject-3381c.appspot.com/users_profile_pics/%s.png</string>
     <string name="free">FREE</string>
     <string name="fullNameTooltip">Full Name</string>
     <string name="full_name">Your full name</string>
@@ -78,7 +77,6 @@
     <string name="nicknameTooltip">Nickname</string>
     <string name="no">No</string>
     <string name="no_consuming_jobs">You don\'t have any request</string>
-    <string name="no_favorites">You haven\'t set any favorites yet</string>
     <string name="no_info">Not specified</string>
     <string name="no_jobs_with_status">You don\'t have any %s job</string>
     <string name="no_offers_date">No offer on %s/%s/%s was found</string>
@@ -87,6 +85,7 @@
     <string name="no_producing_jobs">You don\'t have any work to do</string>
     <string name="no_skills">No skills available</string>
     <string name="no_timeslots">You don\'t have any timeslots</string>
+    <string name="no_ratings">No %s ratings found</string>
     <string name="offer">See Offer</string>
     <string name="optional_comment">Optional comment…</string>
     <string name="rate">Rate</string>

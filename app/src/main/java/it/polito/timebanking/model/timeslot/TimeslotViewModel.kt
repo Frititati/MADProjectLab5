@@ -50,7 +50,7 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
     fun update(
         id: String, title: String, description: String, date: Long, duration: String, location: String
     ) {
-        val data: MutableMap<String, Any> = mutableMapOf()
+        val data = mutableMapOf<String, Any>()
         if (title.isNotEmpty()) {
             data["title"] = title
         }

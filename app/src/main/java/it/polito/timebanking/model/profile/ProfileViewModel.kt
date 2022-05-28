@@ -21,7 +21,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
 
     fun update(
-        id: String, fullName: String?, nickname: String?, age: Long?, email: String?, location: String?, description: String?, favList: List<String>
+        id: String, fullName: String?, nickname: String?, age: Long?, email: String?, location: String?, description: String?
     ) {
         val data = mutableMapOf<String, Any>()
 
@@ -53,7 +53,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         if (age != null) {
             data["age"] = age
         }
-        data["favorites"] = favList
         FirebaseFirestore.getInstance().collection("users").document(id).update(data as Map<String, Any>)
     }
 }

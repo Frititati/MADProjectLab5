@@ -13,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
 import it.polito.timebanking.model.chat.JobData
-import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
 import it.polito.timebanking.model.timeslot.*
@@ -22,10 +21,8 @@ import it.polito.timebanking.ui.messages.JobStatus
 class OfferDetailFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()
     private var _binding: FragmentOfferDetailBinding? = null
-    private var favList = mutableListOf<String>()
     private val binding get() = _binding!!
     private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
-    private var fav = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -55,18 +52,6 @@ class OfferDetailFragment : Fragment() {
                 binding.Location.text = locationFormatter(it.location)
             }
         }
-        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { d ->
-            val myList = d.get("favorites") as MutableList<*>
-            favList = myList.map { it.toString() }.toMutableList()
-            if (favList.contains(idTimeslot)) {
-                fav = 1
-                requireActivity().invalidateOptionsMenu()
-            }
-            if (firebaseUserID == otherUserID) {
-                fav = 2
-                requireActivity().invalidateOptionsMenu()
-            }
-        }
 
         binding.chatStartButton.isVisible = firebaseUserID != otherUserID
 
@@ -91,59 +76,8 @@ class OfferDetailFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        when (fav) {
-            1 -> {
-                menu.findItem(R.id.action_fav_on).isVisible = true
-                menu.findItem(R.id.action_fav_off).isVisible = false
-            }
-            0 -> {
-                menu.findItem(R.id.action_fav_on).isVisible = false
-                menu.findItem(R.id.action_fav_off).isVisible = true
-            }
-            else -> {
-                menu.findItem(R.id.action_fav_on).isVisible = false
-                menu.findItem(R.id.action_fav_off).isVisible = false
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_fav_off -> {
-                fav = 1
-                requireActivity().invalidateOptionsMenu()
-                favList.add(requireArguments().getString("id_timeslot").toString())
-                updateUserData(favList)
-                Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
-            }
-            R.id.action_fav_on -> {
-                fav = 0
-                requireActivity().invalidateOptionsMenu()
-                favList.remove(requireArguments().getString("id_timeslot").toString())
-                updateUserData(favList)
-                Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun updateUserData(newFavList: List<String>) {
-        val vm by viewModels<ProfileViewModel>()
-        vm.get(firebaseUserID).observe(viewLifecycleOwner) {
-            it.favorites = newFavList
-            vm.update(firebaseUserID, it.fullName, it.nickName, it.age, it.email, it.location, it.description, newFavList)
-        }
     }
 }
