@@ -30,32 +30,28 @@ class AllSkillsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_UNLOCKED
-        )
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         _binding = FragmentSkillListBinding.inflate(inflater, container, false)
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    val dialog = AlertDialog.Builder(context)
-                    val dialogView = layoutInflater.inflate(R.layout.dialog_generic, null)
-                    dialog.setTitle("Are you sure you want to quit?")
-                    dialog.setView(dialogView)
-                    dialog.setPositiveButton("Yes") { _, _ ->
-                        val intent = Intent(Intent.ACTION_MAIN)
-                        intent.addCategory(Intent.CATEGORY_HOME)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
-                    }
-
-                    dialog.setNegativeButton("NO") { _, _ ->
-                    }
-                    dialog.create().show()
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val dialog = AlertDialog.Builder(context)
+                val dialogView = layoutInflater.inflate(R.layout.dialog_generic, null)
+                dialog.setTitle("Are you sure you want to quit?")
+                dialog.setView(dialogView)
+                dialog.setPositiveButton("Yes") { _, _ ->
+                    val intent = Intent(Intent.ACTION_MAIN)
+                    intent.addCategory(Intent.CATEGORY_HOME)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
                 }
+
+                dialog.setNegativeButton("NO") { _, _ ->
+                }
+                dialog.create().show()
             }
+        }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         return binding.root

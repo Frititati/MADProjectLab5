@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.messages
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -26,16 +27,13 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
     private var allJobs: MutableList<Pair<String, JobData>> = mutableListOf()
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): ProducingListViewHolder {
-        return ProducingListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_jobs_list, parent, false)
-        )
+        return ProducingListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_jobs_list, parent, false))
     }
 
     override fun onBindViewHolder(holder: ProducingListViewHolder, position: Int) {
-        holder.bind(allJobs[position].first, allJobs[position].second)
+        holder.bind(allJobs[position].first, allJobs[position].second,holder.itemView.context)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -49,7 +47,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun filterBy(jobs: MutableList<Pair<String, JobData>>,status: JobStatus): Int {
+    fun filterBy(jobs: MutableList<Pair<String, JobData>>, status: JobStatus): Int {
         allJobs = jobs.filter { it.second.jobStatus == status }.toMutableList()
         notifyDataSetChanged()
         return allJobs.size
@@ -62,33 +60,21 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
         private val jobStatus = v.findViewById<TextView>(R.id.jobStatus)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
-        fun bind(jobID: String, job: JobData) {
-            val userID = FirebaseAuth.getInstance().currentUser!!.uid
-            val otherUserID = if (job.userProducerID == userID) job.userConsumerID
+        fun bind(jobID: String, job: JobData,context: Context) {
+            val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+            val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
             else job.userProducerID
 
-            FirebaseFirestore.getInstance().collection("users")
-                .document(otherUserID).get()
-                .addOnSuccessListener { otherUser ->
+            FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { otherUser ->
                     userName.text = otherUser.toUserProfileData().fullName
                     if (otherUser != null) {
-                        Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${otherUserID}.png")
-                            .getBytes(1024 * 1024)
-                            .addOnSuccessListener { pic ->
-                                image.setImageBitmap(
-                                    BitmapFactory.decodeByteArray(
-                                        pic,
-                                        0,
-                                        pic.size
-                                    )
-                                )
+                        Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic,otherUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                                image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                             }
                     }
                 }
 
-            FirebaseFirestore.getInstance().collection("timeslots")
-                .document(job.timeslotID).get()
-                .addOnSuccessListener { timeslot ->
+            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
                 }
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
@@ -98,16 +84,13 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
             }
 
             rootView.setOnClickListener {
-                rootView.findNavController()
-                    .navigate(
-                        R.id.producing_to_job,
-                        bundleOf(
-                            "otherUserName" to userName.text,
-                            "jobID" to jobID,
-                        )
-                    )
+                rootView.findNavController().navigate(R.id.producing_to_job, bundleOf(
+                        "otherUserName" to userName.text,
+                        "jobID" to jobID,
+                    ))
             }
         }
+
         private fun timeFormatter(time: Long): String {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time

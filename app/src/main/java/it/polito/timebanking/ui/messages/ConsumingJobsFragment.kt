@@ -17,12 +17,12 @@ class ConsumingJobsFragment : Fragment() {
     private var _binding: FragmentConsumingJobsBinding? = null
     private val binding get() = _binding!!
     private var jobsListAdapter = ConsumingJobsAdapter()
-    private var allJobs = mutableListOf<Pair<String,JobData>>()
+    private var allJobs = mutableListOf<Pair<String, JobData>>()
     private val jobVM by viewModels<JobViewModel>()
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConsumingJobsBinding.inflate(inflater, container, false)
         return binding.root
@@ -36,7 +36,7 @@ class ConsumingJobsFragment : Fragment() {
         binding.chatListRecycler.adapter = jobsListAdapter
         binding.nothingToShow.text = resources.getString(R.string.no_consuming_jobs)
 
-        jobVM.getConsumingJobs(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+        jobVM.getConsumingJobs(firebaseUserID).observe(viewLifecycleOwner) {
             jobsListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
             binding.nothingToShow.isVisible = it.isEmpty()
         }
@@ -65,10 +65,7 @@ class ConsumingJobsFragment : Fragment() {
                 val n = jobsListAdapter.filterBy(allJobs, JobStatus.REQUESTED)
                 if (n == 0) {
                     binding.nothingToShow.isVisible = true
-                    binding.nothingToShow.text = String.format(
-                        resources.getString(R.string.no_jobs_with_status),
-                        JobStatus.REQUESTED
-                    )
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_jobs_with_status), JobStatus.REQUESTED)
                 }
                 true
             }
@@ -77,10 +74,7 @@ class ConsumingJobsFragment : Fragment() {
                 val n = jobsListAdapter.filterBy(allJobs, JobStatus.ACCEPTED)
                 if (n == 0) {
                     binding.nothingToShow.isVisible = true
-                    binding.nothingToShow.text = String.format(
-                        resources.getString(R.string.no_jobs_with_status),
-                        JobStatus.ACCEPTED
-                    )
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_jobs_with_status), JobStatus.ACCEPTED)
                 }
                 true
             }
@@ -98,10 +92,7 @@ class ConsumingJobsFragment : Fragment() {
                 val n = jobsListAdapter.filterBy(allJobs, JobStatus.COMPLETED)
                 if (n == 0) {
                     binding.nothingToShow.isVisible = true
-                    binding.nothingToShow.text = String.format(
-                        resources.getString(R.string.no_jobs_with_status),
-                        JobStatus.COMPLETED
-                    )
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_jobs_with_status), JobStatus.COMPLETED)
                 }
                 true
             }

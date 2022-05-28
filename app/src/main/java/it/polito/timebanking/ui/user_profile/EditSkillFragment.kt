@@ -24,7 +24,7 @@ import it.polito.timebanking.model.skill.toSkillData
 class EditSkillFragment : Fragment() {
     private var _binding: FragmentEditSkillBinding? = null
     private val binding get() = _binding!!
-    private var firestoreUser = FirebaseAuth.getInstance().currentUser
+    private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
     private val vm by viewModels<SkillViewModel>()
     private var editableSkillListAdapter = EditSkillAdapter()
     private val allSkills = mutableListOf<SkillData>()
@@ -32,9 +32,7 @@ class EditSkillFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditSkillBinding.inflate(inflater, container, false)
         return binding.root
@@ -46,14 +44,13 @@ class EditSkillFragment : Fragment() {
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = editableSkillListAdapter
         vm.get().observe(viewLifecycleOwner) {
-            FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
-                .addOnSuccessListener { r ->
-                    if (r != null) {
-                        val myList = r.toUserProfileData().skills
-                        editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
-                    }
-                    editableSkillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
+            FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
+                if (r != null) {
+                    val myList = r.toUserProfileData().skills
+                    editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
                 }
+                editableSkillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
+            }
         }
 
         binding.buttonAdd.setOnClickListener {
@@ -68,23 +65,21 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun updateAllSkills() {
-        FirebaseFirestore.getInstance().collection("skills").get()
-            .addOnSuccessListener { documents ->
-                val map: MutableList<Pair<String, SkillData>> = mutableListOf()
-                for (document in documents) {
-                    map.add(Pair(document.id, document.toSkillData()))
-                    allSkills.add(SkillData(document.get("title").toString()))
-                }
-                editableSkillListAdapter.setSkills(map)
+        FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
+            val map: MutableList<Pair<String, SkillData>> = mutableListOf()
+            for (document in documents) {
+                map.add(Pair(document.id, document.toSkillData()))
+                allSkills.add(SkillData(document.get("title").toString()))
             }
+            editableSkillListAdapter.setSkills(map)
+        }
 
-        FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
-            .addOnSuccessListener { r ->
-                if (r != null) {
-                    val myList = r.toUserProfileData().skills
-                    editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
-                }
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
+            if (r != null) {
+                val myList = r.toUserProfileData().skills
+                editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
             }
+        }
     }
 
 
@@ -101,11 +96,10 @@ class EditSkillFragment : Fragment() {
 
         dialog.setPositiveButton("Done") { _, _ ->
             newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString().trim()
-            if(newSkill.isEmpty()){
-                Toast.makeText(context,"Cannot create empty skill",Toast.LENGTH_SHORT).show()
+            if (newSkill.isEmpty()) {
+                Toast.makeText(context, "Cannot create empty skill", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
-            }
-            else if (isUnique(allSkills, newSkill)) {
+            } else if (isUnique(allSkills, newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_LONG).show()
                 updateAllSkills()
             } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
@@ -131,17 +125,12 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun createNewSkill() {
-        FirebaseFirestore.getInstance().collection("skills")
-            .add(
-                SkillData(newSkill)
-            )
-            .addOnSuccessListener {
-                updateAllSkills()
-                Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Snackbar.make(binding.root, "Skill BAD", Snackbar.LENGTH_SHORT).show()
-            }
+        FirebaseFirestore.getInstance().collection("skills").add(SkillData(newSkill)).addOnSuccessListener {
+            updateAllSkills()
+            Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Snackbar.make(binding.root, "Skill BAD", Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     private fun isUnique(list: List<SkillData>, skill: String): Boolean {
@@ -152,23 +141,23 @@ class EditSkillFragment : Fragment() {
         val totalWord = wordCount(s)
         val total = 100
         val perWord = total / totalWord
-        var gotperw = 0
+        var gotW = 0
         if (s != t) {
             for (i in 1..totalWord) {
-                gotperw = if (simpleMatch(splitString(s, i), t) == 1) {
-                    perWord * (total - 10) / total + gotperw
+                gotW = if (simpleMatch(splitString(s, i), t) == 1) {
+                    perWord * (total - 10) / total + gotW
                 } else if (frontFullMatch(splitString(s, i), t) == 1) {
-                    perWord * (total - 20) / total + gotperw
+                    perWord * (total - 20) / total + gotW
                 } else if (anywhereMatch(splitString(s, i), t) == 1) {
-                    perWord * (total - 30) / total + gotperw
+                    perWord * (total - 30) / total + gotW
                 } else {
-                    perWord * smartMatch(splitString(s, i), t) / total + gotperw
+                    perWord * smartMatch(splitString(s, i), t) / total + gotW
                 }
             }
         } else {
-            gotperw = 100
+            gotW = 100
         }
-        return gotperw
+        return gotW
     }
 
     private fun anywhereMatch(s: String?, t: String): Int {
@@ -224,20 +213,15 @@ class EditSkillFragment : Fragment() {
     private fun smartMatch(ts: String?, tt: String): Int {
         val s: CharArray = ts!!.toCharArray()
         val t: CharArray = tt.toCharArray()
-        val slen = s.size
-        //number of 3 combinations per word//
-        val combs = slen - 3 + 1
-        //percentage per combination of 3 characters//
+        val sLen = s.size
+        val combs = sLen - 3 + 1
         var ppc = 0
-        if (slen >= 3) {
+        if (sLen >= 3) {
             ppc = 100 / combs
         }
-        //initialising an integer to store the total % this class genrate//
         var x = 0
-        //declaring a temporary new source char array
         val ns = CharArray(3)
-        //check if source char array has more then 3 characters//
-        if (slen >= 3) {
+        if (sLen >= 3) {
             for (i in 0 until combs) {
                 for (j in 0..2) {
                     ns[j] = s[j + i]
@@ -260,10 +244,8 @@ class EditSkillFragment : Fragment() {
             for (i in 0..z) {
                 for (j in s.indices) {
                     if (s[j] == t[j + i]) {
-                        // x=1 if any character matches
                         x = 1
                     } else {
-                        // if x=0 mean an character do not matches and loop break out
                         x = 0
                         break
                     }

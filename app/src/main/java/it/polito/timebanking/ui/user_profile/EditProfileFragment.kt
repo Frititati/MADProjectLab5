@@ -25,7 +25,6 @@ import it.polito.timebanking.model.profile.*
 import java.io.ByteArrayOutputStream
 import kotlin.concurrent.thread
 
-
 @Suppress("DEPRECATION")
 class EditProfileFragment : Fragment() {
 
@@ -37,20 +36,13 @@ class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private lateinit var drawerListener: NavBarUpdater
-    private var firestoreUser = FirebaseAuth.getInstance().currentUser
+    private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
     private var favList = listOf<String>()
 
-    private val userProfilePath =
-        "gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser!!.uid}.png"
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-        )
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         drawerListener = context as NavBarUpdater
         return binding.root
@@ -58,7 +50,8 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vm.get(firestoreUser!!.uid).observe(viewLifecycleOwner) {
+        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic,firebaseUserID))
+        vm.get(firebaseUserID).observe(viewLifecycleOwner) {
             binding.fullName.hint = fullNameFormatter(it.fullName)
             binding.nickName.hint = nickNameFormatter(it.nickName)
             binding.age.hint = ageFormatter(it.age.toString()) + " Years Old"
@@ -66,15 +59,8 @@ class EditProfileFragment : Fragment() {
             binding.location.hint = locationFormatter(it.location)
             binding.description.hint = descriptionFormatter(it.description)
             favList = it.favorites.map { f -> f.toString() }
-            Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024)
-                .addOnSuccessListener { pic ->
-                    binding.userImage.setImageBitmap(
-                        BitmapFactory.decodeByteArray(
-                            pic,
-                            0,
-                            pic.size
-                        )
-                    )
+            Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                    binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                 }
         }
         val editButton = binding.editImage
@@ -84,8 +70,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.buttonSkill.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.edit_profile_to_edit_skill)
+            view.findNavController().navigate(R.id.edit_profile_to_edit_skill)
             Snackbar.make(binding.root, "Edit your skills here", 1500).show()
 
         }
@@ -94,19 +79,9 @@ class EditProfileFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         thread {
-            vm.update(
-                firestoreUser!!.uid,
-                binding.fullName.text.toString().trim().trim(),
-                binding.nickName.text.toString().trim(),
-                binding.age.text.toString().toLongOrNull(),
-                binding.email.text.toString().trim(),
-                binding.location.text.toString().trim(),
-                binding.description.text.toString().trim(),
-                favList
-            )
+            vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim(), favList)
         }
-        if (binding.fullName.text.toString().isNotEmpty())
-            drawerListener.updateFName(binding.fullName.text.toString())
+        if (binding.fullName.text.toString().isNotEmpty()) drawerListener.updateFName(binding.fullName.text.toString())
     }
 
     override fun onDestroyView() {
@@ -115,9 +90,7 @@ class EditProfileFragment : Fragment() {
     }
 
     override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo?
+        menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
         menu.setHeaderTitle("Choose a pic")
@@ -148,10 +121,7 @@ class EditProfileFragment : Fragment() {
         val choosePictureIntent = Intent(Intent.ACTION_GET_CONTENT)
         try {
             choosePictureIntent.type = "image/*"
-            startActivityForResult(
-                Intent.createChooser(choosePictureIntent, "Select Picture"),
-                galleryId
-            )
+            startActivityForResult(Intent.createChooser(choosePictureIntent, "Select Picture"), galleryId)
         } catch (e: ActivityNotFoundException) {
             Log.w("activity", "No Activity found...")
             Snackbar.make(binding.root, "No gallery activity found", Snackbar.LENGTH_SHORT).show()
@@ -161,6 +131,7 @@ class EditProfileFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic,firebaseUserID))
         if (resultCode == RESULT_OK) {
             val h = 300
             val w = 300
@@ -169,16 +140,12 @@ class EditProfileFragment : Fragment() {
                 imageBitmap.scale(w, h)
             }
             if (requestCode == galleryId) {
-                imageBitmap = MediaStore.Images.Media.getBitmap(
-                    requireActivity().contentResolver,
-                    data!!.data
-                ).scale(w, h)
+                imageBitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, data!!.data).scale(w, h)
             }
             binding.userImage.setImageBitmap(imageBitmap)
-            val baos = ByteArrayOutputStream()
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(baos.toByteArray())
-                .addOnSuccessListener {
+            val b = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b)
+            Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(b.toByteArray()).addOnSuccessListener {
                     drawerListener.updateIMG(userProfilePath)
                 }
         }

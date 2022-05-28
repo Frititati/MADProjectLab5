@@ -9,11 +9,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TimeViewModel(application: Application) : AndroidViewModel(application) {
     fun get(userID: String): LiveData<Long> {
         val time = MutableLiveData<Long>()
-        FirebaseFirestore.getInstance().collection("users").document(userID)
-            .addSnapshotListener { t, e ->
+        FirebaseFirestore.getInstance().collection("users").document(userID).addSnapshotListener { t, e ->
                 if (t != null) {
-                    time.value = if (e != null)
-                        0L
+                    time.value = if (e != null) 0L
                     else t.getLong("time") ?: 0L
                 }
             }

@@ -23,7 +23,7 @@ import it.polito.timebanking.model.profile.toUserProfileData
 class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() {
 
     private var allRates = mutableListOf<Pair<String, RateData>>()
-    private val userID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
     class RatingsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
@@ -36,20 +36,11 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         fun bind(rating: RateData, context: Context) {
             score.text = (rating.score / 10.0).toString()
             setCardBackground(rating.score / 10.0, cardView, context)
-            FirebaseFirestore.getInstance().collection("users").document(rating.senderID).get()
-                .addOnSuccessListener {
+            FirebaseFirestore.getInstance().collection("users").document(rating.senderID).get().addOnSuccessListener {
                     name.text = it.toUserProfileData().fullName
                 }
-            Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${rating.senderID}.png")
-                .getBytes(1024 * 1024)
-                .addOnSuccessListener { pic ->
-                    image.setImageBitmap(
-                        BitmapFactory.decodeByteArray(
-                            pic,
-                            0,
-                            pic.size
-                        )
-                    )
+            Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic,rating.senderID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                    image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                 }
 
             rootView.setOnClickListener {
@@ -64,46 +55,18 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         }
 
         private fun setCardBackground(score: Double, background: CardView, context: Context) {
-            if (score < 1.0)
-                background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Ruby_Red))
-            else if (score < 2.0)
-                background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bean_Red))
-            else if (score < 3.0)
-                background.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.Bee_Yellow
-                    )
-                )
-            else if (score < 4.0)
-                background.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.Sun_Yellow
-                    )
-                )
-            else if (score < 5.0)
-                background.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.Stoplight_Go_Green
-                    )
-                )
-            else if (score == 5.0)
-                background.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.Yellow_Green
-                    )
-                )
+            if (score < 1.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Ruby_Red))
+            else if (score < 2.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bean_Red))
+            else if (score < 3.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bee_Yellow))
+            else if (score < 4.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Sun_Yellow))
+            else if (score < 5.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Stoplight_Go_Green))
+            else if (score == 5.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Yellow_Green))
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RatingsViewHolder {
-        return RatingsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_ratings, parent, false)
-        )
+        return RatingsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_ratings, parent, false))
     }
 
     override fun onBindViewHolder(holder: RatingsViewHolder, position: Int) {
@@ -112,10 +75,8 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
 
     @SuppressLint("NotifyDataSetChanged")
     fun setRatings(ratings: MutableList<Pair<String, RateData>>, received: Boolean) {
-        allRates = if (received)
-            ratings.filter { it.second.receiverID == userID }.toMutableList()
-        else
-            ratings.filter { it.second.senderID == userID }.toMutableList()
+        allRates = if (received) ratings.filter { it.second.receiverID == firebaseUserID }.toMutableList()
+        else ratings.filter { it.second.senderID == firebaseUserID }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -126,8 +87,7 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
     @SuppressLint("NotifyDataSetChanged")
     fun sortByRate(higher: Boolean) {
         allRates = allRates.sortedBy { it.second.score }.toMutableList()
-        if (higher)
-            allRates.reverse()
+        if (higher) allRates.reverse()
         notifyDataSetChanged()
     }
 }

@@ -19,6 +19,7 @@ class ProducingJobsFragment : Fragment() {
     private var jobsListAdapter = ProducingJobsAdapter()
     private var allJobs = mutableListOf<Pair<String, JobData>>()
     private val vm by viewModels<JobViewModel>()
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +39,7 @@ class ProducingJobsFragment : Fragment() {
         binding.chatListRecycler.adapter = jobsListAdapter
         binding.nothingToShow.text = resources.getString(R.string.no_producing_jobs)
 
-        vm.getProducingJobs(FirebaseAuth.getInstance().currentUser!!.uid)
+        vm.getProducingJobs(firebaseUserID)
             .observe(viewLifecycleOwner) {
                 jobsListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
                 allJobs = it

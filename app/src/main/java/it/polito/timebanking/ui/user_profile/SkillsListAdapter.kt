@@ -15,9 +15,7 @@ class SkillsListAdapter : RecyclerView.Adapter<SkillsListAdapter.SkillsListViewH
     private var userSkills: MutableList<String> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillsListViewHolder {
-        return SkillsListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_skills_list, parent, false)
-        )
+        return SkillsListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_skills_list, parent, false))
     }
 
     override fun onBindViewHolder(holder: SkillsListViewHolder, position: Int) {

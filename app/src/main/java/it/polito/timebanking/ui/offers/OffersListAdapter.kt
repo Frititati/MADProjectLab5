@@ -17,16 +17,12 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
-class OffersListAdapter(private val mode: String) :
-    RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(),
-    Filterable {
+class OffersListAdapter(private val mode: String) : RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>(), Filterable {
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
     private var timeslotsFull: MutableList<Pair<String, TimeslotData>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
-        return OfferListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false), mode
-        )
+        return OfferListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_offer, parent, false), mode)
     }
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
@@ -64,22 +60,10 @@ class OffersListAdapter(private val mode: String) :
             free.isVisible = timeslot.duration == 0L
 
             button.setOnClickListener {
-                if (mode == "Watch")
-                    rootView.findNavController()
-                        .navigate(
-                            R.id.offers_to_offer,
-                            bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
-                        )
-                Snackbar.make(it, "Details about ${title.text}", 1500)
-                    .show()
-                if (mode == "Fav")
-                    rootView.findNavController()
-                        .navigate(
-                            R.id.favoritesToDetail,
-                            bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy)
-                        )
-                Snackbar.make(it, "Details about ${title.text}", 1500)
-                    .show()
+                if (mode == "Watch") rootView.findNavController().navigate(R.id.offers_to_offer, bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy))
+                Snackbar.make(it, "Details about ${title.text}", 1500).show()
+                if (mode == "Fav") rootView.findNavController().navigate(R.id.favoritesToDetail, bundleOf("id_timeslot" to id, "id_user" to timeslot.ownedBy))
+                Snackbar.make(it, "Details about ${title.text}", 1500).show()
             }
         }
     }
@@ -91,13 +75,10 @@ class OffersListAdapter(private val mode: String) :
     private val exampleFilter: Filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence): FilterResults {
             var filteredList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
-            if (constraint.isEmpty())
-                filteredList.addAll(timeslotsFull)
+            if (constraint.isEmpty()) filteredList.addAll(timeslotsFull)
             else {
                 val pattern = constraint.toString().lowercase().trim()
-                filteredList =
-                    timeslotsFull.filter { it.second.title.lowercase().contains(pattern) }
-                        .toMutableList()
+                filteredList = timeslotsFull.filter { it.second.title.lowercase().contains(pattern) }.toMutableList()
             }
             val results = FilterResults()
             results.values = filteredList
@@ -115,23 +96,20 @@ class OffersListAdapter(private val mode: String) :
     @SuppressLint("NotifyDataSetChanged")
     fun sortByDate(descending: Boolean) {
         timeslots.clear().run { timeslots.addAll(timeslotsFull.sortedBy { it.second.date }) }
-        if (descending)
-            timeslots.reverse()
+        if (descending) timeslots.reverse()
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun sortByDuration(descending: Boolean) {
         timeslots.clear().run { timeslots.addAll(timeslotsFull.sortedBy { it.second.duration }) }
-        if (descending)
-            timeslots.reverse()
+        if (descending) timeslots.reverse()
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun filterByDuration(duration: Int): Int {
-        timeslots.clear()
-            .run { timeslots.addAll(timeslotsFull.filter { it.second.duration >= duration }) }
+        timeslots.clear().run { timeslots.addAll(timeslotsFull.filter { it.second.duration >= duration }) }
         notifyDataSetChanged()
         return timeslots.size
     }

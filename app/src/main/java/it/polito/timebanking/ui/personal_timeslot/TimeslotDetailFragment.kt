@@ -20,12 +20,9 @@ class TimeslotDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         _binding = FragmentTimeslotDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,10 +53,7 @@ class TimeslotDetailFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 val idTimeslot: String? = requireArguments().getString("id_timeslot")
-                findNavController().navigate(
-                    R.id.details_to_edit,
-                    bundleOf("id_timeslot" to idTimeslot)
-                )
+                findNavController().navigate(R.id.details_to_edit, bundleOf("id_timeslot" to idTimeslot))
                 Snackbar.make(binding.root, "Remember to bind with your own skills", 1500).show()
                 true
             }

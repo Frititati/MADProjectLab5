@@ -16,11 +16,10 @@ class FavoritesListFragment : Fragment() {
     private var _binding: FragmentOffersBinding? = null
     private val offersListAdapter = OffersListAdapter("Fav")
     private val binding get() = _binding!!
+    private val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentOffersBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,22 +33,15 @@ class FavoritesListFragment : Fragment() {
         binding.timeslotRecycler.adapter = offersListAdapter
         binding.buttonAdd.isVisible = false
 
-        FirebaseFirestore.getInstance().collection("users")
-            .document(FirebaseAuth.getInstance().currentUser!!.uid).addSnapshotListener { t, _ ->
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUser).addSnapshotListener { t, _ ->
                 if (t != null) {
                     favorites = t.get("favorites") as MutableList<*>
                     favorites.forEach { f ->
-                        FirebaseFirestore.getInstance().collection("timeslots")
-                            .document(f.toString()).get()
-                            .addOnSuccessListener { t ->
+                        FirebaseFirestore.getInstance().collection("timeslots").document(f.toString()).get().addOnSuccessListener { t ->
                                 offersListAdapter.addTimeslots(Pair(t.id, t.toTimeslotData()))
                             }
                     }
-                    binding.nothingToShow.text = String.format(
-                        resources.getString(
-                            R.string.no_favorites
-                        )
-                    )
+                    binding.nothingToShow.text = String.format(resources.getString(R.string.no_favorites))
                     binding.nothingToShow.isVisible = favorites.size == 0
                 }
             }

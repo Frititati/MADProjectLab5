@@ -24,12 +24,11 @@ class OfferDetailFragment : Fragment() {
     private var _binding: FragmentOfferDetailBinding? = null
     private var favList = mutableListOf<String>()
     private val binding get() = _binding!!
+    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
     private var fav = 0
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentOfferDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -39,89 +38,56 @@ class OfferDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val idTimeslot = requireArguments().getString("id_timeslot")!!
         val otherUserID = requireArguments().getString("id_user")!!
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
 
-        if (otherUserID == userID)
-            Toast.makeText(context, "Your own offer!", Toast.LENGTH_SHORT).show()
-        FirebaseFirestore.getInstance().collection("users")
-            .document(otherUserID).get().addOnSuccessListener { user ->
-                binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
-                binding.UserAge.text = ageFormatter(user.get("age").toString())
-                binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
-                val score = user.getLong("score") ?: 0
-                val jobs = user.getLong("jobsRated") ?: 0
-                if(jobs != 0L)
-                        binding.userRating.text = (score / jobs).toString()
-                vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
-                    binding.Title.text = titleFormatter(it.title)
-                    binding.Description.text = descriptionFormatter(it.description)
-                    binding.Date.text = dateFormatter(it.date)
-                    binding.Duration.text = durationMinuteFormatter(it.duration)
-                    binding.Location.text = locationFormatter(it.location)
-                }
+        if (otherUserID == firebaseUserID) Toast.makeText(context, "Your own offer!", Toast.LENGTH_SHORT).show()
+        FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { user ->
+            binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
+            binding.UserAge.text = ageFormatter(user.get("age").toString())
+            binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
+            val score = user.getLong("score") ?: 0
+            val jobs = user.getLong("jobsRated") ?: 0
+            if (jobs != 0L) binding.userRating.text = (score / jobs).toString()
+            vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
+                binding.Title.text = titleFormatter(it.title)
+                binding.Description.text = descriptionFormatter(it.description)
+                binding.Date.text = dateFormatter(it.date)
+                binding.Duration.text = durationMinuteFormatter(it.duration)
+                binding.Location.text = locationFormatter(it.location)
             }
-        FirebaseFirestore.getInstance().collection("users")
-            .document(userID).get().addOnSuccessListener { d ->
-                val myList = d.get("favorites") as MutableList<*>
-                favList = myList.map { it.toString() }.toMutableList()
-                if (favList.contains(idTimeslot)) {
-                    fav = 1
-                    requireActivity().invalidateOptionsMenu()
-                }
-                if (userID == otherUserID) {
-                    fav = 2
-                    requireActivity().invalidateOptionsMenu()
-                }
+        }
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { d ->
+            val myList = d.get("favorites") as MutableList<*>
+            favList = myList.map { it.toString() }.toMutableList()
+            if (favList.contains(idTimeslot)) {
+                fav = 1
+                requireActivity().invalidateOptionsMenu()
             }
+            if (firebaseUserID == otherUserID) {
+                fav = 2
+                requireActivity().invalidateOptionsMenu()
+            }
+        }
 
-        binding.chatStartButton.isVisible = userID != otherUserID
+        binding.chatStartButton.isVisible = firebaseUserID != otherUserID
 
         binding.chatStartButton.setOnClickListener {
             var jobExists = false
-            FirebaseFirestore.getInstance().collection("jobs")
-                .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
-                .addOnSuccessListener { ext ->
-                    ext.forEach {
-                        if (it.getString("jobStatus") != JobStatus.COMPLETED.toString()) {
-                            jobExists = true
-                        }
-                    }
-                    if (!jobExists) {
-                        val jobData = JobData(
-                            idTimeslot,
-                            emptyList<String>(),
-                            System.currentTimeMillis(),
-                            otherUserID,
-                            userID,
-                            listOf(
-                                otherUserID,
-                                userID
-                            ),
-                            JobStatus.INIT,
-                            "",
-                            ""
-                        )
-                        FirebaseFirestore.getInstance().collection("jobs").add(jobData)
-                            .addOnSuccessListener {
-                                findNavController().navigate(
-                                    R.id.offer_to_job,
-                                    bundleOf(
-                                        "otherUserName" to binding.UserFullName.text,
-                                        "jobID" to it.id
-                                    )
-                                )
-                            }
-                    } else {
-                        val chat = ext.first()
-                        findNavController().navigate(
-                            R.id.offer_to_job,
-                            bundleOf(
-                                "otherUserName" to binding.UserFullName.text,
-                                "jobID" to chat.id
-                            )
-                        )
+            FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", firebaseUserID).get().addOnSuccessListener { ext ->
+                ext.forEach {
+                    if (it.getString("jobStatus") != JobStatus.COMPLETED.toString()) {
+                        jobExists = true
                     }
                 }
+                if (!jobExists) {
+                    val jobData = JobData(idTimeslot, emptyList<String>(), System.currentTimeMillis(), otherUserID, firebaseUserID, listOf(otherUserID, firebaseUserID), JobStatus.INIT, "", "")
+                    FirebaseFirestore.getInstance().collection("jobs").add(jobData).addOnSuccessListener {
+                        findNavController().navigate(R.id.offer_to_job, bundleOf("otherUserName" to binding.UserFullName.text, "jobID" to it.id))
+                    }
+                } else {
+                    val chat = ext.first()
+                    findNavController().navigate(R.id.offer_to_job, bundleOf("otherUserName" to binding.UserFullName.text, "jobID" to chat.id))
+                }
+            }
         }
     }
 
@@ -175,19 +141,9 @@ class OfferDetailFragment : Fragment() {
 
     private fun updateUserData(newFavList: List<String>) {
         val vm by viewModels<ProfileViewModel>()
-        vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+        vm.get(firebaseUserID).observe(viewLifecycleOwner) {
             it.favorites = newFavList
-
-            vm.update(
-                FirebaseAuth.getInstance().currentUser!!.uid,
-                it.fullName,
-                it.nickName,
-                it.age,
-                it.email,
-                it.location,
-                it.description,
-                newFavList
-            )
+            vm.update(firebaseUserID, it.fullName, it.nickName, it.age, it.email, it.location, it.description, newFavList)
         }
     }
 }

@@ -11,8 +11,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     fun get(id: String): LiveData<ProfileData> {
         val timeslot = MutableLiveData<ProfileData>()
 
-        FirebaseFirestore.getInstance().collection("users").document(id)
-            .addSnapshotListener { r, _ ->
+        FirebaseFirestore.getInstance().collection("users").document(id).addSnapshotListener { r, _ ->
                 if (r != null) {
                     timeslot.value = r.toUserProfileData()
                 }
@@ -22,14 +21,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
 
     fun update(
-        id: String,
-        fullName: String?,
-        nickname: String?,
-        age: Long?,
-        email: String?,
-        location: String?,
-        description: String?,
-        favList: List<String>
+        id: String, fullName: String?, nickname: String?, age: Long?, email: String?, location: String?, description: String?, favList: List<String>
     ) {
         val data = mutableMapOf<String, Any>()
 
@@ -62,8 +54,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             data["age"] = age
         }
         data["favorites"] = favList
-        FirebaseFirestore.getInstance().collection("users").document(id).update(
-            data as Map<String, Any>
-        )
+        FirebaseFirestore.getInstance().collection("users").document(id).update(data as Map<String, Any>)
     }
 }

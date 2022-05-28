@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -25,8 +24,7 @@ class RatingsFragment : Fragment() {
     private val rateVM by viewModels<RateViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRatingsBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,18 +32,13 @@ class RatingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         binding.rateListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.rateListRecycler.adapter = ratingsListAdapter
 
-        rateVM.getRatings(FirebaseAuth.getInstance().currentUser!!.uid)
-            .observe(viewLifecycleOwner) {
+        rateVM.getRatings(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
                 ratingList = it
-                ratingsListAdapter.setRatings(
-                    it as MutableList<Pair<String, RateData>>,
-                    showingReceived
-                )
+                ratingsListAdapter.setRatings(it as MutableList<Pair<String, RateData>>, showingReceived)
             }
     }
 
@@ -68,19 +61,13 @@ class RatingsFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_received_ratings -> {
                 showingReceived = true
-                ratingsListAdapter.setRatings(
-                    ratingList as MutableList<Pair<String, RateData>>,
-                    showingReceived
-                )
+                ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
                 requireActivity().invalidateOptionsMenu()
                 true
             }
             R.id.action_given_ratings -> {
                 showingReceived = false
-                ratingsListAdapter.setRatings(
-                    ratingList as MutableList<Pair<String, RateData>>,
-                    showingReceived
-                )
+                ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
                 requireActivity().invalidateOptionsMenu()
                 true
             }

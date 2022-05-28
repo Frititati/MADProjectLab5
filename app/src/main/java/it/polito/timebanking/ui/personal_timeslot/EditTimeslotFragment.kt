@@ -37,13 +37,9 @@ class EditTimeslotFragment : Fragment() {
     private var dateMilli: Long = 0
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(
-            DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-        )
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         _binding = FragmentTimeslotEditBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,9 +61,7 @@ class EditTimeslotFragment : Fragment() {
             binding.editDuration.hint = durationFormatter(it.duration).toString() + " minutes"
             binding.editLocation.hint = locationFormatter(it.location)
 
-            editableSkillListAdapter.setTimeslotSkills(
-                idTimeslot,
-                it.skills.map { l -> l.toString() })
+            editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map { l -> l.toString() })
 
             if (it.available) {
                 binding.activateButton!!.visibility = View.GONE
@@ -78,9 +72,7 @@ class EditTimeslotFragment : Fragment() {
             }
         }
 
-        FirebaseFirestore.getInstance().collection("users")
-            .document(FirebaseAuth.getInstance().uid!!).get()
-            .addOnSuccessListener { userIt ->
+        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
                 val user = userIt.toUserProfileData()
                 editableSkillListAdapter.setAvailableSkills(user.skills.map { it.toString() })
             }
@@ -88,8 +80,7 @@ class EditTimeslotFragment : Fragment() {
         val cal = Calendar.getInstance()
         binding.editDateButton.setOnClickListener {
             val dpd = DatePickerDialog(requireContext(), { _, y, m, d ->
-                val date =
-                    LocalDateTime.parse("$y-${"%02d".format(m + 1)}-${"%02d".format(d)}T00:00:00")
+                val date = LocalDateTime.parse("$y-${"%02d".format(m + 1)}-${"%02d".format(d)}T00:00:00")
                 dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
                 binding.editDate.text = dateFormatter(dateMilli)
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
@@ -114,31 +105,27 @@ class EditTimeslotFragment : Fragment() {
             dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             binding.editDate.hint = dateFormatter(dateMilli)
             if (dateMilli + oneDay >= System.currentTimeMillis()) {
-                FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
-                    .update("available", true).addOnSuccessListener {
+                FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                         Snackbar.make(binding.root, "Timeslot now active", 1500).show()
                     }
-            }
-            else{
+            } else {
                 val dialog = AlertDialog.Builder(context)
                 dialog.setTitle("Cannot create timeslot for ${"%02d".format(d)}/${"%02d".format(m)}/$y. Activate for today?")
-                dialog.setView(layoutInflater.inflate(R.layout.dialog_generic,null))
-                dialog.setPositiveButton("Yes"){_, _ ->
+                dialog.setView(layoutInflater.inflate(R.layout.dialog_generic, null))
+                dialog.setPositiveButton("Yes") { _, _ ->
                     dateMilli = System.currentTimeMillis()
                     binding.editDate.text = dateFormatter(dateMilli)
-                    FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
-                        .update("available", true).addOnSuccessListener {
+                    FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                             Snackbar.make(binding.root, "Timeslot now active", 1500).show()
                         }
                 }
-                dialog.setNegativeButton("No"){_,_ ->}
+                dialog.setNegativeButton("No") { _, _ -> }
                 dialog.create().show()
             }
         }
 
         binding.deactivateButton!!.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
-                .update("available", false).addOnSuccessListener {
+            FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", false).addOnSuccessListener {
                     Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
                 }
         }
@@ -146,11 +133,9 @@ class EditTimeslotFragment : Fragment() {
         binding.deleteButton.setOnClickListener {
             val dialog = AlertDialog.Builder(context)
             val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
-            dialog.setTitle(
-                String.format(
-                    resources.getString(R.string.delete_timeslot_confirm),
-                )
-            )
+            dialog.setTitle(String.format(
+                resources.getString(R.string.delete_timeslot_confirm),
+            ))
             dialog.setView(dialogView)
 
             dialog.setPositiveButton("Yes") { _, _ ->
@@ -182,14 +167,7 @@ class EditTimeslotFragment : Fragment() {
         super.onPause()
         if (toUpdate) {
             thread {
-                vm.update(
-                    idTimeslot,
-                    binding.editTitle.text.toString().trim(),
-                    binding.editDescription.text.toString().trim(),
-                    dateMilli,
-                    binding.editDuration.text.toString().trim(),
-                    binding.editLocation.text.toString().trim()
-                )
+                vm.update(idTimeslot, binding.editTitle.text.toString().trim(), binding.editDescription.text.toString().trim(), dateMilli, binding.editDuration.text.toString().trim(), binding.editLocation.text.toString().trim())
                 Snackbar.make(binding.root, "Updated Timeslot", 1500).show()
             }
         }

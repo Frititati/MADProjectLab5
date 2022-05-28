@@ -2,10 +2,8 @@ package it.polito.timebanking.ui.user_profile
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,7 +20,6 @@ import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.skill.SkillData
 import it.polito.timebanking.model.skill.toSkillData
 import java.text.DecimalFormat
-import kotlin.math.roundToLong
 
 
 class ShowProfileFragment : Fragment() {
@@ -30,13 +27,11 @@ class ShowProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private val vm by viewModels<ProfileViewModel>()
     private val div = 10.0
-    private var firestoreUser = FirebaseAuth.getInstance().currentUser
+    private val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
     private val skillsListAdapter = SkillsListAdapter()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentShowProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,14 +40,12 @@ class ShowProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
 
-        FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
-            .addOnSuccessListener { res ->
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUser).get().addOnSuccessListener { res ->
                 if (res.exists()) {
-                    vm.get(firestoreUser!!.uid).observe(viewLifecycleOwner) {
+                    vm.get(firebaseUser).observe(viewLifecycleOwner) {
                         binding.fullName.text = it.fullName
                         binding.nickName.text = it.nickName
                         binding.email.text = it.email
@@ -61,18 +54,10 @@ class ShowProfileFragment : Fragment() {
                         binding.description.text = it.description
                         if (it.jobsRated > 0) {
                             val f = DecimalFormat("#.0")
-                            binding.rating.text =
-                                f.format(((it.score / div) / (it.jobsRated / div))).toString()
+                            binding.rating.text = f.format(((it.score / div) / (it.jobsRated / div))).toString()
                         }
-                        Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser!!.uid}.png")
-                            .getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                                binding.userImage.setImageBitmap(
-                                    BitmapFactory.decodeByteArray(
-                                        pic,
-                                        0,
-                                        pic.size
-                                    )
-                                )
+                        Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic,firebaseUser))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                                binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                             }
                         binding.skillView.layoutManager = LinearLayoutManager(activity)
                         binding.skillView.adapter = skillsListAdapter
@@ -80,8 +65,7 @@ class ShowProfileFragment : Fragment() {
                         binding.skillView.isNestedScrollingEnabled = false
                     }
                 }
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 Toast.makeText(context, "Unexpected error", Toast.LENGTH_LONG).show()
             }
         updateAllSkills()
@@ -122,8 +106,7 @@ class ShowProfileFragment : Fragment() {
     }
 
     private fun updateAllSkills() {
-        FirebaseFirestore.getInstance().collection("skills").get()
-            .addOnSuccessListener { documents ->
+        FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
                 val map: MutableMap<String, SkillData> = mutableMapOf()
                 for (document in documents) {
                     map[document.id] = document.toSkillData()

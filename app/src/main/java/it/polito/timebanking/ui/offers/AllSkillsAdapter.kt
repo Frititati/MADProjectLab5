@@ -12,14 +12,11 @@ import com.google.android.material.snackbar.Snackbar
 import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.SkillData
 
-class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolder>() {
+class AllSkillsAdapter : RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolder>() {
     private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
-        return SkillListViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.widget_all_skills, parent, false)
-        )
+        return SkillListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_all_skills, parent, false))
     }
 
     override fun onBindViewHolder(holder: SkillListViewHolder, position: Int) {
@@ -44,8 +41,7 @@ class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolde
             title.text = skill.title
             title.setOnClickListener {
                 rootView.findNavController().navigate(R.id.skill_to_offers, bundleOf("skill_select" to id, "offerName" to title.text))
-                Snackbar.make(it, "You are seeing all offers for ${title.text}", 1500)
-                    .show()
+                Snackbar.make(it, "You are seeing all offers for ${title.text}", 1500).show()
             }
         }
     }

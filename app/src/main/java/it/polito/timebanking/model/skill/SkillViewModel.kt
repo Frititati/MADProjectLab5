@@ -11,11 +11,9 @@ class SkillViewModel(application: Application) : AndroidViewModel(application) {
     fun get(): LiveData<List<Pair<String, SkillData>>> {
         val skills = MutableLiveData<List<Pair<String, SkillData>>>()
 
-        FirebaseFirestore.getInstance().collection("skills")
-            .addSnapshotListener { s, e ->
+        FirebaseFirestore.getInstance().collection("skills").addSnapshotListener { s, e ->
                 if (s != null) {
-                    skills.value = if (e != null)
-                        emptyList()
+                    skills.value = if (e != null) emptyList()
                     else s.map { Pair(it.id, it.toSkillData()) }
                 }
             }

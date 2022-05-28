@@ -19,10 +19,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
     private var timeslots: MutableList<Pair<String, TimeslotData>> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeslotListViewHolder {
-        return TimeslotListViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.widget_timeslot_list_personal, parent, false)
-        )
+        return TimeslotListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_timeslot_list_personal, parent, false))
     }
 
     override fun onBindViewHolder(holder: TimeslotListViewHolder, position: Int) {
@@ -51,14 +48,11 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             date.text = dateFormatter(timeslot.date)
             free.isVisible = timeslot.duration == 0L
             rootView.setOnClickListener {
-                rootView.findNavController()
-                    .navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
-                Snackbar.make(it, "Details about: ${title.text}", 1500)
-                    .show()
+                rootView.findNavController().navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
+                Snackbar.make(it, "Details about: ${title.text}", 1500).show()
             }
             button.setOnClickListener {
-                rootView.findNavController()
-                    .navigate(R.id.personal_to_edit, bundleOf("id_timeslot" to id))
+                rootView.findNavController().navigate(R.id.personal_to_edit, bundleOf("id_timeslot" to id))
                 Snackbar.make(rootView, "Remember to bind with your own skills", 1500).show()
             }
         }

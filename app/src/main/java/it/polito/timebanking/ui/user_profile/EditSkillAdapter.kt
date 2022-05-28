@@ -14,22 +14,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.SkillData
 
-class EditSkillAdapter :
-    RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {
+class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {
     private var allSkills: MutableList<Pair<String, SkillData>> = mutableListOf()
     private var userSkills: MutableList<String> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
-        return SkillListViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.widget_edit_profile_skill, parent, false)
-        )
+        return SkillListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.widget_edit_profile_skill, parent, false))
     }
 
     override fun onBindViewHolder(holder: SkillListViewHolder, position: Int) {
         if (allSkills.isNotEmpty()) {
             val temp = allSkills[position]
-            Log .d("test","${temp.first} $userSkills")
+            Log.d("test", "${temp.first} $userSkills")
             holder.bind(temp.first, temp.second, temp.first in userSkills)
         }
     }
@@ -56,8 +52,7 @@ class EditSkillAdapter :
     class SkillListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
-        private var _firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-        private var firestoreUser = FirebaseAuth.getInstance().currentUser
+        private var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
         fun bind(id: String, skill: SkillData, is_selected: Boolean) {
             checkBox.text = skill.title
@@ -72,13 +67,11 @@ class EditSkillAdapter :
         }
 
         private fun addSkillUser(skillID: String) {
-            _firestore.collection("users").document(firestoreUser!!.uid)
-                .update("skills", arrayUnion(skillID))
+            FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("skills", arrayUnion(skillID))
         }
 
         private fun removeSkillUser(skillID: String) {
-            _firestore.collection("users").document(firestoreUser!!.uid)
-                .update("skills", arrayRemove(skillID))
+            FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("skills", arrayRemove(skillID))
         }
     }
 }
