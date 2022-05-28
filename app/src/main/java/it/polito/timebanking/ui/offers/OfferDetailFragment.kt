@@ -16,7 +16,6 @@ import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
-import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.*
 import it.polito.timebanking.ui.messages.JobStatus
 
@@ -83,7 +82,7 @@ class OfferDetailFragment : Fragment() {
                 .whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", userID).get()
                 .addOnSuccessListener { ext ->
                     ext.forEach {
-                        if (it.getString("jobStatus") != JobStatus.CONCLUDED.toString()) {
+                        if (it.getString("jobStatus") != JobStatus.COMPLETED.toString()) {
                             jobExists = true
                         }
                     }

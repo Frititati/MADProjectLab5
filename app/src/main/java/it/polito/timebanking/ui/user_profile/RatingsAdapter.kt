@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,12 +69,7 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
             else if (score < 2.0)
                 background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bean_Red))
             else if (score < 3.0)
-                background.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.Bee_Yellow
-                    )
-                )
+                background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bee_Yellow))
             else if (score < 4.0)
                 background.setCardBackgroundColor(
                     ContextCompat.getColor(
@@ -120,5 +116,13 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
 
     override fun getItemCount(): Int {
         return allRates.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun sortByRate(higher: Boolean) {
+        allRates = allRates.sortedBy { it.second.score }.toMutableList()
+        if(higher)
+            allRates.reverse()
+        notifyDataSetChanged()
     }
 }

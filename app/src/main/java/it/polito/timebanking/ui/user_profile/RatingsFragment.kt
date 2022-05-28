@@ -18,6 +18,8 @@ class RatingsFragment : Fragment() {
     private var _binding: FragmentRatingsBinding? = null
     private val binding get() = _binding!!
     private var ratingsListAdapter = RatingsAdapter()
+    private var higher = 1
+    private var lower = 2
     private var showingReceived = true
     private var ratingList = emptyList<Pair<String, RateData>>()
     private val rateVM by viewModels<RateViewModel>()
@@ -56,6 +58,10 @@ class RatingsFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.action_given_ratings).isVisible = showingReceived
         menu.findItem(R.id.action_received_ratings).isVisible = !showingReceived
+        menu.findItem(R.id.action_sortRatings).subMenu.clear()
+        menu.findItem(R.id.action_sortRatings).isVisible = true
+        menu.findItem(R.id.action_sortRatings).subMenu.add(0, higher, 0, "Higher")
+        menu.findItem(R.id.action_sortRatings).subMenu.add(0, lower, 0, "Lower")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -70,13 +76,20 @@ class RatingsFragment : Fragment() {
                 true
             }
             R.id.action_given_ratings -> {
-                Log.d("test","TOCCATO G")
                 showingReceived = false
                 ratingsListAdapter.setRatings(
                     ratingList as MutableList<Pair<String, RateData>>,
                     showingReceived
                 )
                 requireActivity().invalidateOptionsMenu()
+                true
+            }
+            higher -> {
+                ratingsListAdapter.sortByRate(true)
+                true
+            }
+            lower -> {
+                ratingsListAdapter.sortByRate(false)
                 true
             }
             else -> super.onOptionsItemSelected(item)

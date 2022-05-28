@@ -229,7 +229,7 @@ class MessageListFragment : Fragment() {
                     updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                 else {
                     updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                    updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                    updateJobStatus(JobStatus.COMPLETED, "The job is concluded")
                 }
             } else {
                 if (job.jobStatus == JobStatus.DONE)
@@ -239,7 +239,7 @@ class MessageListFragment : Fragment() {
                         JobStatus.RATED_BY_CONSUMER,
                         "The job was RATED (by consumer)"
                     )
-                    updateJobStatus(JobStatus.CONCLUDED, "The job is concluded")
+                    updateJobStatus(JobStatus.COMPLETED, "The job is concluded")
                 }
             }
         dialog.setNegativeButton("Cancel") { _, _ -> }

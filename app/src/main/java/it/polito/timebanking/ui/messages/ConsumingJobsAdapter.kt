@@ -44,6 +44,13 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterBy(jobs: MutableList<Pair<String, JobData>>,status: JobStatus):Int {
+        allJobs = jobs.filter { it.second.jobStatus == status }.toMutableList()
+        notifyDataSetChanged()
+        return allJobs.size
+    }
+
     override fun getItemCount(): Int {
         return allJobs.size
     }

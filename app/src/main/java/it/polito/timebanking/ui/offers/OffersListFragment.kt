@@ -76,13 +76,16 @@ class OffersListFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        menu.findItem(R.id.action_sort).isVisible = true
-        menu.findItem(R.id.action_sort).subMenu.add(0, 1, 0, "Sort by most recent")
-        menu.findItem(R.id.action_sort).subMenu.add(0, 2, 0, "Sort by least recent")
-        menu.findItem(R.id.action_sort).subMenu.add(0, 3, 0, "Sort by longer time")
-        menu.findItem(R.id.action_sort).subMenu.add(0, 4, 0, "Sort by shorter time")
-        menu.findItem(R.id.action_sort).subMenu.add(0, 5, 0, "Filter by duration")
-        menu.findItem(R.id.action_sort).subMenu.add(0, 6, 0, "Filter by date")
+        menu.findItem(R.id.action_sortOffers).isVisible = true
+        menu.findItem(R.id.action_sortOffers).subMenu.clear()
+        menu.findItem(R.id.action_sortOffers).subMenu.add(0, 1, 0, "Most recent")
+        menu.findItem(R.id.action_sortOffers).subMenu.add(0, 2, 0, "Least recent")
+        menu.findItem(R.id.action_sortOffers).subMenu.add(0, 3, 0, "Longer time")
+        menu.findItem(R.id.action_sortOffers).subMenu.add(0, 4, 0, "Shorter time")
+        menu.findItem(R.id.action_filterOffers).isVisible = true
+        menu.findItem(R.id.action_filterOffers).subMenu.clear()
+        menu.findItem(R.id.action_filterOffers).subMenu.add(0, 5, 0, "Duration")
+        menu.findItem(R.id.action_filterOffers).subMenu.add(0, 6, 0, "Date")
         /*if (this.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             for ((i, s) in listOf(
                 "Sort by most recent",
@@ -124,19 +127,33 @@ class OffersListFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            1 -> offersListAdapter.sortByDate(true)
-            2 -> offersListAdapter.sortByDate(false)
-            3 -> offersListAdapter.sortByDuration(true)
-            4 -> offersListAdapter.sortByDuration(false)
+            1 -> {
+                binding.nothingToShow.isVisible = false
+                offersListAdapter.sortByDate(true)
+            }
+            2 -> {
+                binding.nothingToShow.isVisible = false
+                offersListAdapter.sortByDate(false)
+            }
+            3 -> {
+                binding.nothingToShow.isVisible = false
+                offersListAdapter.sortByDuration(true)
+            }
+            4 -> {
+                binding.nothingToShow.isVisible = false
+                offersListAdapter.sortByDuration(false)
+            }
             5 -> {
+                binding.nothingToShow.isVisible = false
                 numberPickerCustom()
             }
             6 -> {
+                binding.nothingToShow.isVisible = false
                 datePickerCustom()
             }
-            else -> binding.nothingToShow.isVisible = false
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onContextItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
@@ -170,21 +187,24 @@ class OffersListFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun datePickerCustom() {
         val cal = Calendar.getInstance()
-        DatePickerDialog(requireContext(), { _, y, m, d ->
+        val dpd = DatePickerDialog(requireContext(), { _, y, m, d ->
             val n = offersListAdapter.selectDate(
                 LocalDateTime.parse(
-                    "$y-${"%02d".format(m + 1)}-${
-                        "%02d".format(d)
-                    }T00:00:00"
+                    "$y-${"%02d".format(m + 1)}-${"%02d".format(d)}T00:00:00"
                 ).atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             )
             if (n == 0) {
                 binding.nothingToShow.isVisible = true
-                binding.nothingToShow.text =
-                    String.format(resources.getString(R.string.no_offers_date))
+                binding.nothingToShow.text = String.format(
+                    resources.getString(R.string.no_offers_date),
+                    "%02d".format(d),
+                    "%02d".format(m + 1),
+                    y.toString()
+                )
 
             }
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
-            .show()
+        dpd.datePicker.minDate = System.currentTimeMillis()
+        dpd.show()
     }
 }

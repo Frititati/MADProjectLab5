@@ -39,12 +39,19 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setChats(chats: MutableList<Pair<String, JobData>>) {
-        allJobs = chats.sortedByDescending { it.second.lastUpdate }.toMutableList()
+    fun setChats(jobs: MutableList<Pair<String, JobData>>) {
+        allJobs = jobs.sortedByDescending { it.second.lastUpdate }.toMutableList()
         notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
+        return allJobs.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterBy(jobs: MutableList<Pair<String, JobData>>,status: JobStatus): Int {
+        allJobs = jobs.filter { it.second.jobStatus == status }.toMutableList()
+        notifyDataSetChanged()
         return allJobs.size
     }
 

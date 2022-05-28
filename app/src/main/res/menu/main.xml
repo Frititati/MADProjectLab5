@@ -15,10 +15,20 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/action_sort"
+        android:id="@+id/action_sortOffers"
         android:icon="@drawable/ic_sort_and_filter"
+        android:title="@string/sortBy"
         android:visible="false"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
+    <menu />
+    </item>
+    <item
+        android:id="@+id/action_filterOffers"
+        android:icon="@drawable/ic_sort_and_filter"
+        android:title="@string/filterBy"
+        android:visible="false"
+        app:showAsAction="never">
+
         <menu />
     </item>
     <item
@@ -41,4 +51,18 @@
         android:title="@string/action_given_ratings"
         android:visible="false"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_filterJobs"
+        android:title="@string/select_job_status"
+        android:visible="false"
+        app:showAsAction="never">
+        <menu />
+    </item>
+    <item
+        android:id="@+id/action_sortRatings"
+        android:title="@string/sortBy"
+        android:visible="false"
+        app:showAsAction="never">
+    <menu />
+    </item>
 </menu>

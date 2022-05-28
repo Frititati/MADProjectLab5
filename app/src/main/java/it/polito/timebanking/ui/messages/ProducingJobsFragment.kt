@@ -1,10 +1,8 @@
 package it.polito.timebanking.ui.messages
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
@@ -18,7 +16,8 @@ import it.polito.timebanking.model.chat.JobViewModel
 class ProducingJobsFragment : Fragment() {
     private var _binding: FragmentProducingJobsBinding? = null
     private val binding get() = _binding!!
-    private var chatListAdapter = ProducingJobsAdapter()
+    private var jobsListAdapter = ProducingJobsAdapter()
+    private var allJobs = mutableListOf<Pair<String, JobData>>()
     private val vm by viewModels<JobViewModel>()
 
     override fun onCreateView(
@@ -36,12 +35,91 @@ class ProducingJobsFragment : Fragment() {
         )
 
         binding.chatListRecycler.layoutManager = LinearLayoutManager(activity)
-        binding.chatListRecycler.adapter = chatListAdapter
+        binding.chatListRecycler.adapter = jobsListAdapter
         binding.nothingToShow.text = resources.getString(R.string.no_producing_jobs)
 
-        vm.getProducingJobs(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
-            chatListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
-            binding.nothingToShow.isVisible = it.isEmpty()
+        vm.getProducingJobs(FirebaseAuth.getInstance().currentUser!!.uid)
+            .observe(viewLifecycleOwner) {
+                jobsListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
+                allJobs = it
+                binding.nothingToShow.isVisible = it.isEmpty()
+            }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.action_filterJobs).subMenu.clear()
+        menu.findItem(R.id.action_filterJobs).isVisible = true
+        menu.findItem(R.id.action_filterJobs).subMenu.add(
+            0,
+            JobStatus.REQUESTED.ordinal,
+            0,
+            "Requested"
+        )
+        menu.findItem(R.id.action_filterJobs).subMenu.add(
+            0,
+            JobStatus.ACCEPTED.ordinal,
+            0,
+            "Accepted"
+        )
+        menu.findItem(R.id.action_filterJobs).subMenu.add(0, JobStatus.DONE.ordinal, 0, "To be rated")
+        menu.findItem(R.id.action_filterJobs).subMenu.add(0, JobStatus.COMPLETED.ordinal, 0, "Completed")
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            JobStatus.REQUESTED.ordinal -> {
+                binding.nothingToShow.isVisible = false
+
+                val n = jobsListAdapter.filterBy(allJobs, JobStatus.REQUESTED)
+                if (n == 0) {
+                    binding.nothingToShow.isVisible = true
+                    binding.nothingToShow.text = String.format(
+                        resources.getString(R.string.no_jobs_with_status),
+                        JobStatus.REQUESTED
+                    )
+                }
+                true
+            }
+            JobStatus.ACCEPTED.ordinal -> {
+                binding.nothingToShow.isVisible = false
+                val n = jobsListAdapter.filterBy(allJobs, JobStatus.ACCEPTED)
+                if (n == 0) {
+                    binding.nothingToShow.isVisible = true
+                    binding.nothingToShow.text = String.format(
+                        resources.getString(R.string.no_jobs_with_status),
+                        JobStatus.ACCEPTED
+                    )
+                }
+                true
+            }
+            JobStatus.DONE.ordinal -> {
+                binding.nothingToShow.isVisible = false
+                val n = jobsListAdapter.filterBy(allJobs, JobStatus.DONE)
+                if (n == 0) {
+                    binding.nothingToShow.isVisible = true
+                    binding.nothingToShow.text = String.format("You don't have any job to rate")
+                }
+                true
+            }
+            JobStatus.COMPLETED.ordinal -> {
+                binding.nothingToShow.isVisible = false
+                val n = jobsListAdapter.filterBy(allJobs, JobStatus.COMPLETED)
+                if (n == 0) {
+                    binding.nothingToShow.isVisible = true
+                    binding.nothingToShow.text = String.format(
+                        resources.getString(R.string.no_jobs_with_status),
+                        JobStatus.COMPLETED
+                    )
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

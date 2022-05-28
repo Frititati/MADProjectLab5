@@ -45,7 +45,8 @@ class ShowProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            .setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
 
         FirebaseFirestore.getInstance().collection("users").document(firestoreUser!!.uid).get()
@@ -58,9 +59,10 @@ class ShowProfileFragment : Fragment() {
                         binding.age.text = String.format(resources.getString(R.string.age), it.age)
                         binding.location.text = it.location
                         binding.description.text = it.description
-                        if(it.jobsRated > 0) {
+                        if (it.jobsRated > 0) {
                             val f = DecimalFormat("#.0")
-                            binding.rating.text = f.format(((it.score / div) / (it.jobsRated / div))).toString()
+                            binding.rating.text =
+                                f.format(((it.score / div) / (it.jobsRated / div))).toString()
                         }
                         Firebase.storage.getReferenceFromUrl("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser!!.uid}.png")
                             .getBytes(1024 * 1024).addOnSuccessListener { pic ->
@@ -74,7 +76,7 @@ class ShowProfileFragment : Fragment() {
                             }
                         binding.skillView.layoutManager = LinearLayoutManager(activity)
                         binding.skillView.adapter = skillsListAdapter
-                        skillsListAdapter.setUserSkills(it.skills.map {l -> l.toString() })
+                        skillsListAdapter.setUserSkills(it.skills.map { l -> l.toString() })
                         binding.skillView.isNestedScrollingEnabled = false
                     }
                 }
@@ -86,7 +88,7 @@ class ShowProfileFragment : Fragment() {
 
         binding.buttonRate!!.setOnClickListener {
             findNavController().navigate(R.id.show_to_ratings)
-            Snackbar.make(binding.root,"Tap on a rating to see more",Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "Tap on a rating to see more", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -102,8 +104,7 @@ class ShowProfileFragment : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        val item = menu.findItem(R.id.action_settings)
-        item.isVisible = true
+        menu.findItem(R.id.action_settings).isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

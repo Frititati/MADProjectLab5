@@ -80,12 +80,13 @@
     <string name="reject">Reject</string>
     <string name="no_info">Not specified</string>
     <string name="no_offers_duration">No offer for %d minutes was found</string>
-    <string name="no_offers_date">No offer for selected date was found</string>
+    <string name="no_offers_date">No offer on %s/%s/%s was found</string>
     <string name="no_offers_found">No offer for %s was found</string>
     <string name="no_favorites">You haven\'t set any favorites yet</string>
     <string name="no_skills">No skills available</string>
     <string name="no_producing_jobs">You don\'t have any work to do</string>
     <string name="no_consuming_jobs">You don\'t have any request</string>
+    <string name="no_jobs_with_status">You don\'t have any %s job</string>
     <string name="no_timeslots">You don\'t have any timeslots</string>
     <string name="offer">Offer</string>
     <string name="request">Request</string>
@@ -106,4 +107,7 @@
     <string name="jobStatus">Status</string>
     <string name="action_received_ratings">Show Received</string>
     <string name="action_given_ratings">Show Given</string>
+    <string name="select_job_status">Filter by status</string>
+    <string name="sortBy">Sort by…</string>
+    <string name="filterBy">Filter by…</string>
 </resources>
