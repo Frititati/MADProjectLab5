@@ -20,22 +20,20 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            />
+            android:layout_marginTop="30dp" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            />
+            android:layout_marginTop="50dp" />
 
         <Button
             android:id="@+id/view_button"
@@ -46,6 +44,14 @@
             android:text="@string/see_more"
             android:textColor="#212121"
             android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/free"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:textStyle="bold"
+            android:text="@string/free" />
 
 
     </androidx.cardview.widget.CardView>

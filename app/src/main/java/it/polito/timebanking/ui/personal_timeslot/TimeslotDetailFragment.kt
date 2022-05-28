@@ -37,7 +37,7 @@ class TimeslotDetailFragment : Fragment() {
             binding.Title.text = titleFormatter(it.title)
             binding.Description.text = descriptionFormatter(it.description)
             binding.Date.text = dateFormatter(it.date)
-            binding.Duration.text = durationMinuteFormatter(resources, it.duration)
+            binding.Duration.text = durationMinuteFormatter(it.duration)
             binding.Location.text = locationFormatter(it.location)
         }
     }
@@ -60,7 +60,7 @@ class TimeslotDetailFragment : Fragment() {
                     R.id.details_to_edit,
                     bundleOf("id_timeslot" to idTimeslot)
                 )
-                Snackbar.make(binding.root, "Edit your timeslot here", 1500).show()
+                Snackbar.make(binding.root, "Remember to bind with your own skills", 1500).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

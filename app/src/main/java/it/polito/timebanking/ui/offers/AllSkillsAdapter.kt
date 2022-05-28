@@ -37,7 +37,7 @@ class AllSkillsAdapter: RecyclerView.Adapter<AllSkillsAdapter.SkillListViewHolde
 
     class SkillListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val rootView = v
-        val title: TextView = v.findViewById(R.id.title)
+        val title = v.findViewById<TextView>(R.id.title)!!
 
 
         fun bind(id: String, skill: SkillData) {

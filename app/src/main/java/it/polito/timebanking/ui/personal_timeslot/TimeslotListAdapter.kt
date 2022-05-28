@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.timebanking.R
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import it.polito.timebanking.model.timeslot.TimeslotData
@@ -37,15 +39,17 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
 
     class TimeslotListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val rootView = v
-        private val title: TextView = v.findViewById(R.id.title)
-        private val location: TextView = v.findViewById(R.id.location)
-        private val date: TextView = v.findViewById(R.id.date)
-        private val button: TextView = v.findViewById(R.id.details_button)
+        private val title = v.findViewById<TextView>(R.id.title)
+        private val location = v.findViewById<TextView>(R.id.location)
+        private val date = v.findViewById<TextView>(R.id.date)
+        private val button = v.findViewById<Button>(R.id.details_button)
+        private val free = v.findViewById<TextView>(R.id.free)
 
         fun bind(id: String, timeslot: TimeslotData) {
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
+            free.isVisible = timeslot.duration == 0L
             rootView.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
@@ -55,8 +59,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             button.setOnClickListener {
                 rootView.findNavController()
                     .navigate(R.id.personal_to_edit, bundleOf("id_timeslot" to id))
-                Snackbar.make(it, "Edit your timeslot here", 1500)
-                    .show()
+                Snackbar.make(rootView, "Remember to bind with your own skills", 1500).show()
             }
         }
     }

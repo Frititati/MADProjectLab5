@@ -9,6 +9,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -50,15 +51,17 @@ class OffersListAdapter(private val mode: String) :
 
     class OfferListViewHolder(v: View, private val mode: String) : RecyclerView.ViewHolder(v) {
         private val rootView = v
-        val title: TextView = v.findViewById(R.id.title)
-        private val location: TextView = v.findViewById(R.id.location)
-        private val date: TextView = v.findViewById(R.id.date)
-        private val button: Button = v.findViewById(R.id.view_button)
+        private val title = v.findViewById<TextView>(R.id.title)
+        private val location = v.findViewById<TextView>(R.id.location)
+        private val date = v.findViewById<TextView>(R.id.date)
+        private val button = v.findViewById<Button>(R.id.view_button)
+        private val free = v.findViewById<TextView>(R.id.free)
 
         fun bind(id: String, timeslot: TimeslotData) {
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
+            free.isVisible = timeslot.duration == 0L
 
             button.setOnClickListener {
                 if (mode == "Watch")

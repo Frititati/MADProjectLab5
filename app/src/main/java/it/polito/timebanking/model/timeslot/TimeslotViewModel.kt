@@ -31,8 +31,9 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
             .whereEqualTo("available", true)
             .addSnapshotListener { u, _ ->
                 if (u != null) {
-                    offers.value = u.filter { it.toTimeslotData().date + oneDay >= System.currentTimeMillis() }
-                        .map { Pair(it.id, it.toTimeslotData()) }
+                    offers.value =
+                        u.filter { it.toTimeslotData().date + oneDay >= System.currentTimeMillis() }
+                            .map { Pair(it.id, it.toTimeslotData()) }
                 }
             }
         return offers
@@ -41,19 +42,14 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
     fun getUserTimeslots(): LiveData<List<Pair<String, TimeslotData>>> {
         val timeslots = MutableLiveData<List<Pair<String, TimeslotData>>>()
 
-        FirebaseFirestore.getInstance().collection("users")
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .addSnapshotListener { ut, _ ->
-                val timeslotsList: MutableList<Pair<String, TimeslotData>> = mutableListOf()
-                (ut?.get("timeslots") as List<*>).forEach {
-                    FirebaseFirestore.getInstance().collection("timeslots")
-                        .document(it.toString())
-                        .addSnapshotListener { t, _ ->
-                            if (t != null) {
-                                timeslotsList.add(Pair(t.id, t.toTimeslotData()))
-                                timeslots.value = timeslotsList
-                            }
-                        }
+        FirebaseFirestore.getInstance().collection("timeslots")
+            .whereEqualTo("ownedBy", FirebaseAuth.getInstance().currentUser!!.uid)
+            .addSnapshotListener { ts, e ->
+                if (ts != null) {
+                    timeslots.value = if (e != null)
+                        emptyList()
+                    else
+                        ts.map { Pair(it.id, it.toTimeslotData()) }
                 }
             }
         return timeslots

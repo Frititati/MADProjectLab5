@@ -70,7 +70,13 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 val dialog = AlertDialog.Builder(this)
                 dialog.setTitle("Are you sure you want to log out?")
-                dialog.setView(this.layoutInflater.inflate(R.layout.dialog_generic,findViewById(android.R.id.content), false))
+                dialog.setView(
+                    this.layoutInflater.inflate(
+                        R.layout.dialog_generic,
+                        findViewById(android.R.id.content),
+                        false
+                    )
+                )
                 dialog.setNegativeButton("No") { _, _ ->
                     findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
@@ -129,20 +135,13 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     updateIMG("gs://madproject-3381c.appspot.com/user_profile_picture/${firestoreUser.uid}.png")
                     FirebaseFirestore.getInstance().collection("users").document(firestoreUser.uid)
                         .get().addOnSuccessListener {
-                            updateTime(
-                                String.format(
-                                    resources.getString(
-                                        R.string.minutes,
-                                        it.get("time").toString().toLong()
-                                    )
-                                )
-                            )
+                            updateTime(it.get("time").toString().toLong())
                             updateFName(it.get("fullName").toString())
                         }
                 }
             }
         timeVM.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(this) {
-            updateTime(String.format(resources.getString(R.string.minutes), it))
+            updateTime(it)
         }
 
         /*
@@ -163,8 +162,24 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         supportActionBar!!.title = title
     }
 
-    override fun updateTime(time: String) {
-        binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = time
+    override fun updateTime(time: Long) {
+        binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text =
+            timeFormatter(time)
+    }
+
+    private fun timeFormatter(time: Long): String {
+        val h = if(time/60L == 1L)
+            "1 hour"
+        else
+            "${time/60L} hours"
+        val m = if(time%60L == 1L)
+            "1 minute"
+        else
+            "${time%60L} minutes"
+        return if (h == "0 hours")
+            m
+        else
+            "$h, $m"
     }
 
     override fun updateFName(name: String) {

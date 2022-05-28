@@ -29,16 +29,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
             }
-
-//        val messagesList: MutableList<MessageData> = mutableListOf()
-//        FirebaseFirestore.getInstance().collection("messages").whereEqualTo("chatID", chatID)
-//            .addSnapshotListener { m, e ->
-//                if (m != null) {
-//                    messages.value = if (e != null)
-//                        emptyList()
-//                    else m.map { it.toMessageData() }
-//                }
-//            }
         return messages
     }
 

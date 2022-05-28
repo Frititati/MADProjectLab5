@@ -56,7 +56,7 @@ class OfferDetailFragment : Fragment() {
                     binding.Title.text = titleFormatter(it.title)
                     binding.Description.text = descriptionFormatter(it.description)
                     binding.Date.text = dateFormatter(it.date)
-                    binding.Duration.text = durationMinuteFormatter(resources, it.duration)
+                    binding.Duration.text = durationMinuteFormatter(it.duration)
                     binding.Location.text = locationFormatter(it.location)
                 }
             }

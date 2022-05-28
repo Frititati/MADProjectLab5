@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotEditBinding
 import it.polito.timebanking.model.profile.toUserProfileData
-import it.polito.timebanking.model.timeslot.TimeslotViewModel
 import it.polito.timebanking.model.timeslot.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -123,7 +120,19 @@ class EditTimeslotFragment : Fragment() {
                     }
             }
             else{
-                Toast.makeText(context,"Date should be today or after",Toast.LENGTH_SHORT).show()
+                val dialog = AlertDialog.Builder(context)
+                dialog.setTitle("Cannot create timeslot for ${"%02d".format(d)}/${"%02d".format(m)}/$y. Activate for today?")
+                dialog.setView(layoutInflater.inflate(R.layout.dialog_generic,null))
+                dialog.setPositiveButton("Yes"){_, _ ->
+                    dateMilli = System.currentTimeMillis()
+                    binding.editDate.text = dateFormatter(dateMilli)
+                    FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot)
+                        .update("available", true).addOnSuccessListener {
+                            Snackbar.make(binding.root, "Timeslot now active", 1500).show()
+                        }
+                }
+                dialog.setNegativeButton("No"){_,_ ->}
+                dialog.create().show()
             }
         }
 

@@ -44,9 +44,21 @@ fun descriptionFormatter(description: String?): String {
     else description
 }
 
-fun durationMinuteFormatter(r: Resources, duration: Long?): String {
-    return if (duration == null || duration == 0L) String.format(r.getString(R.string.minutes), 0)
-    else String.format(r.getString(R.string.minutes), duration)
+fun durationMinuteFormatter(time: Long): String {
+    val h = if (time / 60L == 1L)
+        "1 hour"
+    else
+        "${time / 60L} hours"
+    val m = if (time % 60L == 1L)
+        "1 minute"
+    else
+        "${time % 60L} minutes"
+    return if (h == "0 hours" && m == "0 minutes")
+        "FREE"
+    else if (h == "0 hours")
+        m
+    else
+        "$h, $m"
 }
 
 fun durationFormatter(duration: Long?): Long {

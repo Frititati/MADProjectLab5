@@ -50,7 +50,6 @@
     <string name="locationTooltip">Location</string>
     <string name="login_welcome">Welcome, please login</string>
     <string name="logout">Logout</string>
-    <string name="minutes">%d minutes</string>
     <string name="myChat">My Chat</string>
     <string name="my_profile">My Profile</string>
     <string name="nickname">Your nick name</string>
@@ -110,4 +109,7 @@
     <string name="select_job_status">Filter by status</string>
     <string name="sortBy">Sort by…</string>
     <string name="filterBy">Filter by…</string>
+    <string name="free">FREE</string>
+    <string name="comment">Comment:</string>
+    <string name="job">Job:</string>
 </resources>
