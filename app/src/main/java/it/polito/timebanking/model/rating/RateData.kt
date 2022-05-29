@@ -7,8 +7,7 @@ data class RateData(
     var comment: String,
     var jobName: String,
     var senderID: String,
-    var receiverID: String,
-    var consumerRate: Boolean
+    var receiverID: String
 )
 
 fun DocumentSnapshot.toRateData(): RateData {
@@ -17,8 +16,7 @@ fun DocumentSnapshot.toRateData(): RateData {
         this.getString("comment") ?: "",
         this.getString("jobName") ?: "",
         this.getString("senderID") ?: "",
-        this.getString("receiverID") ?: "",
-        this.getBoolean("consumerRate") ?: false
+        this.getString("receiverID") ?: ""
         )
 
 }

@@ -19,7 +19,7 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val mReceived = 2
     private val mSystem = 3
     private var messageList = mutableListOf<MessageData>()
-    private val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUser = FirebaseAuth.getInstance().uid!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

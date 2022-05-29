@@ -51,7 +51,7 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
     class SkillListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
-        private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+        private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
         fun bind(id: String, skill: SkillData, is_selected: Boolean) {
             checkBox.text = skill.title

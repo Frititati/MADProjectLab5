@@ -38,7 +38,7 @@ class MessageListFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()
     private val vmProfile by viewModels<ProfileViewModel>()
     private val messageListAdapter = MessageListAdapter()
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private var userIsProducer = false
     private lateinit var jobID: String
     private lateinit var drawerListener: NavBarUpdater
@@ -160,14 +160,14 @@ class MessageListFragment : Fragment() {
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toDouble()
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
                 if (userIsProducer) {
-                    val rate = RateData(rating, comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
+                    val rate = RateData(rating, comment, timeslot.title, job.userProducerID, job.userConsumerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }
                 else {
-                    val rate = RateData(rating, comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
+                    val rate = RateData(rating, comment, timeslot.title, job.userConsumerID, job.userProducerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()

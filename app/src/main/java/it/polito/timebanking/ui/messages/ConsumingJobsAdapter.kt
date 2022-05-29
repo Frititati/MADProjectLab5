@@ -61,7 +61,7 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
         fun bind(jobID: String, job: JobData,context: Context) {
-            val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+            val firebaseUserID = FirebaseAuth.getInstance().uid!!
             val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
             else job.userProducerID
 

@@ -26,6 +26,7 @@ class ShowProfileFragment : Fragment() {
     private var _binding: FragmentShowProfileBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<ProfileViewModel>()
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private val skillsListAdapter = SkillsListAdapter()
 
     override fun onCreateView(
@@ -40,9 +41,10 @@ class ShowProfileFragment : Fragment() {
 
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
-        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener { res ->
+
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { res ->
             if (res.exists()) {
-                vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
+                vm.get(firebaseUserID).observe(viewLifecycleOwner) {
                     binding.fullName.text = it.fullName
                     binding.nickName.text = it.nickName
                     binding.email.text = it.email
@@ -51,15 +53,14 @@ class ShowProfileFragment : Fragment() {
                     binding.description.text = it.description
                     if (it.jobsRated > 0) {
                         val f = DecimalFormat("#.0")
-                        Log.d("test","Score = ${it.score.toString().toDouble()} / ${it.jobsRated.toDouble()}")
                         binding.rating.text = f.format(it.score / it.jobsRated.toDouble()).toString()
                     }
-                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, FirebaseAuth.getInstance().currentUser!!.uid))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                         binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                     }
                     binding.skillView.layoutManager = LinearLayoutManager(activity)
                     binding.skillView.adapter = skillsListAdapter
-                    skillsListAdapter.setUserSkills(it.skills.map { l -> l.toString() })
+                    skillsListAdapter.setUserSkills(it.skills.map { s -> s.toString() })
                     binding.skillView.isNestedScrollingEnabled = false
                 }
             }
@@ -104,11 +105,10 @@ class ShowProfileFragment : Fragment() {
     }
 
     private fun updateAllSkills() {
-        FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
+        FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener {
             val map = mutableMapOf<String, SkillData>()
-            for (document in documents) {
-                map[document.id] = document.toSkillData()
-            }
+
+            it.forEach { d -> map[d.id] = d.toSkillData()}
             skillsListAdapter.setAllSkills(map)
         }
     }

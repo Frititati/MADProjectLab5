@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TimeslotViewModel(application: Application) : AndroidViewModel(application) {
 
     private val oneDay = 86400000
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     fun get(id: String): LiveData<TimeslotData> {
         val timeslot = MutableLiveData<TimeslotData>()
 

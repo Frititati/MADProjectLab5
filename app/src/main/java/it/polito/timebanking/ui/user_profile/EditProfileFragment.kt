@@ -36,7 +36,7 @@ class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private lateinit var drawerListener: NavBarUpdater
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

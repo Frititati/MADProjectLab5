@@ -22,7 +22,7 @@ class TimeslotListFragment : Fragment() {
     private var _binding: FragmentTimeslotListBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<TimeslotViewModel>()
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
 
     override fun onCreateView(

@@ -23,7 +23,7 @@ class OfferDetailFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()
     private var _binding: FragmentOfferDetailBinding? = null
     private val binding get() = _binding!!
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

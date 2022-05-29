@@ -21,7 +21,7 @@ class RatingsFragment : Fragment() {
     private var higher = 1
     private var lower = 2
     private var showingReceived = true
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private var ratingList = emptyList<Pair<String, RateData>>()
     private val rateVM by viewModels<RateViewModel>()
 

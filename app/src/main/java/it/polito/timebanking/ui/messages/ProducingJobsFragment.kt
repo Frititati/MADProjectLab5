@@ -19,7 +19,7 @@ class ProducingJobsFragment : Fragment() {
     private var jobsListAdapter = ProducingJobsAdapter()
     private var allJobs = mutableListOf<Pair<String, JobData>>()
     private val vm by viewModels<JobViewModel>()
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

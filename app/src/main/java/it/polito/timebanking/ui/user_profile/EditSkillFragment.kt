@@ -24,7 +24,7 @@ import it.polito.timebanking.model.skill.toSkillData
 class EditSkillFragment : Fragment() {
     private var _binding: FragmentEditSkillBinding? = null
     private val binding get() = _binding!!
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private val vm by viewModels<SkillViewModel>()
     private var editableSkillListAdapter = EditSkillAdapter()
     private val allSkills = mutableListOf<SkillData>()

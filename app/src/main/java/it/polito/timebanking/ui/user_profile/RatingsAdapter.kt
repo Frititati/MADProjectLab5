@@ -23,7 +23,7 @@ import it.polito.timebanking.model.profile.toUserProfileData
 class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() {
 
     private var allRates = mutableListOf<Pair<String, RateData>>()
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     class RatingsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 

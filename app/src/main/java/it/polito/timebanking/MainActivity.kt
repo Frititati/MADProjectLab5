@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     private val defaultAge = 18L
     private val startingTime = 120L
     private val timeVM by viewModels<TimeViewModel>()
-    private val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
