@@ -9,14 +9,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     fun get(id: String): LiveData<ProfileData> {
-        val timeslot = MutableLiveData<ProfileData>()
+        val user = MutableLiveData<ProfileData>()
 
         FirebaseFirestore.getInstance().collection("users").document(id).addSnapshotListener { r, _ ->
                 if (r != null) {
-                    timeslot.value = r.toUserProfileData()
+                    user.value = r.toUserProfileData()
                 }
             }
-        return timeslot
+        return user
     }
 
 

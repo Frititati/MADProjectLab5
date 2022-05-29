@@ -25,16 +25,6 @@
             android:layout_weight="0.33"
             android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/editImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/editButton"
-                app:layout_constraintBottom_toTopOf="@id/userImage"
-                app:layout_constraintRight_toRightOf="@id/userImage"
-                app:srcCompat="@android:drawable/ic_menu_camera" />
-
             <ImageView
                 android:id="@+id/userImage"
                 android:layout_width="match_parent"

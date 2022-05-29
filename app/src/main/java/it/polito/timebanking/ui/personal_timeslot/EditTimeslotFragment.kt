@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,8 +51,8 @@ class EditTimeslotFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.skillListRecycler!!.layoutManager = LinearLayoutManager(activity)
-        binding.skillListRecycler!!.adapter = editableSkillListAdapter
+        binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
+        binding.skillListRecycler.adapter = editableSkillListAdapter
 
         idTimeslot = requireArguments().getString("id_timeslot")!!
         vm.get(idTimeslot).observe(viewLifecycleOwner) {
@@ -64,8 +65,8 @@ class EditTimeslotFragment : Fragment() {
 
             editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map { l -> l.toString() })
 
-            binding.activateButton!!.visibility = if (it.available) View.GONE else View.VISIBLE
-            binding.deactivateButton!!.visibility = if (it.available) View.VISIBLE else View.GONE
+            binding.activateButton.visibility = if (it.available) View.GONE else View.VISIBLE
+            binding.deactivateButton.visibility = if (it.available) View.VISIBLE else View.GONE
         }
 
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
@@ -84,7 +85,7 @@ class EditTimeslotFragment : Fragment() {
             dpd.show()
         }
 
-        binding.activateButton!!.setOnClickListener {
+        binding.activateButton.setOnClickListener {
             val y: Int
             val m: Int
             val d: Int
@@ -110,7 +111,7 @@ class EditTimeslotFragment : Fragment() {
                         else {
                             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                                 Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
-                                binding.activateButton!!.visibility = View.GONE
+                                binding.activateButton.visibility = View.GONE
                             }
                         }
                     }
@@ -132,10 +133,10 @@ class EditTimeslotFragment : Fragment() {
             }
         }
 
-        binding.deactivateButton!!.setOnClickListener {
+        binding.deactivateButton.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", false).addOnSuccessListener {
                 Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
-                binding.deactivateButton!!.visibility = View.GONE
+                binding.deactivateButton.visibility = View.GONE
             }
         }
 

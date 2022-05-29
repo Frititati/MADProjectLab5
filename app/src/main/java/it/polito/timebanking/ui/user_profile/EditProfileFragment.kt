@@ -61,7 +61,7 @@ class EditProfileFragment : Fragment() {
                     binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                 }
         }
-        val editButton = binding.editImage
+        val editButton = binding.userImage
         registerForContextMenu(editButton)
         editButton.setOnClickListener {
             requireActivity().openContextMenu(it)

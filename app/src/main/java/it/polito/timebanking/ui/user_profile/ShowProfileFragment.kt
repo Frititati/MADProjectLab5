@@ -42,34 +42,33 @@ class ShowProfileFragment : Fragment() {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
 
-        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { res ->
-            if (res.exists()) {
-                vm.get(firebaseUserID).observe(viewLifecycleOwner) {
-                    binding.fullName.text = it.fullName
-                    binding.nickName.text = it.nickName
-                    binding.email.text = it.email
-                    binding.age.text = String.format(resources.getString(R.string.age), it.age)
-                    binding.location.text = it.location
-                    binding.description.text = it.description
-                    if (it.jobsRated > 0) {
-                        val f = DecimalFormat("#.0")
-                        binding.rating.text = f.format(it.score / it.jobsRated.toDouble()).toString()
-                    }
-                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                        binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                    }
-                    binding.skillView.layoutManager = LinearLayoutManager(activity)
-                    binding.skillView.adapter = skillsListAdapter
-                    skillsListAdapter.setUserSkills(it.skills.map { s -> s.toString() })
-                    binding.skillView.isNestedScrollingEnabled = false
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
+            vm.get(firebaseUserID).observe(viewLifecycleOwner) {
+                binding.fullName.text = it.fullName
+                binding.nickName.text = it.nickName
+                binding.email.text = it.email
+                binding.age.text = String.format(resources.getString(R.string.age), it.age)
+                binding.location.text = it.location
+                binding.description.text = it.description
+                if (it.jobsRated > 0) {
+                    val f = DecimalFormat("#.0")
+                    binding.rating.text = f.format(it.score / it.jobsRated.toDouble()).toString()
                 }
+                Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                    binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
+                }
+                binding.skillView.layoutManager = LinearLayoutManager(activity)
+                binding.skillView.adapter = skillsListAdapter
+                Log.d("test", "${it.skills.map{s -> s.toString()}}")
+                skillsListAdapter.setUserSkills(it.skills.map { s -> s.toString() })
+                binding.skillView.isNestedScrollingEnabled = false
             }
         }.addOnFailureListener {
             Toast.makeText(context, "Unexpected error", Toast.LENGTH_LONG).show()
         }
         updateAllSkills()
 
-        binding.buttonRate!!.setOnClickListener {
+        binding.buttonRate.setOnClickListener {
             findNavController().navigate(R.id.show_to_ratings)
             Snackbar.make(binding.root, "Tap on a rating to see more", Snackbar.LENGTH_SHORT).show()
         }
@@ -108,7 +107,7 @@ class ShowProfileFragment : Fragment() {
         FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener {
             val map = mutableMapOf<String, SkillData>()
 
-            it.forEach { d -> map[d.id] = d.toSkillData()}
+            it.forEach { d -> map[d.id] = d.toSkillData() }
             skillsListAdapter.setAllSkills(map)
         }
     }
