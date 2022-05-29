@@ -178,5 +178,10 @@
         android:name="it.polito.timebanking.ui.user_profile.RatingsFragment"
         android:label="My Ratings"
         tools:layout="@layout/fragment_ratings" />
+    <fragment
+        android:id="@+id/couponFragment"
+        android:name="it.polito.timebanking.ui.user_profile.CouponFragment"
+        android:label="fragment_coupon"
+        tools:layout="@layout/fragment_coupon" />
 
 </navigation>

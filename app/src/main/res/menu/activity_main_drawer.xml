@@ -24,5 +24,9 @@
             android:id="@+id/producingJobFragment"
             android:icon="@drawable/ic_job_request"
             android:title="@string/jobRequest" />
+        <item
+            android:id="@+id/couponFragment"
+            android:icon="@drawable/ic_job_request"
+            android:title="COUPONS!" />
     </group>
 </menu>

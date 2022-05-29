@@ -21,12 +21,10 @@ import it.polito.timebanking.model.skill.SkillData
 import it.polito.timebanking.model.skill.toSkillData
 import java.text.DecimalFormat
 
-
 class ShowProfileFragment : Fragment() {
     private var _binding: FragmentShowProfileBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<ProfileViewModel>()
-    private val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
     private val skillsListAdapter = SkillsListAdapter()
 
     override fun onCreateView(
@@ -41,10 +39,9 @@ class ShowProfileFragment : Fragment() {
 
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
-
-        FirebaseFirestore.getInstance().collection("users").document(firebaseUser).get().addOnSuccessListener { res ->
+        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener { res ->
             if (res.exists()) {
-                vm.get(firebaseUser).observe(viewLifecycleOwner) {
+                vm.get(FirebaseAuth.getInstance().currentUser!!.uid).observe(viewLifecycleOwner) {
                     binding.fullName.text = it.fullName
                     binding.nickName.text = it.nickName
                     binding.email.text = it.email
@@ -55,7 +52,7 @@ class ShowProfileFragment : Fragment() {
                         val f = DecimalFormat("#.0")
                         binding.rating.text = f.format(it.score / it.jobsRated).toString()
                     }
-                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUser))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, FirebaseAuth.getInstance().currentUser!!.uid))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                         binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
                     }
                     binding.skillView.layoutManager = LinearLayoutManager(activity)
