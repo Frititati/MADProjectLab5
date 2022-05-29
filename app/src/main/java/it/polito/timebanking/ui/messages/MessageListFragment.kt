@@ -160,15 +160,16 @@ class MessageListFragment : Fragment() {
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
                 if (userIsProducer) {
-                    val rate = RateData((rating * 10).toLong(), comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
+                    val rate = RateData(rating.toDouble(), comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
+                        FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating.toLong()))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }
                 else {
-                    val rate = RateData((rating * 10).toLong(), comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
+                    val rate = RateData(rating.toDouble(), comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment((rating * 10).toLong()))
+                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating.toLong()))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }

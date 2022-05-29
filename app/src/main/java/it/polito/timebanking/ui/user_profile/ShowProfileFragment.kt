@@ -53,7 +53,7 @@ class ShowProfileFragment : Fragment() {
                     binding.description.text = it.description
                     if (it.jobsRated > 0) {
                         val f = DecimalFormat("#.0")
-                        binding.rating.text = f.format(((it.score / it.jobsRated) / 10.0)).toString()
+                        binding.rating.text = f.format(it.score / it.jobsRated).toString()
                     }
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUser))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                         binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))

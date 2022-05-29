@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,8 +64,8 @@ class EditTimeslotFragment : Fragment() {
 
             editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map { l -> l.toString() })
 
-            binding.activateButton!!.visibility = if(it.available) View.GONE else View.VISIBLE
-            binding.deactivateButton!!.visibility = if(it.available) View.VISIBLE else View.GONE
+            binding.activateButton!!.visibility = if (it.available) View.GONE else View.VISIBLE
+            binding.deactivateButton!!.visibility = if (it.available) View.VISIBLE else View.GONE
         }
 
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
@@ -93,7 +92,8 @@ class EditTimeslotFragment : Fragment() {
                 y = getYear(initialDate)
                 m = getMonth(initialDate)
                 d = getDay(initialDate)
-            } else {
+            }
+            else {
                 y = getYear(binding.editDate.text.toString())
                 m = getMonth(binding.editDate.text.toString())
                 d = getDay(binding.editDate.text.toString())
@@ -106,7 +106,8 @@ class EditTimeslotFragment : Fragment() {
                     if (r != null) {
                         if (r.any { it.getString("jobStatus").toString() == JobStatus.ACCEPTED.toString() || it.getString("jobStatus") == JobStatus.STARTED.toString() }) {
                             Snackbar.make(binding.root, "This timeslot is already busy", Snackbar.LENGTH_SHORT).show()
-                        } else {
+                        }
+                        else {
                             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                                 Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
                                 binding.activateButton!!.visibility = View.GONE
@@ -114,7 +115,8 @@ class EditTimeslotFragment : Fragment() {
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 val dialog = AlertDialog.Builder(context)
                 dialog.setTitle("Cannot create timeslot for ${"%02d".format(d)}/${"%02d".format(m)}/$y. Activate for today?")
                 dialog.setView(layoutInflater.inflate(R.layout.dialog_generic, null))
@@ -138,25 +140,30 @@ class EditTimeslotFragment : Fragment() {
         }
 
         binding.deleteButton.setOnClickListener {
-            val dialog = AlertDialog.Builder(context)
-            val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
-            dialog.setTitle(
-                String.format(
-                    resources.getString(R.string.delete_timeslot_confirm),
-                )
-            )
-            dialog.setView(dialogView)
+            FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).get().addOnSuccessListener { r ->
+                if (r != null) {
+                    if (r.any { it.getString("jobStatus").toString() == JobStatus.ACCEPTED.toString() || it.getString("jobStatus") == JobStatus.STARTED.toString() }) {
+                        Snackbar.make(binding.root, "This timeslot is already busy", Snackbar.LENGTH_SHORT).show()
+                    }
+                    else {
+                        val dialog = AlertDialog.Builder(context)
+                        val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
+                        dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm)))
+                        dialog.setView(dialogView)
 
-            dialog.setPositiveButton("Yes") { _, _ ->
-                toUpdate = false
-                vm.delete(idTimeslot)
-                vm.deleteUserTimeslot(idTimeslot)
-                findNavController().navigate(R.id.edit_to_personal)
-                Snackbar.make(binding.root, "Timeslot deleted", 1500).show()
+                        dialog.setPositiveButton("Yes") { _, _ ->
+                            toUpdate = false
+                            vm.delete(idTimeslot)
+                            vm.deleteUserTimeslot(idTimeslot)
+                            findNavController().navigate(R.id.edit_to_personal)
+                            Snackbar.make(binding.root, "Timeslot deleted", 1500).show()
+                        }
+                        dialog.setNegativeButton("No") { _, _ ->
+                        }
+                        dialog.create().show()
+                    }
+                }
             }
-            dialog.setNegativeButton("No") { _, _ ->
-            }
-            dialog.create().show()
         }
     }
 

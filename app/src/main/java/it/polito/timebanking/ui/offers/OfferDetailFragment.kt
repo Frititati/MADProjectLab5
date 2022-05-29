@@ -37,6 +37,7 @@ class OfferDetailFragment : Fragment() {
         val idTimeslot = requireArguments().getString("id_timeslot")!!
         val otherUserID = requireArguments().getString("id_user")!!
 
+
         if (otherUserID == firebaseUserID) Toast.makeText(context, "Your own offer!", Toast.LENGTH_SHORT).show()
         FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { user ->
             binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
@@ -46,7 +47,7 @@ class OfferDetailFragment : Fragment() {
             val jobsRated = user.getLong("jobsRated") ?: 0
             if (jobsRated != 0L) {
                 val f = DecimalFormat("#.0")
-                binding.userRating.text = f.format(((score / jobsRated) / 10.0)).toString()
+                binding.userRating.text = f.format(((score / jobsRated))).toString()
             }
             vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                 binding.Title.text = titleFormatter(it.title)

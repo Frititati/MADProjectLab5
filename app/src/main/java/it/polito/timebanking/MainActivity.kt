@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
                             Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic,firebaseUserID))).putBytes(it)
                         }
-                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, 0, 0))
+                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, 0.0, 0))
                     binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")
 
                 } else {
