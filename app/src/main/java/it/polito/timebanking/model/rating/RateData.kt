@@ -1,7 +1,6 @@
 package it.polito.timebanking.model.rating
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.ktx.getField
 
 data class RateData(
     var score: Double,
@@ -14,7 +13,7 @@ data class RateData(
 
 fun DocumentSnapshot.toRateData(): RateData {
     return RateData(
-        this.getDouble("score") ?: 0.0,
+        this.getDouble("score") ?: .0,
         this.getString("comment") ?: "",
         this.getString("jobName") ?: "",
         this.getString("senderID") ?: "",

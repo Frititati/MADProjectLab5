@@ -27,7 +27,7 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.get("timeslots") as List<*>? ?: emptyList<String>(),
         this.getString("description") ?: "",
         this.getLong("time") ?: 0,
-        this.getDouble("score") ?: 0.0,
+        this.getDouble("score") ?: .0,
         this.getLong("jobsRated") ?: 0
     )
 }

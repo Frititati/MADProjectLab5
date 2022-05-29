@@ -2,6 +2,7 @@ package it.polito.timebanking.ui.user_profile
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
@@ -50,7 +51,8 @@ class ShowProfileFragment : Fragment() {
                     binding.description.text = it.description
                     if (it.jobsRated > 0) {
                         val f = DecimalFormat("#.0")
-                        binding.rating.text = f.format(it.score / it.jobsRated).toString()
+                        Log.d("test","Score = ${it.score.toString().toDouble()} / ${it.jobsRated.toDouble()}")
+                        binding.rating.text = f.format(it.score / it.jobsRated.toDouble()).toString()
                     }
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, FirebaseAuth.getInstance().currentUser!!.uid))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                         binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))

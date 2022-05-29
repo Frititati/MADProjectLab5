@@ -32,11 +32,10 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         private val image = v.findViewById<ImageView>(R.id.userImageOnRate)
         private val name = v.findViewById<TextView>(R.id.ratePerson)
         private val cardView = v.findViewById<CardView>(R.id.rating_card_view)
-        private val div = 10.0
 
         fun bind(rating: RateData, context: Context) {
-            score.text = (rating.score / div).toString()
-            setCardBackground(rating.score / div, cardView, context)
+            score.text = (rating.score).toString()
+            setCardBackground(rating.score, cardView, context)
             FirebaseFirestore.getInstance().collection("users").document(rating.senderID).get().addOnSuccessListener {
                     name.text = it.toUserProfileData().fullName
                 }
