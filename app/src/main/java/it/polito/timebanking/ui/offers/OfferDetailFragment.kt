@@ -17,6 +17,7 @@ import it.polito.timebanking.model.profile.ageFormatter
 import it.polito.timebanking.model.profile.fullNameFormatter
 import it.polito.timebanking.model.timeslot.*
 import it.polito.timebanking.ui.messages.JobStatus
+import java.text.DecimalFormat
 
 class OfferDetailFragment : Fragment() {
     private val vmTimeslot by viewModels<TimeslotViewModel>()
@@ -42,8 +43,11 @@ class OfferDetailFragment : Fragment() {
             binding.UserAge.text = ageFormatter(user.get("age").toString())
             binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
             val score = user.getLong("score") ?: 0
-            val jobs = user.getLong("jobsRated") ?: 0
-            if (jobs != 0L) binding.userRating.text = (score / jobs).toString()
+            val jobsRated = user.getLong("jobsRated") ?: 0
+            if (jobsRated != 0L) {
+                val f = DecimalFormat("#.0")
+                binding.userRating.text = f.format(((score / jobsRated) / 10.0)).toString()
+            }
             vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                 binding.Title.text = titleFormatter(it.title)
                 binding.Description.text = descriptionFormatter(it.description)

@@ -2,7 +2,6 @@ package it.polito.timebanking.ui.messages
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,7 +93,8 @@ class MessageListFragment : Fragment() {
             if (message.isNotEmpty()) {
                 vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), false)
                 binding.writeMessage.setText("")
-            } else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
+            }
+            else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate", System.currentTimeMillis())
         }
 
@@ -109,7 +109,8 @@ class MessageListFragment : Fragment() {
                         if (enoughTime(it.getLong("time") ?: 0)) updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
                         else Toast.makeText(context, "Sorry, you don't have enough time", Toast.LENGTH_SHORT).show()
                     }
-                } else {
+                }
+                else {
                     Snackbar.make(binding.root, "The timeslot is temporarily unavailable. Please try again later", Snackbar.LENGTH_SHORT).show()
                 }
             }
@@ -127,7 +128,8 @@ class MessageListFragment : Fragment() {
                             }
                         }
                     }
-                } else {
+                }
+                else {
                     Toast.makeText(context, "Couldn't accept. Consumer is out of time", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -157,30 +159,33 @@ class MessageListFragment : Fragment() {
             dialog.setPositiveButton("Confirm") { _, _ ->
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
-                val mul = 10.0
                 if (userIsProducer) {
-                    val rate = RateData((rating * mul).toLong(), comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
+                    val rate = RateData((rating * 10).toLong(), comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
-                } else {
-                    val rate = RateData((rating * mul).toLong(), comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
+                }
+                else {
+                    val rate = RateData((rating * 10).toLong(), comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment((rating * mul).toLong()))
+                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment((rating * 10).toLong()))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }
 
                 if (userIsProducer) {
-                    if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                    else {
+                    if (job.jobStatus == JobStatus.DONE)
                         updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
+                    else {
+                        vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by producer)", System.currentTimeMillis(), true)
                         updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
                     }
-                } else {
-                    if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
+                }
+                else {
+                    if (job.jobStatus == JobStatus.DONE)
+                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
-                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
+                        vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by consumer)", System.currentTimeMillis(), true)
                         updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
                     }
                 }
@@ -210,14 +215,16 @@ class MessageListFragment : Fragment() {
             JobStatus.INIT -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
-                } else {
+                }
+                else {
                     updateButtonStatus(requested = true, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }
             JobStatus.REQUESTED -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = true, reject = true, start = false, end = false, rate = false)
-                } else {
+                }
+                else {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }

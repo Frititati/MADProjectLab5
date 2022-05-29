@@ -26,7 +26,6 @@ class ShowProfileFragment : Fragment() {
     private var _binding: FragmentShowProfileBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModels<ProfileViewModel>()
-    private val div = 10.0
     private val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
     private val skillsListAdapter = SkillsListAdapter()
 
@@ -54,7 +53,7 @@ class ShowProfileFragment : Fragment() {
                     binding.description.text = it.description
                     if (it.jobsRated > 0) {
                         val f = DecimalFormat("#.0")
-                        binding.rating.text = f.format(((it.score / it.jobsRated) / div)).toString()
+                        binding.rating.text = f.format(((it.score / it.jobsRated) / 10.0)).toString()
                     }
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUser))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                         binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))

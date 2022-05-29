@@ -12,7 +12,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentSkillListBinding
 import it.polito.timebanking.model.skill.SkillData

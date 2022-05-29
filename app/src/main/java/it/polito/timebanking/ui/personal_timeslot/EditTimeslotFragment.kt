@@ -65,13 +65,8 @@ class EditTimeslotFragment : Fragment() {
 
             editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map { l -> l.toString() })
 
-            if (it.available) {
-                binding.activateButton!!.visibility = View.GONE
-                binding.deactivateButton!!.visibility = View.VISIBLE
-            } else {
-                binding.activateButton!!.visibility = View.VISIBLE
-                binding.deactivateButton!!.visibility = View.GONE
-            }
+            binding.activateButton!!.visibility = if(it.available) View.GONE else View.VISIBLE
+            binding.deactivateButton!!.visibility = if(it.available) View.VISIBLE else View.GONE
         }
 
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
