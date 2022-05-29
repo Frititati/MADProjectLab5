@@ -43,11 +43,11 @@ class OfferDetailFragment : Fragment() {
             binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
             binding.UserAge.text = ageFormatter(user.get("age").toString())
             binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
-            val score = user.getLong("score") ?: 0
+            val score = user.getDouble("score") ?: 0.0
             val jobsRated = user.getLong("jobsRated") ?: 0
             if (jobsRated != 0L) {
                 val f = DecimalFormat("#.0")
-                binding.userRating.text = f.format(((score / jobsRated))).toString()
+                binding.userRating.text = f.format(score / jobsRated).toString()
             }
             vmTimeslot.get(idTimeslot).observe(viewLifecycleOwner) {
                 binding.Title.text = titleFormatter(it.title)
