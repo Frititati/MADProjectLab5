@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentTimeslotEditBinding
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.*
+import it.polito.timebanking.ui.messages.JobStatus
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -73,9 +75,9 @@ class EditTimeslotFragment : Fragment() {
         }
 
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
-                val user = userIt.toUserProfileData()
-                editableSkillListAdapter.setAvailableSkills(user.skills.map { it.toString() })
-            }
+            val user = userIt.toUserProfileData()
+            editableSkillListAdapter.setAvailableSkills(user.skills.map { it.toString() })
+        }
 
         val cal = Calendar.getInstance()
         binding.editDateButton.setOnClickListener {
@@ -105,9 +107,17 @@ class EditTimeslotFragment : Fragment() {
             dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             binding.editDate.hint = dateFormatter(dateMilli)
             if (dateMilli + oneDay >= System.currentTimeMillis()) {
-                FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
-                        Snackbar.make(binding.root, "Timeslot now active", 1500).show()
+                FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).addSnapshotListener { r, e ->
+                    if (r != null) {
+                        if (r.any { it.getString("jobStatus").toString() == JobStatus.ACCEPTED.toString() || it.getString("jobStatus") == JobStatus.STARTED.toString() }) Snackbar.make(binding.root, "This timeslot is already busy", Snackbar.LENGTH_SHORT).show()
+                        else {
+                            FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
+                                Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
+                                binding.activateButton!!.visibility = View.GONE
+                            }
+                        }
                     }
+                }
             } else {
                 val dialog = AlertDialog.Builder(context)
                 dialog.setTitle("Cannot create timeslot for ${"%02d".format(d)}/${"%02d".format(m)}/$y. Activate for today?")
@@ -116,8 +126,8 @@ class EditTimeslotFragment : Fragment() {
                     dateMilli = System.currentTimeMillis()
                     binding.editDate.text = dateFormatter(dateMilli)
                     FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
-                            Snackbar.make(binding.root, "Timeslot now active", 1500).show()
-                        }
+                        Snackbar.make(binding.root, "Timeslot now active", 1500).show()
+                    }
                 }
                 dialog.setNegativeButton("No") { _, _ -> }
                 dialog.create().show()
@@ -126,8 +136,9 @@ class EditTimeslotFragment : Fragment() {
 
         binding.deactivateButton!!.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", false).addOnSuccessListener {
-                    Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
-                }
+                Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
+                binding.deactivateButton!!.visibility = View.GONE
+            }
         }
 
         binding.deleteButton.setOnClickListener {

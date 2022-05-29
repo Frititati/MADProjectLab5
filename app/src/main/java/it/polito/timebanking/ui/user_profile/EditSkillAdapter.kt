@@ -25,7 +25,6 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
     override fun onBindViewHolder(holder: SkillListViewHolder, position: Int) {
         if (allSkills.isNotEmpty()) {
             val temp = allSkills[position]
-            Log.d("test", "${temp.first} $userSkills")
             holder.bind(temp.first, temp.second, temp.first in userSkills)
         }
     }

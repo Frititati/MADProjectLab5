@@ -47,10 +47,11 @@
             android:textColor="#212121"
             android:textSize="12sp" />
         <TextView
-            android:id="@+id/free"
+            android:id="@+id/isActive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/free"
+            android:text="@string/activate"
+            android:textStyle="italic"
             android:layout_gravity="end|bottom"
             />
 

@@ -9,10 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.timebanking.R
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
-import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.*
 
 class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotListViewHolder>() {
@@ -40,13 +38,13 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
         private val location = v.findViewById<TextView>(R.id.location)
         private val date = v.findViewById<TextView>(R.id.date)
         private val button = v.findViewById<Button>(R.id.details_button)
-        private val free = v.findViewById<TextView>(R.id.free)
+        private val isActive = v.findViewById<TextView>(R.id.isActive)
 
         fun bind(id: String, timeslot: TimeslotData) {
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
-            free.isVisible = timeslot.duration == 0L
+            isActive.text = if(timeslot.available) "Active" else "Not active"
             rootView.setOnClickListener {
                 rootView.findNavController().navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
                 Snackbar.make(it, "Details about: ${title.text}", 1500).show()

@@ -103,34 +103,40 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonRequest.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get().addOnSuccessListener {
-                    if (enoughTime(it.getLong("time") ?: 0)) updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
-                    else Toast.makeText(context, "Sorry, you don't have enough time", Toast.LENGTH_SHORT).show()
+            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener { ts ->
+                if (ts.getBoolean("available") == true) {
+                    FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get().addOnSuccessListener {
+                        if (enoughTime(it.getLong("time") ?: 0)) updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
+                        else Toast.makeText(context, "Sorry, you don't have enough time", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Snackbar.make(binding.root, "The timeslot is temporarily unavailable. Please try again later", Snackbar.LENGTH_SHORT).show()
                 }
+            }
         }
 
         binding.buttonAccept.setOnClickListener {
 
             FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get().addOnSuccessListener {
-                    if (enoughTime(it.getLong("time") ?: 0L)) {
-                        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("time", FieldValue.increment(timeslot.duration)).addOnSuccessListener {
-                                FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("time", FieldValue.increment(-timeslot.duration)).addOnSuccessListener {
-                                        timeslot.available = false
-                                        FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
-                                                updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
-                                            }
-                                    }
+                if (enoughTime(it.getLong("time") ?: 0L)) {
+                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("time", FieldValue.increment(timeslot.duration)).addOnSuccessListener {
+                        FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("time", FieldValue.increment(-timeslot.duration)).addOnSuccessListener {
+                            timeslot.available = false
+                            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
+                                updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
                             }
-                    } else {
-                        Toast.makeText(context, "Couldn't accept. Consumer is out of time", Toast.LENGTH_SHORT).show()
+                        }
                     }
+                } else {
+                    Toast.makeText(context, "Couldn't accept. Consumer is out of time", Toast.LENGTH_SHORT).show()
                 }
+            }
         }
 
         binding.buttonReject.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
-                    updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
-                }
+                updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
+            }
         }
 
         binding.buttonJobStart.setOnClickListener {
@@ -138,8 +144,8 @@ class MessageListFragment : Fragment() {
         }
         binding.buttonJobEnd.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
-                    updateJobStatus(JobStatus.DONE, "Job is DONE")
-                }
+                updateJobStatus(JobStatus.DONE, "Job is DONE")
+            }
         }
 
         binding.buttonRate.setOnClickListener {
@@ -152,32 +158,32 @@ class MessageListFragment : Fragment() {
                 val rating = dialogView.findViewById<RatingBar>(R.id.ratingBar).rating.toLong()
                 val comment = dialogView.findViewById<EditText>(R.id.comment).text.toString()
                 val mul = 10
-                Log.d("test","${rating*mul}")
+                Log.d("test", "${rating * mul}")
                 if (userIsProducer) {
                     val rate = RateData(rating * mul, comment, timeslot.title, job.userProducerID, job.userConsumerID, false)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                            Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
-                        }
+                        Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
+                    }
                 } else {
                     val rate = RateData(rating * mul, comment, timeslot.title, job.userConsumerID, job.userProducerID, true)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                            FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
-                            Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
-                        }
+                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
+                        Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            if (userIsProducer) {
-                if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                else {
-                    updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                    updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
-                }
-            } else {
-                if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
-                else {
-                    updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
-                    updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
+                if (userIsProducer) {
+                    if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
+                    else {
+                        updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
+                        updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
+                    }
+                } else {
+                    if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
+                    else {
+                        updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
+                        updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
+                    }
                 }
             }
             dialog.setNegativeButton("Cancel") { _, _ -> }
@@ -196,8 +202,8 @@ class MessageListFragment : Fragment() {
 
     private fun updateJobStatus(status: JobStatus, message: String) {
         FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("jobStatus", status, "lastUpdate", System.currentTimeMillis()).addOnSuccessListener {
-                vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), true)
-            }
+            vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), true)
+        }
     }
 
     private fun updateButtons() {
