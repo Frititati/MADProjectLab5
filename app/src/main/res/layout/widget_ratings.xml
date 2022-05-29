@@ -7,11 +7,11 @@
     android:orientation="horizontal"
     android:padding="4dp">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
+        app:shapeAppearanceOverlay="@style/ratingCardView"
         android:id="@+id/rating_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
         card_view:cardCornerRadius="10dp"
         card_view:contentPadding="10dp">
 
@@ -51,5 +51,5 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
