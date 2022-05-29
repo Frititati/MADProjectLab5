@@ -5,30 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:orientation="horizontal"
-    android:padding="6dp">
+    android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/rating_card_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|center_horizontal"
         android:backgroundTint="@color/MenuColor"
-        android:layout_gravity="center"
-        card_view:cardElevation="0dp"
-        card_view:cardCornerRadius="4dp"
-        card_view:contentPadding="10dp"
+        card_view:cardElevation="4dp"
+        card_view:cardCornerRadius="10dp"
+        card_view:contentPadding="8dp"
+        android:layout_margin="6dp"
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
-        card_view:layout_constraintTop_toTopOf="parent">
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:textColor="@color/AntiqueWhite"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textAllCaps="true"
+            android:textAlignment="center"/>
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

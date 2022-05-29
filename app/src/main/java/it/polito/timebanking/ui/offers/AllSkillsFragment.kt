@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentSkillListBinding
@@ -60,7 +61,7 @@ class AllSkillsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
+        binding.skillListRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.skillListRecycler.adapter = skillListAdapter
         vm.get().observe(viewLifecycleOwner) {
             skillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)

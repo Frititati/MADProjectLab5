@@ -140,11 +140,11 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonJobStart.setOnClickListener {
-            updateJobStatus(JobStatus.STARTED, "Job is STARTED")
+            updateJobStatus(JobStatus.STARTED, "Job was STARTED")
         }
         binding.buttonJobEnd.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
-                updateJobStatus(JobStatus.DONE, "Job is DONE")
+                updateJobStatus(JobStatus.DONE, "Job was DONE")
             }
         }
 
@@ -175,13 +175,13 @@ class MessageListFragment : Fragment() {
                     if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                     else {
                         updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
-                        updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
+                        updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
                     }
                 } else {
                     if (job.jobStatus == JobStatus.DONE) updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "The job was RATED (by consumer)")
-                        updateJobStatus(JobStatus.COMPLETED, "The job is Concluded")
+                        updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
                     }
                 }
             }
@@ -242,10 +242,7 @@ class MessageListFragment : Fragment() {
         }
     }
 
-    private fun updateButtonStatus(
-        requested: Boolean, accept: Boolean, reject: Boolean, start: Boolean, end: Boolean, rate: Boolean
-    ) {
-
+    private fun updateButtonStatus(requested: Boolean, accept: Boolean, reject: Boolean, start: Boolean, end: Boolean, rate: Boolean) {
         binding.buttonRequest.visibility = if (requested) View.VISIBLE else View.GONE
         binding.buttonAccept.visibility = if (accept) View.VISIBLE else View.GONE
         binding.buttonReject.visibility = if (reject) View.VISIBLE else View.GONE
@@ -253,5 +250,4 @@ class MessageListFragment : Fragment() {
         binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
         binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
     }
-
 }

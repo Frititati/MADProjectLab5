@@ -107,10 +107,11 @@ class EditTimeslotFragment : Fragment() {
             dateMilli = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             binding.editDate.hint = dateFormatter(dateMilli)
             if (dateMilli + oneDay >= System.currentTimeMillis()) {
-                FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).addSnapshotListener { r, e ->
+                FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).get().addOnSuccessListener { r ->
                     if (r != null) {
-                        if (r.any { it.getString("jobStatus").toString() == JobStatus.ACCEPTED.toString() || it.getString("jobStatus") == JobStatus.STARTED.toString() }) Snackbar.make(binding.root, "This timeslot is already busy", Snackbar.LENGTH_SHORT).show()
-                        else {
+                        if (r.any { it.getString("jobStatus").toString() == JobStatus.ACCEPTED.toString() || it.getString("jobStatus") == JobStatus.STARTED.toString() }) {
+                            Snackbar.make(binding.root, "This timeslot is already busy", Snackbar.LENGTH_SHORT).show()
+                        } else {
                             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                                 Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
                                 binding.activateButton!!.visibility = View.GONE
@@ -144,9 +145,11 @@ class EditTimeslotFragment : Fragment() {
         binding.deleteButton.setOnClickListener {
             val dialog = AlertDialog.Builder(context)
             val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
-            dialog.setTitle(String.format(
-                resources.getString(R.string.delete_timeslot_confirm),
-            ))
+            dialog.setTitle(
+                String.format(
+                    resources.getString(R.string.delete_timeslot_confirm),
+                )
+            )
             dialog.setView(dialogView)
 
             dialog.setPositiveButton("Yes") { _, _ ->

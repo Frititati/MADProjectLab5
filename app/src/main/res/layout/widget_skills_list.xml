@@ -8,5 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textStyle="bold"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textAllCaps="true"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@
     <string name="age">%d Years Old</string>
     <string name="ageTooltip">Age</string>
     <string name="all_ratings">All Ratings</string>
-    <string name="all_skills">All Skills</string>
+    <string name="all_skills">Skills Offered</string>
     <string name="all_skills_offered">List of all skills offered</string>
     <string name="app_name">Timebanking</string>
     <string name="cancel">Cancel</string>
