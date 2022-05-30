@@ -1,7 +1,6 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.model.skill.SkillData
 
 class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHolder>() {
-    private var allSkills = mutableListOf<Pair<String, SkillData>> ()
+    private var allSkills = mutableListOf<Pair<String, SkillData>>()
     private var userSkills = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillListViewHolder {
@@ -33,7 +32,7 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
 
     @SuppressLint("NotifyDataSetChanged")
     fun setSkills(inAllSkills: List<Pair<String, SkillData>>) {
-        allSkills = inAllSkills.sortedBy { it.second.title }.toMutableList()
+        allSkills = inAllSkills.toMutableList()
         notifyDataSetChanged()
     }
 

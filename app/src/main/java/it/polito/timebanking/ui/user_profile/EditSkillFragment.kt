@@ -46,9 +46,9 @@ class EditSkillFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
                 if (r != null) {
                     val myList = r.toUserProfileData().skills
-                    editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
+                    editableSkillListAdapter.setUserSkills(myList.map { t -> t.toString() })
                 }
-                editableSkillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
+                editableSkillListAdapter.setSkills(it.sortedBy { t -> t.second.title.lowercase() } as MutableList<Pair<String, SkillData>>)
             }
         }
 
@@ -68,9 +68,9 @@ class EditSkillFragment : Fragment() {
             val map = mutableListOf<Pair<String, SkillData>>()
             for (document in documents) {
                 map.add(Pair(document.id, document.toSkillData()))
-                allSkills.add(SkillData(document.get("title").toString()))
+                allSkills.add(document.toSkillData())
             }
-            editableSkillListAdapter.setSkills(map)
+            editableSkillListAdapter.setSkills(map.sortedBy { it.second.title.lowercase() })
         }
 
         FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
@@ -97,10 +97,12 @@ class EditSkillFragment : Fragment() {
             if (newSkill.isEmpty()) {
                 Toast.makeText(context, "Cannot create empty skill", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
-            } else if (isUnique(allSkills, newSkill)) {
+            }
+            else if (isUnique(allSkills, newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
-            } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
+            }
+            else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
                 dialogConfirm.setPositiveButton("Yes") { _, _ ->
                     createNewSkill(newSkill)
                 }
@@ -108,7 +110,8 @@ class EditSkillFragment : Fragment() {
                     updateAllSkills()
                 }
                 dialogConfirm.create().show()
-            } else {
+            }
+            else {
                 createNewSkill(newSkill)
             }
         }
@@ -122,7 +125,7 @@ class EditSkillFragment : Fragment() {
 
     }
 
-    private fun createNewSkill(newSkill:String) {
+    private fun createNewSkill(newSkill: String) {
         FirebaseFirestore.getInstance().collection("skills").add(SkillData(newSkill)).addOnSuccessListener {
             updateAllSkills()
             Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
@@ -144,15 +147,19 @@ class EditSkillFragment : Fragment() {
             for (i in 1..totalWord) {
                 gotW = if (simpleMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 10) / total + gotW
-                } else if (frontFullMatch(splitString(s, i), t) == 1) {
+                }
+                else if (frontFullMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 20) / total + gotW
-                } else if (anywhereMatch(splitString(s, i), t) == 1) {
+                }
+                else if (anywhereMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 30) / total + gotW
-                } else {
+                }
+                else {
                     perWord * smartMatch(splitString(s, i), t) / total + gotW
                 }
             }
-        } else {
+        }
+        else {
             gotW = 100
         }
         return gotW
@@ -237,12 +244,14 @@ class EditSkillFragment : Fragment() {
         var x = 0
         if (s.size > t.size) {
             return x
-        } else {
+        }
+        else {
             for (i in 0..z) {
                 for (j in s.indices) {
                     if (s[j] == t[j + i]) {
                         x = 1
-                    } else {
+                    }
+                    else {
                         x = 0
                         break
                     }
@@ -280,7 +289,8 @@ class EditSkillFragment : Fragment() {
         str = str.trim { it <= ' ' }
         if (str.isEmpty()) {
             x = 0
-        } else {
+        }
+        else {
             if (str.contains(" ")) {
                 while (true) {
                     x++
