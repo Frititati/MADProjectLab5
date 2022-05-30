@@ -24,6 +24,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="16dp"
+            android:backgroundTint="#97D8CE"
+            android:background="@drawable/shape"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -132,6 +134,7 @@
             app:layout_constraintTop_toBottomOf="@id/offerLayout"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
             android:padding="10dp">
@@ -222,9 +225,10 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/chatStartButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="10dp"
@@ -232,8 +236,8 @@
             android:clickable="true"
             android:contentDescription="@string/myChat"
             android:focusable="true"
-            android:src="@drawable/ic_chat_bubble"
-            app:backgroundTint="@color/Ocean_Blue"
+            android:src="@drawable/ic_chat"
+            app:backgroundTint="@color/Blue_Orchid"
             app:tint="@color/AntiqueWhite" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

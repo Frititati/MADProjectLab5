@@ -8,7 +8,7 @@
     android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
     android:background="@drawable/shape"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/Blue_Gray"
     android:elevation="6dp"
     android:orientation="vertical"
     android:padding="10dp"
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:backgroundTint="#BCF4DE"
+                    android:backgroundTint="@color/Light_Aquamarine"
                     android:contentDescription="@string/editButton"
                     app:elevation="0dp"
                     app:srcCompat="@drawable/ic_calendar" />
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#20BF55"
+                    android:backgroundTint="@color/Green_Snake"
                     android:text="@string/activate"
                     android:textColor="@color/White" />
 
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#0096C7"
+                    android:backgroundTint="@color/Gray"
                     android:text="@string/deactivate"
                     android:textColor="@color/White"
                     android:visibility="gone" />
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#F96E46"
+                    android:backgroundTint="@color/Coral"
                     android:text="@string/delete"
                     android:textColor="@color/White" />
             </LinearLayout>
