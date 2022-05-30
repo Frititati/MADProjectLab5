@@ -17,7 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentShowProfileBinding
-import it.polito.timebanking.model.profile.ProfileViewModel
+import it.polito.timebanking.model.profile.*
 import it.polito.timebanking.model.skill.SkillData
 import it.polito.timebanking.model.skill.toSkillData
 import java.text.DecimalFormat
@@ -44,12 +44,12 @@ class ShowProfileFragment : Fragment() {
 
         FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
             vm.get(firebaseUserID).observe(viewLifecycleOwner) {
-                binding.fullName.text = it.fullName
-                binding.nickName.text = it.nickName
-                binding.email.text = it.email
-                binding.age.text = String.format(resources.getString(R.string.age), it.age)
-                binding.location.text = it.location
-                binding.description.text = it.description
+                binding.fullName.text = fullNameFormatter(it.fullName, false)
+                binding.nickName.text = nickNameFormatter(it.nickName, false)
+                binding.email.text = emailFormatter(it.email, false)
+                binding.age.text = ageFormatter(it.age, false)
+                binding.location.text = locationFormatter(it.location, false)
+                binding.description.text = descriptionFormatterProfile(it.description, false)
                 if (it.jobsRatedAsProducer > 0) {
                     binding.ratingAsProducer.text = DecimalFormat("#.0").format(it.scoreAsProducer / it.jobsRatedAsProducer.toDouble()).toString()
                 }

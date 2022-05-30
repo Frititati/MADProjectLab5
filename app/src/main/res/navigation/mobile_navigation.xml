@@ -185,7 +185,7 @@
     <fragment
         android:id="@+id/couponFragment"
         android:name="it.polito.timebanking.ui.user_profile.CouponFragment"
-        android:label="fragment_coupon"
+        android:label="@string/fragment_coupon"
         tools:layout="@layout/fragment_coupon" />
     <action android:id="@+id/toShowProfile" app:destination="@id/showProfileFragment" />
 

@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import it.polito.timebanking.databinding.FragmentCouponBinding
 import it.polito.timebanking.model.coupon.CouponData
 import it.polito.timebanking.model.coupon.CouponViewModel
+import it.polito.timebanking.model.coupon.toCouponData
 
 class CouponFragment : Fragment() {
     private var _binding: FragmentCouponBinding? = null
@@ -41,17 +42,34 @@ class CouponFragment : Fragment() {
         }
 
         binding.addCoupon.setOnClickListener {
-            val tempCoupon = binding.couponSubmit.text.toString()
-            if (userCoupons.any { it.first == tempCoupon }) {
-                // already used the coupon
-            } else {
-                // can use coupon
-                // check if coupon exists
-                FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).update("usedCoupons", FieldValue.arrayUnion(tempCoupon)).addOnSuccessListener {
+            val tempCouponName = binding.couponSubmit.text.toString().toUpperCase()
+            // find if the coupon actually exists
+            FirebaseFirestore.getInstance().collection("coupons").whereEqualTo("name", tempCouponName).get().addOnSuccessListener {
+                if (!it.isEmpty) {
+                    // we have coupon with that name
+                    val coupon = it.first().toCouponData()
+                    if (!userCoupons.any { uC -> uC.first == it.first().id }) {
+                        // coupon not used
 
+                        val userEdit = mutableMapOf<String, Any>()
+                        userEdit["time"] = FieldValue.increment(coupon.value)
+                        userEdit["usedCoupons"] = FieldValue.arrayUnion(it.first().id)
+                        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!)
+                            .update(userEdit).addOnSuccessListener {
+                                Snackbar.make(view, "Coupon Accepted", 1500).show()
+                                binding.couponSubmit.text.clear()
+                            }
+                    } else {
+                        // already used the coupon
+                        Snackbar.make(view, "Coupon Already Used", 1500).show()
+                        binding.couponSubmit.text.clear()
+                    }
+                } else {
+                    // we have no coupon with that name
+                    Snackbar.make(view, "No Coupon with that name", 1500).show()
+                    binding.couponSubmit.text.clear()
                 }
             }
-
         }
     }
 }

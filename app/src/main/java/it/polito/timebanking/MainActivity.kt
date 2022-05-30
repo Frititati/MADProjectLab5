@@ -29,16 +29,16 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.ActivityMainBinding
 import it.polito.timebanking.model.profile.ProfileData
-import it.polito.timebanking.ui.TimeViewModel
-
+import it.polito.timebanking.model.profile.ProfileViewModel
+import it.polito.timebanking.model.profile.fullNameFormatter
 
 class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val defaultAge = 18L
-    private val startingTime = 120L
-    private val timeVM by viewModels<TimeViewModel>()
+    private val defaultAge = 0L
+    private val startingTime = 0L
+    private val profileVM by viewModels<ProfileViewModel>()
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,11 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
         val navController = navHostFragment.navController
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment), binding.drawerLayout)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment
+            ), binding.drawerLayout
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
@@ -77,19 +81,15 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                 Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).putBytes(it)
                 }
-                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, .0, 0,.0,0))
-
-            }
-            else {
+                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID)
+                    .set(ProfileData("", "", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "", listOf<String>(), listOf<String>(), "", startingTime, .0, 0, .0, 0, listOf<String>()))
+            } else {
                 updateIMG(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID)))
-                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
-                    updateTime(it.get("time").toString().toLong())
-                    updateFName(it.get("fullName").toString())
-                }
             }
         }
-        timeVM.get(firebaseUserID).observe(this) {
-            updateTime(it)
+        profileVM.get(firebaseUserID).observe(this) {
+            updateTime(it.time)
+            updateFName(fullNameFormatter(it.fullName, false))
         }
 
         /*
@@ -108,7 +108,6 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
             navHostFragment.findNavController().navigate(R.id.toShowProfile)
             findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
-
     }
 
     override fun setNavBarTitle(title: String?) {
@@ -119,8 +118,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         if (time == 0L) {
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).setTextColor(ContextCompat.getColor(this, R.color.Beer))
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = String.format(resources.getString(R.string.no_time))
-        }
-        else {
+        } else {
             if (time < 60)
                 binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).setTextColor(ContextCompat.getColor(this, R.color.Yellow))
             else
