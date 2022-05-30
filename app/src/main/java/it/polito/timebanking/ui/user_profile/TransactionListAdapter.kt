@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,18 +48,16 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         private val value = v.findViewById<TextView>(R.id.value)
 
         fun bind(jobID: String, job: JobData) {
-            val firebaseUserID = FirebaseAuth.getInstance().uid!!
-            val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
-            else job.userProducerID
-
-            FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { otherUser ->
-                userName.text = otherUser.toUserProfileData().fullName
-            }
+            val isPlus = job.userProducerID == FirebaseAuth.getInstance().uid!!
 
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener {
                 val tData = it.toTimeslotData()
                 timeslotTitle.text = tData.title
-                value.text = tData.duration.toString()
+                if (isPlus) {
+                    value.text = String.format("%s Gained", durationFormatter(tData.duration))
+                } else {
+                    value.text = String.format("%s Lost", durationFormatter(tData.duration))
+                }
             }
 
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
@@ -78,6 +77,21 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time
             return SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN).format(calendar.time)
+        }
+
+        private fun durationFormatter(time: Long): String {
+            val h = if (time / 60L == 1L) "1 hour"
+            else "${time / 60L} hours"
+            val hEmpty = (time / 60L) == 0L
+            val m = if (time % 60L == 1L) "1 min"
+            else "${time % 60L} min"
+            val mEmpty = (time.toInt() % 60) == 0
+            Log.d("test", "'$h' $hEmpty and '$m' $mEmpty")
+            return when {
+                hEmpty -> m
+                mEmpty -> h
+                else -> "$h, $m"
+            }
         }
     }
 }

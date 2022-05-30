@@ -41,7 +41,6 @@ class ShowProfileFragment : Fragment() {
 
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
-
         FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
             vm.get(firebaseUserID).observe(viewLifecycleOwner) {
                 binding.fullName.text = fullNameFormatter(it.fullName, false)
