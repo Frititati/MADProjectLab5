@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -47,10 +48,9 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        val drawerLayout = binding.drawerLayout
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_main) as NavHostFragment
         val navController = navHostFragment.navController
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment), drawerLayout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
@@ -103,6 +103,11 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
           }
          */
         window.statusBarColor = ContextCompat.getColor(this, R.color.MenuColor)
+
+        binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setOnClickListener {
+            navHostFragment.findNavController().navigate(R.id.toShowProfile)
+            findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        }
 
     }
 
