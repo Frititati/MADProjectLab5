@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.personalTimeslotListFragment, R.id.showProfileFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment
+                R.id.personalTimeslotListFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment
             ), binding.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -105,8 +105,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         window.statusBarColor = ContextCompat.getColor(this, R.color.MenuColor)
 
         binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setOnClickListener {
-            navHostFragment.findNavController().navigate(R.id.toShowProfile)
-            findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            navHostFragment.findNavController().navigate(R.id.showProfileFragment)
         }
     }
 

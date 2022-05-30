@@ -24,9 +24,6 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@+id/back_to_skills_list"
-            app:destination="@id/allSkillFragment" />
     </fragment>
 
     <fragment
@@ -55,7 +52,6 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@+id/personalTimeslotListFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -187,6 +183,5 @@
         android:name="it.polito.timebanking.ui.user_profile.CouponFragment"
         android:label="@string/fragment_coupon"
         tools:layout="@layout/fragment_coupon" />
-    <action android:id="@+id/toShowProfile" app:destination="@id/showProfileFragment" />
 
 </navigation>
