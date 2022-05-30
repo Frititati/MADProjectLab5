@@ -13,10 +13,6 @@
             android:icon="@drawable/ic_timeslots"
             android:title="@string/timeslot_list" />
         <item
-            android:id="@+id/showProfileFragment"
-            android:icon="@android:drawable/ic_dialog_info"
-            android:title="@string/my_profile" />
-        <item
             android:id="@+id/consumingJobsFragment"
             android:icon="@drawable/ic_requested_job"
             android:title="@string/requestedJobs" />

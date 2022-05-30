@@ -18,8 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginStart="2dp"
-        android:backgroundTint="@color/ColorBlue"
+        android:layout_marginStart="3dp"
+        android:backgroundTint="@color/Blue_Jay"
         android:text="@string/logout"
         android:textColor="@color/Azure" />
 
