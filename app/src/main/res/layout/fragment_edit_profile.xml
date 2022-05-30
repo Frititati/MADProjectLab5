@@ -27,7 +27,7 @@
             android:layout_height="0dp"
             android:layout_weight=".33"
             android:orientation="vertical"
-            android:paddingTop="30dp"
+            android:paddingTop="24dp"
             >
 
             <androidx.cardview.widget.CardView
