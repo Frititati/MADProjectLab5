@@ -49,7 +49,7 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic,firebaseUserID))
+        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic, firebaseUserID))
         vm.get(firebaseUserID).observe(viewLifecycleOwner) {
             binding.fullName.hint = fullNameFormatter(it.fullName)
             binding.nickName.hint = nickNameFormatter(it.nickName)
@@ -58,8 +58,8 @@ class EditProfileFragment : Fragment() {
             binding.location.hint = locationFormatter(it.location)
             binding.description.hint = descriptionFormatter(it.description)
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                    binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                }
+                binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
+            }
         }
 
         binding.userImage.setOnClickListener {
@@ -79,7 +79,7 @@ class EditProfileFragment : Fragment() {
         thread {
             vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim())
         }
-        if (binding.fullName.text.toString().isNotEmpty()) listenerNavBar.updateFName(binding.fullName.text.toString())
+//        if (binding.fullName.text.toString().isNotEmpty()) listenerNavBar.updateFName(binding.fullName.text.toString())
     }
 
     override fun onDestroyView() {
@@ -129,7 +129,7 @@ class EditProfileFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic,firebaseUserID))
+        val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic, firebaseUserID))
         if (resultCode == RESULT_OK) {
             val h = 300
             val w = 300
@@ -144,8 +144,8 @@ class EditProfileFragment : Fragment() {
             val b = ByteArrayOutputStream()
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b)
             Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(b.toByteArray()).addOnSuccessListener {
-                    listenerNavBar.updateIMG(userProfilePath)
-                }
+                listenerNavBar.updateIMG(userProfilePath)
+            }
         }
     }
 }

@@ -34,7 +34,16 @@ class CouponUsedAdapter : RecyclerView.Adapter<CouponUsedAdapter.CouponListViewH
 
         fun bind(couponData: CouponData) {
             name.text = couponData.name
-            value.text = couponData.value.toString()
+            value.text = timeFormatter(couponData.value)
+        }
+
+        private fun timeFormatter(time: Long): String {
+            val h = if (time / 60L == 1L) "1 hour"
+            else "${time / 60L} hours"
+            val m = if (time % 60L == 1L) "1 min"
+            else "${time % 60L} min"
+            return if (h == "0 hours") m
+            else "$h, $m"
         }
     }
 }

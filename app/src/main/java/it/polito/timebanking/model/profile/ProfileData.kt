@@ -15,7 +15,8 @@ data class ProfileData(
     var scoreAsProducer: Double,
     var jobsRatedAsProducer: Long,
     var scoreAsConsumer: Double,
-    var jobsRatedAsConsumer: Long
+    var jobsRatedAsConsumer: Long,
+    var usedCoupons: List<*>
 )
 
 fun DocumentSnapshot.toUserProfileData(): ProfileData {
@@ -32,7 +33,8 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.getDouble("scoreAsProducer") ?: .0,
         this.getLong("jobsRatedAsProducer") ?: 0,
         this.getDouble("scoreAsConsumer") ?: .0,
-        this.getLong("jobsRatedAsConsumer") ?: 0
+        this.getLong("jobsRatedAsConsumer") ?: 0,
+        this.get("usedCoupons") as List<*>? ?: emptyList<String>(),
     )
 }
 

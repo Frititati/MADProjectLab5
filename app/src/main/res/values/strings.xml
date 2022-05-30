@@ -120,4 +120,5 @@
     <string name="used_coupon">Already Used Coupons</string>
     <string name="offerToolTip">Offer</string>
     <string name="userToolTip">Owner</string>
+    <string name="fragment_coupon">Coupons</string>
 </resources>
