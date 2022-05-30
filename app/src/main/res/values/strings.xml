@@ -121,4 +121,7 @@
     <string name="offerToolTip">Offer</string>
     <string name="userToolTip">Owner</string>
     <string name="fragment_coupon">Coupons</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_transactions">Transactions List</string>
 </resources>
