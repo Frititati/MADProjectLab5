@@ -35,6 +35,8 @@
             android:layout_height="100dp"
             app:srcCompat="@drawable/user"
             android:layout_gravity="center"
+            android:scaleType="centerCrop"
+
             />
 
     </androidx.cardview.widget.CardView>
