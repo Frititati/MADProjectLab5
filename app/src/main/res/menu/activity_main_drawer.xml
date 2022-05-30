@@ -22,7 +22,7 @@
             android:title="@string/jobRequest" />
         <item
             android:id="@+id/transactionsListFragment"
-            android:icon="@drawable/ic_job_request"
+            android:icon="@drawable/ic_transactions"
             android:title="@string/fragment_transactions" />
         <item
             android:id="@+id/couponFragment"
