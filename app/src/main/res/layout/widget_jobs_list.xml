@@ -54,6 +54,15 @@
             android:textSize="18sp"
             android:textStyle="italic" />
         <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:layout_marginStart="70dp"
+            android:text="@string/date"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+        <TextView
             android:id="@+id/jobStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

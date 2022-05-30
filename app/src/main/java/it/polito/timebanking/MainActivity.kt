@@ -55,39 +55,39 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         binding.navView.setupWithNavController(navController)
 
         binding.navView.getHeaderView(0).findViewById<Button>(R.id.buttonLogout).setOnClickListener {
-                findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                val dialog = AlertDialog.Builder(this)
-                dialog.setTitle("Are you sure you want to log out?")
-                dialog.setView(this.layoutInflater.inflate(R.layout.dialog_generic, findViewById(android.R.id.content), false))
-                dialog.setNegativeButton("No") { _, _ ->
-                    findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                }
-                dialog.setPositiveButton("Yes") { _, _ ->
-                    Firebase.auth.signOut()
-                    GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()).signOut()
-                    Toast.makeText(this, "See you soon!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, EntryPointActivity::class.java))
-                    finish()
-                }
-                dialog.create().show()
+            findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            val dialog = AlertDialog.Builder(this)
+            dialog.setTitle("Are you sure you want to log out?")
+            dialog.setView(this.layoutInflater.inflate(R.layout.dialog_generic, findViewById(android.R.id.content), false))
+            dialog.setNegativeButton("No") { _, _ ->
+                findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }
+            dialog.setPositiveButton("Yes") { _, _ ->
+                Firebase.auth.signOut()
+                GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()).signOut()
+                Toast.makeText(this, "See you soon!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, EntryPointActivity::class.java))
+                finish()
+            }
+            dialog.create().show()
+        }
 
         FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { res ->
-                if (!res.exists()) {
-                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
-                            Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic,firebaseUserID))).putBytes(it)
-                        }
-                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, .0, 0))
-                    binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")
+            if (!res.exists()) {
+                Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
+                    Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).putBytes(it)
+                }
+                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).set(ProfileData("Empty FullName", "Empty Nickname", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "Empty location", listOf<String>(), listOf<String>(), "Empty description", startingTime, .0, 0,.0,0))
 
-                } else {
-                    updateIMG(String.format(resources.getString(R.string.firebaseUserPic,firebaseUserID)))
-                    FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
-                            updateTime(it.get("time").toString().toLong())
-                            updateFName(it.get("fullName").toString())
-                        }
+            }
+            else {
+                updateIMG(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID)))
+                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener {
+                    updateTime(it.get("time").toString().toLong())
+                    updateFName(it.get("fullName").toString())
                 }
             }
+        }
         timeVM.get(firebaseUserID).observe(this) {
             updateTime(it)
         }
@@ -106,12 +106,22 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     }
 
-    override fun setTitleWithSkill(title: String?) {
+    override fun setNavBarTitle(title: String?) {
         supportActionBar!!.title = title
     }
 
     override fun updateTime(time: Long) {
-        binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = timeFormatter(time)
+        if (time == 0L) {
+            binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).setTextColor(ContextCompat.getColor(this, R.color.Beer))
+            binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = String.format(resources.getString(R.string.no_time))
+        }
+        else {
+            if (time < 60)
+                binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).setTextColor(ContextCompat.getColor(this, R.color.Yellow))
+            else
+                binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).setTextColor(ContextCompat.getColor(this, R.color.Azure))
+            binding.navView.getHeaderView(0).findViewById<TextView>(R.id.userTimeOnDrawer).text = timeFormatter(time)
+        }
     }
 
     private fun timeFormatter(time: Long): String {
@@ -129,8 +139,8 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     override fun updateIMG(url: String) {
         Firebase.storage.getReferenceFromUrl(url).getBytes(1024 * 1024).addOnSuccessListener {
-                binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
-            }
+            binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

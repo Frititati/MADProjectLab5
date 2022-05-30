@@ -124,7 +124,7 @@
     <fragment
         android:id="@+id/editProfileSkillFragment"
         android:name="it.polito.timebanking.ui.user_profile.EditSkillFragment"
-        android:label="Select or add your personal skills"
+        android:label="Edit Skills"
         tools:layout="@layout/fragment_edit_skill" />
     <fragment
         android:id="@+id/offerDetailFragment"
@@ -158,7 +158,11 @@
         android:label="ChatFragment">
         <action
             android:id="@+id/job_to_offer"
-            app:destination="@id/offerDetailFragment" />
+            app:destination="@id/offerDetailFragment"
+            app:enterAnim="@android:animator/fade_in"
+            app:exitAnim="@android:animator/fade_out"
+            app:popEnterAnim="@android:animator/fade_in"
+            app:popExitAnim="@android:animator/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/producingJobFragment"
@@ -176,7 +180,7 @@
     <fragment
         android:id="@+id/ratingsFragment"
         android:name="it.polito.timebanking.ui.user_profile.RatingsFragment"
-        android:label="My Ratings"
+        android:label="Received Ratings"
         tools:layout="@layout/fragment_ratings" />
     <fragment
         android:id="@+id/couponFragment"

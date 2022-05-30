@@ -57,6 +57,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
         private val userName = v.findViewById<TextView>(R.id.chatMember)
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val time = v.findViewById<TextView>(R.id.time)
+        private val date = v.findViewById<TextView>(R.id.date)
         private val jobStatus = v.findViewById<TextView>(R.id.jobStatus)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
@@ -80,6 +81,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
                 val jData = it.toJobData()
                 time.text = timeFormatter(jData.lastUpdate)
+                date.text = dateFormatter(jData.lastUpdate)
                 jobStatus.text = jData.jobStatus.toString()
             }
 
@@ -89,6 +91,12 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
                         "jobID" to jobID,
                     ))
             }
+        }
+
+        private fun dateFormatter(time: Long): String {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = time
+            return SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN).format(calendar.time)
         }
 
         private fun timeFormatter(time: Long): String {

@@ -1,8 +1,6 @@
 package it.polito.timebanking.model.timeslot
 
-import android.content.res.Resources
 import com.google.firebase.firestore.DocumentSnapshot
-import it.polito.timebanking.R
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -41,7 +41,7 @@ class MessageListFragment : Fragment() {
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private var userIsProducer = false
     private lateinit var jobID: String
-    private lateinit var drawerListener: NavBarUpdater
+    private lateinit var listenerNavBar: NavBarUpdater
     private lateinit var job: JobData
     private lateinit var timeslot: TimeslotData
     private lateinit var userConsumer: ProfileData
@@ -50,8 +50,8 @@ class MessageListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         jobID = requireArguments().getString("jobID", "").toString()
-        drawerListener = context as NavBarUpdater
-        drawerListener.setTitleWithSkill("Chat with " + requireArguments().getString("otherUserName"))
+        listenerNavBar = context as NavBarUpdater
+        listenerNavBar.setNavBarTitle("Chat with " + requireArguments().getString("otherUserName"))
         _binding = FragmentMessagesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -123,8 +123,10 @@ class MessageListFragment : Fragment() {
                     FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("time", FieldValue.increment(timeslot.duration)).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("time", FieldValue.increment(-timeslot.duration)).addOnSuccessListener {
                             timeslot.available = false
-                            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
+                            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available", false).addOnSuccessListener {
                                 updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
+                                if (userIsProducer)
+                                    Snackbar.make(binding.root, "You received: ${timeFormatter(timeslot.duration)}", Snackbar.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -136,16 +138,15 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonReject.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
-                updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
-            }
+            updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
         }
 
         binding.buttonJobStart.setOnClickListener {
+            Snackbar.make(binding.root, "You granted: ${timeFormatter(timeslot.duration)}", Snackbar.LENGTH_SHORT).show()
             updateJobStatus(JobStatus.STARTED, "Job was STARTED")
         }
         binding.buttonJobEnd.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).set(timeslot).addOnSuccessListener {
+            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available",true).addOnSuccessListener {
                 updateJobStatus(JobStatus.DONE, "Job was DONE")
             }
         }
@@ -162,14 +163,14 @@ class MessageListFragment : Fragment() {
                 if (userIsProducer) {
                     val rate = RateData(rating, comment, timeslot.title, job.userProducerID, job.userConsumerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                        FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
+                        FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRatedAsConsumer", FieldValue.increment(1), "scoreAsConsumer", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }
                 else {
                     val rate = RateData(rating, comment, timeslot.title, job.userConsumerID, job.userProducerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
-                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRated", FieldValue.increment(1), "score", FieldValue.increment(rating))
+                        FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRatedAsProducer", FieldValue.increment(1), "scoreAsProducer", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -179,7 +180,7 @@ class MessageListFragment : Fragment() {
                         updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                     else {
                         vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by producer)", System.currentTimeMillis(), true)
-                        updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
+                        updateJobStatus(JobStatus.COMPLETED, "Job was CONCLUDED")
                     }
                 }
                 else {
@@ -187,7 +188,7 @@ class MessageListFragment : Fragment() {
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
                         vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by consumer)", System.currentTimeMillis(), true)
-                        updateJobStatus(JobStatus.COMPLETED, "Job was Concluded")
+                        updateJobStatus(JobStatus.COMPLETED, "Job was CONCLUDED")
                     }
                 }
             }
@@ -257,5 +258,14 @@ class MessageListFragment : Fragment() {
         binding.buttonJobStart.visibility = if (start) View.VISIBLE else View.GONE
         binding.buttonJobEnd.visibility = if (end) View.VISIBLE else View.GONE
         binding.buttonRate.visibility = if (rate) View.VISIBLE else View.GONE
+    }
+
+    private fun timeFormatter(time: Long): String {
+        val h = if (time / 60L == 1L) "1 hour"
+        else "${time / 60L} hours"
+        val m = if (time % 60L == 1L) "1 minute"
+        else "${time % 60L} minutes"
+        return if (h == "0 hours") m
+        else "$h, $m"
     }
 }

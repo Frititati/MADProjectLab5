@@ -33,6 +33,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
     }
 
     class TimeslotListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        private val oneDay = 86400000
         private val rootView = v
         private val title = v.findViewById<TextView>(R.id.title)
         private val location = v.findViewById<TextView>(R.id.location)
@@ -44,7 +45,7 @@ class TimeslotListAdapter : RecyclerView.Adapter<TimeslotListAdapter.TimeslotLis
             title.text = titleFormatter(timeslot.title)
             location.text = locationFormatter(timeslot.location)
             date.text = dateFormatter(timeslot.date)
-            isActive.text = if(timeslot.available) "Active" else "Not active"
+            isActive.text = if(timeslot.available && timeslot.date + oneDay > System.currentTimeMillis()) "Active" else if(timeslot.available) "Expired" else "Not active"
             rootView.setOnClickListener {
                 rootView.findNavController().navigate(R.id.personal_to_details, bundleOf("id_timeslot" to id))
                 Snackbar.make(it, "Details about: ${title.text}", 1500).show()

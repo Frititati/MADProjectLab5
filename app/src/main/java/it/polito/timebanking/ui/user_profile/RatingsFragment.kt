@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import it.polito.timebanking.NavBarUpdater
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentRatingsBinding
 import it.polito.timebanking.model.rating.RateData
@@ -24,10 +25,13 @@ class RatingsFragment : Fragment() {
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private var ratingList = emptyList<Pair<String, RateData>>()
     private val rateVM by viewModels<RateViewModel>()
+    private lateinit var listenerNavBar: NavBarUpdater
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        listenerNavBar = context as NavBarUpdater
+        listenerNavBar.setNavBarTitle("Received Ratings")
         _binding = FragmentRatingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -64,6 +68,7 @@ class RatingsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_received_ratings -> {
+                listenerNavBar.setNavBarTitle("Received Ratings")
                 showingReceived = true
                 val n = ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
                 if (n == 0) {
@@ -74,6 +79,7 @@ class RatingsFragment : Fragment() {
                 true
             }
             R.id.action_given_ratings -> {
+                listenerNavBar.setNavBarTitle("Given Ratings")
                 showingReceived = false
                 val n = ratingsListAdapter.setRatings(ratingList as MutableList<Pair<String, RateData>>, showingReceived)
                 if (n == 0) {

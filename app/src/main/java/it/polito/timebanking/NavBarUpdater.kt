@@ -4,5 +4,5 @@ interface NavBarUpdater {
     fun updateIMG(url: String)
     fun updateTime(time: Long)
     fun updateFName(name: String)
-    fun setTitleWithSkill(title: String?)
+    fun setNavBarTitle(title: String?)
 }

@@ -35,7 +35,7 @@ class EditProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentEditProfileBinding? = null
     private var imageBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-    private lateinit var drawerListener: NavBarUpdater
+    private lateinit var listenerNavBar: NavBarUpdater
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
     override fun onCreateView(
@@ -43,7 +43,7 @@ class EditProfileFragment : Fragment() {
     ): View {
         requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-        drawerListener = context as NavBarUpdater
+        listenerNavBar = context as NavBarUpdater
         return binding.root
     }
 
@@ -79,7 +79,7 @@ class EditProfileFragment : Fragment() {
         thread {
             vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim())
         }
-        if (binding.fullName.text.toString().isNotEmpty()) drawerListener.updateFName(binding.fullName.text.toString())
+        if (binding.fullName.text.toString().isNotEmpty()) listenerNavBar.updateFName(binding.fullName.text.toString())
     }
 
     override fun onDestroyView() {
@@ -144,7 +144,7 @@ class EditProfileFragment : Fragment() {
             val b = ByteArrayOutputStream()
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b)
             Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(b.toByteArray()).addOnSuccessListener {
-                    drawerListener.updateIMG(userProfilePath)
+                    listenerNavBar.updateIMG(userProfilePath)
                 }
         }
     }

@@ -178,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="@string/rating"
+                android:text="@string/rating_producer"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:drawableLeftCompat="@drawable/ic_rating"
                 app:layout_constraintStart_toStartOf="parent"

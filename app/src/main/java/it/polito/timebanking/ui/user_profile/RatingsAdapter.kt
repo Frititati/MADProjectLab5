@@ -32,16 +32,18 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         private val image = v.findViewById<ImageView>(R.id.userImageOnRate)
         private val name = v.findViewById<TextView>(R.id.ratePerson)
         private val cardView = v.findViewById<CardView>(R.id.rating_card_view)
+        private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 
         fun bind(rating: RateData, context: Context) {
-            score.text = (rating.score).toString()
-            setCardBackground(rating.score, cardView, context)
-            FirebaseFirestore.getInstance().collection("users").document(rating.senderID).get().addOnSuccessListener {
-                    name.text = it.toUserProfileData().fullName
-                }
-            Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic,rating.senderID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                    image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                }
+            score.text = rating.score.toString()
+            cardView.setCardBackgroundColor(ContextCompat.getColor(context, chooseColorForRate(rating.score)))
+            val userIDToShow = if(rating.receiverID == firebaseUserID) rating.senderID else rating.receiverID
+            FirebaseFirestore.getInstance().collection("users").document(userIDToShow).get().addOnSuccessListener {
+                name.text = it.toUserProfileData().fullName
+            }
+            Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic, userIDToShow))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
+            }
 
             rootView.setOnClickListener {
                 val dialog = AlertDialog.Builder(context)
@@ -54,15 +56,15 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
             }
         }
 
-        private fun setCardBackground(score: Double, background: CardView, context: Context) {
-            if (score < 1.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Ruby_Red))
-            else if (score < 2.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bean_Red))
-            else if (score < 3.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Bee_Yellow))
-            else if (score < 4.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Sun_Yellow))
-            else if (score < 5.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Stoplight_Go_Green))
-            else if (score == 5.0) background.setCardBackgroundColor(ContextCompat.getColor(context, R.color.Yellow_Green))
+        private fun chooseColorForRate(score: Double): Int {
+            return if (score < 1.0) R.color.Ruby_Red
+            else if   (score < 2.0) R.color.Bean_Red
+            else if   (score < 3.0) R.color.Bee_Yellow
+            else if   (score < 4.0) R.color.Sun_Yellow
+            else if   (score < 5.0) R.color.Stoplight_Go_Green
+            else if   (score == 5.0)R.color.Yellow_Green
+            else R.color.ColorBlue
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RatingsViewHolder {
@@ -74,7 +76,7 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setRatings(ratings: MutableList<Pair<String, RateData>>, received: Boolean):Int {
+    fun setRatings(ratings: MutableList<Pair<String, RateData>>, received: Boolean): Int {
         allRates = if (received) ratings.filter { it.second.receiverID == firebaseUserID }.toMutableList()
         else ratings.filter { it.second.senderID == firebaseUserID }.toMutableList()
         notifyDataSetChanged()

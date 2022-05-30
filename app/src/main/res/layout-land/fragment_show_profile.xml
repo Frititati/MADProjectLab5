@@ -154,24 +154,43 @@
                     app:layout_constraintTop_toBottomOf="@+id/DescriptionTooltip" />
 
                 <TextView
-                    android:id="@+id/RatingTooltip"
+                    android:id="@+id/RatingProducerTooltip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/rating"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/rating_producer"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableLeftCompat="@drawable/ic_rating"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description" />
 
                 <TextView
-                    android:id="@+id/rating"
-                    android:layout_width="match_parent"
+                    android:id="@+id/ratingAsProducer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_info"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/RatingTooltip" />
+                    app:layout_constraintTop_toBottomOf="@+id/RatingProducerTooltip" />
+                <TextView
+                    android:id="@+id/RatingConsumerTooltip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/rating_consumer"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableLeftCompat="@drawable/ic_rating"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ratingAsProducer" />
+
+                <TextView
+                    android:id="@+id/ratingAsConsumer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_info"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/RatingConsumerTooltip" />
 
                 <Button
                     android:id="@+id/buttonRate"
@@ -180,7 +199,7 @@
                     android:backgroundTint="@android:color/holo_blue_bright"
                     android:text="@string/all_ratings"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/RatingTooltip"
+                    app:layout_constraintTop_toTopOf="@id/RatingConsumerTooltip"
                     android:layout_marginTop="6dp"
                     tools:ignore="ImageContrastCheck,ImageContrastCheck" />
 
@@ -192,7 +211,7 @@
                     android:text="@string/skillsTooltip"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rating"
+                    app:layout_constraintTop_toBottomOf="@+id/ratingAsConsumer"
                     app:drawableLeftCompat="@drawable/ic_list" />
 
                 <androidx.recyclerview.widget.RecyclerView

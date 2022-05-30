@@ -12,7 +12,7 @@ data class JobData(
     var users: List<*>,
     var jobStatus: JobStatus,
     var ratingProducer: String,
-    var ratingConsumer: String,
+    var ratingConsumer: String
 )
 
 fun DocumentSnapshot.toJobData(): JobData {

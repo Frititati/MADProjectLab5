@@ -29,7 +29,7 @@ class OffersListFragment : Fragment() {
     private val offersListAdapter = OffersListAdapter()
     private val binding get() = _binding!!
     private val vmTimeslot by viewModels<TimeslotViewModel>()
-    private lateinit var listener: NavBarUpdater
+    private lateinit var listenerNavBar: NavBarUpdater
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,8 +40,8 @@ class OffersListFragment : Fragment() {
             DrawerLayout.LOCK_MODE_LOCKED_CLOSED
         )
 
-        listener = context as NavBarUpdater
-        listener.setTitleWithSkill("Offers for" + " " + requireArguments().getString("offerName"))
+        listenerNavBar = context as NavBarUpdater
+        listenerNavBar.setNavBarTitle("Offers for" + " " + requireArguments().getString("offerName"))
         _binding = FragmentOffersBinding.inflate(inflater, container, false)
         return binding.root
     }

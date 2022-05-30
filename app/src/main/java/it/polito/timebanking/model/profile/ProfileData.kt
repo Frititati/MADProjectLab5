@@ -12,8 +12,10 @@ data class ProfileData(
     var timeslots: List<*>,
     var description: String,
     var time: Long,
-    var score: Double,
-    var jobsRated: Long,
+    var scoreAsProducer: Double,
+    var jobsRatedAsProducer: Long,
+    var scoreAsConsumer: Double,
+    var jobsRatedAsConsumer: Long
 )
 
 fun DocumentSnapshot.toUserProfileData(): ProfileData {
@@ -27,8 +29,10 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.get("timeslots") as List<*>? ?: emptyList<String>(),
         this.getString("description") ?: "",
         this.getLong("time") ?: 0,
-        this.getDouble("score") ?: .0,
-        this.getLong("jobsRated") ?: 0
+        this.getDouble("scoreAsProducer") ?: .0,
+        this.getLong("jobsRatedAsProducer") ?: 0,
+        this.getDouble("scoreAsConsumer") ?: .0,
+        this.getLong("jobsRatedAsConsumer") ?: 0
     )
 }
 
