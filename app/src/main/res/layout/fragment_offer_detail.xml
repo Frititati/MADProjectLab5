@@ -26,12 +26,23 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/OfferToolTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offerToolTip"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
                 android:id="@+id/TitleTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/titleTooltip"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:drawableLeftCompat="@drawable/ic_title"
+                app:layout_constraintStart_toStartOf="@id/OfferToolTip" />
 
             <TextView
                 android:id="@+id/Title"
@@ -128,7 +139,17 @@
             app:layout_constraintTop_toBottomOf="@+id/timeslotLayout">
 
             <TextView
-                android:id="@+id/UserNicknameTooltip"
+                android:id="@+id/UserToolTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/userToolTip"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/UserFullNameTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -210,6 +231,7 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:backgroundTint="@color/Blue_Orchid"
             android:contentDescription="@string/myChat"
             app:srcCompat="@drawable/ic_chat"
@@ -217,5 +239,4 @@
             app:useCompatPadding="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+</ScrollView>

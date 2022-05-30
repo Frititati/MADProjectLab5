@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
     tools:context=".ui.offers.OfferDetailFragment">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="230dp"
+        android:background="@drawable/shape"
+        android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/offerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="16dp"
             android:orientation="vertical"
             android:padding="10dp">
+
+            <TextView
+                android:id="@+id/OfferToolTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offerToolTip"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/TitleTooltip"
@@ -28,7 +43,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="@id/OfferToolTip"
+                app:drawableLeftCompat="@drawable/ic_title" />
 
             <TextView
                 android:id="@+id/Title"
@@ -112,16 +128,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/offerLayout"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/shape"
             android:backgroundTint="@color/Blue_Angel"
             android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/UserNicknameTooltip"
+                android:id="@+id/userToolTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/userToolTip"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/UserFullNameTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -195,6 +221,8 @@
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
             android:id="@+id/chatStartButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -208,6 +236,6 @@
             app:backgroundTint="@color/Ocean_Blue"
             app:tint="@color/AntiqueWhite" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

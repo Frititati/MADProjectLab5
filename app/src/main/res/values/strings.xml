@@ -115,9 +115,9 @@
     <string name="userImage">userImage</string>
     <string name="view">View</string>
     <string name="yes">Yes</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="insert_coupon">Please Insert Coupon</string>
     <string name="submit">Submit</string>
     <string name="used_coupon">Already Used Coupons</string>
+    <string name="offerToolTip">Offer</string>
+    <string name="userToolTip">Owner</string>
 </resources>
