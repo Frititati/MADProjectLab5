@@ -26,7 +26,7 @@
             android:title="@string/fragment_transactions" />
         <item
             android:id="@+id/couponFragment"
-            android:icon="@drawable/ic_job_request"
+            android:icon="@drawable/ic_coupon"
             android:title="@string/fragment_coupon" />
     </group>
 </menu>
