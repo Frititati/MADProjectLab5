@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:text="@string/titleTooltip"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:drawableLeftCompat="@drawable/ic_title" />
 
         <TextView
             android:id="@+id/Title"

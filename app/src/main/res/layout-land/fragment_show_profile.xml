@@ -30,8 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="90dp"
-                android:layout_gravity="center"
-                >
+                android:layout_gravity="center">
             <ImageView
                 android:id="@+id/userImage"
                 android:layout_width="180dp"
@@ -45,17 +44,18 @@
 
         </LinearLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:layout_weight=".67">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/textLayout"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
-                android:layout_height="0dp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/fullName"
@@ -237,7 +237,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/skillsToolTip" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
 
     </LinearLayout>
 
