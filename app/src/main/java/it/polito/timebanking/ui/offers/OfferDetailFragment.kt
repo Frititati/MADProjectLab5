@@ -14,6 +14,7 @@ import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
 import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.profile.ageFormatter
+import it.polito.timebanking.model.profile.descriptionFormatterProfile
 import it.polito.timebanking.model.profile.fullNameFormatter
 import it.polito.timebanking.model.timeslot.*
 import it.polito.timebanking.ui.messages.JobStatus
@@ -39,9 +40,9 @@ class OfferDetailFragment : Fragment() {
 
         if (otherUserID == firebaseUserID) Toast.makeText(context, "Your own offer!", Toast.LENGTH_SHORT).show()
         FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { user ->
-            binding.UserFullName.text = fullNameFormatter(user.get("fullName").toString())
-            binding.UserAge.text = ageFormatter(user.get("age").toString())
-            binding.UserDescription.text = descriptionFormatter(user.get("description").toString())
+            binding.UserFullName.text = fullNameFormatter(user.getString("fullName"), false)
+            binding.UserAge.text = ageFormatter(user.getLong("age"), false)
+            binding.UserDescription.text = descriptionFormatterProfile(user.getString("description"), false)
             val score = user.getDouble("scoreAsProducer") ?: .0
             val jobsRated = user.getLong("jobsRatedAsProducer") ?: 0
             if (jobsRated != 0L) {

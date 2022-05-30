@@ -30,6 +30,7 @@ import com.google.firebase.storage.ktx.storage
 import it.polito.timebanking.databinding.ActivityMainBinding
 import it.polito.timebanking.model.profile.ProfileData
 import it.polito.timebanking.model.profile.ProfileViewModel
+import it.polito.timebanking.model.profile.fullNameFormatter
 
 class MainActivity : AppCompatActivity(), NavBarUpdater {
 
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         }
         profileVM.get(firebaseUserID).observe(this) {
             updateTime(it.time)
-            updateFName(it.fullName)
+            updateFName(fullNameFormatter(it.fullName, false))
         }
 
         /*

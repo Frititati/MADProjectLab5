@@ -51,12 +51,12 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val userProfilePath = String.format(requireActivity().getString(R.string.firebaseUserPic, firebaseUserID))
         vm.get(firebaseUserID).observe(viewLifecycleOwner) {
-            binding.fullName.hint = fullNameFormatter(it.fullName)
-            binding.nickName.hint = nickNameFormatter(it.nickName)
-            binding.age.hint = ageFormatter(it.age.toString()) + " Years Old"
-            binding.email.hint = emailFormatter(it.email)
-            binding.location.hint = locationFormatter(it.location)
-            binding.description.hint = descriptionFormatter(it.description)
+            binding.fullName.hint = fullNameFormatter(it.fullName, true)
+            binding.nickName.hint = nickNameFormatter(it.nickName, true)
+            binding.age.hint = ageFormatter(it.age, true)
+            binding.email.hint = emailFormatter(it.email, true)
+            binding.location.hint = locationFormatter(it.location, true)
+            binding.description.hint = descriptionFormatterProfile(it.description, true)
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                 binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
             }
@@ -70,7 +70,6 @@ class EditProfileFragment : Fragment() {
         binding.buttonSkill.setOnClickListener {
             view.findNavController().navigate(R.id.edit_profile_to_edit_skill)
             Snackbar.make(binding.root, "Edit your skills here", 1500).show()
-
         }
     }
 
