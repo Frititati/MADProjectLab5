@@ -150,7 +150,8 @@ class EditTimeslotFragment : Fragment() {
                     else {
                         val dialog = AlertDialog.Builder(context)
                         val dialogView = layoutInflater.inflate(R.layout.dialog_generic, null)
-                        dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm)))
+                        val title = if(binding.editTitle.text.isEmpty()) binding.editTitle.hint.toString() else binding.editTitle.text.toString()
+                        dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm), title))
                         dialog.setView(dialogView)
 
                         dialog.setPositiveButton("Yes") { _, _ ->
