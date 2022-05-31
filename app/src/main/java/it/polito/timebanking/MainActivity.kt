@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
             findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             val dialog = AlertDialog.Builder(this)
             dialog.setTitle("Are you sure you want to log out?")
-            dialog.setView(this.layoutInflater.inflate(R.layout.dialog_generic, findViewById(android.R.id.content), false))
+            dialog.setView(layoutInflater.inflate(R.layout.dialog_generic, findViewById(android.R.id.content), false))
             dialog.setNegativeButton("No") { _, _ ->
                 findViewById<DrawerLayout>(R.id.drawer_layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }

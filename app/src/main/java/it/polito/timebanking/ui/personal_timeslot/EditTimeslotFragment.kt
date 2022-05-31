@@ -148,7 +148,7 @@ class EditTimeslotFragment : Fragment() {
                     }
                     else {
                         val dialog = AlertDialog.Builder(context)
-                        val dialogView = this.layoutInflater.inflate(R.layout.dialog_generic, null)
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_generic, null)
                         dialog.setTitle(String.format(resources.getString(R.string.delete_timeslot_confirm)))
                         dialog.setView(dialogView)
 

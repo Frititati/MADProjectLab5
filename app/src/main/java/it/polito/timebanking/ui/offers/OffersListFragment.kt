@@ -163,7 +163,7 @@ class OffersListFragment : Fragment() {
 
     private fun numberPickerCustom() {
         val dialog = AlertDialog.Builder(context)
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_filter, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_filter, null)
         dialog.setTitle("Choose minimum duration")
         dialog.setView(dialogView)
         val numberPicker = dialogView.findViewById<NumberPicker>(R.id.dialog_number_picker)

@@ -2,7 +2,6 @@ package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,6 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         private val duration = v.findViewById<TextView>(R.id.duration)
 
         fun bind(transaction: TransactionData,context: Context) {
-            Log.d("test", "transaction : $transaction")
             timeslotTitle.text = transaction.jobTitle
             time.text = timeFormatter(transaction.transactionTime)
             date.text = dateFormatter(transaction.transactionTime)
