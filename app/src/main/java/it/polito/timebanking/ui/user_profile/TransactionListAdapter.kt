@@ -47,10 +47,10 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
             time.text = timeFormatter(transaction.transactionTime)
             date.text = dateFormatter(transaction.transactionTime)
             if (transaction.time < 0) {
-                duration.text = String.format("%s", durationFormatter(-transaction.time))
+                duration.text = String.format("- %s", durationFormatter(-transaction.time))
                 duration.setTextColor(ContextCompat.getColor(context,R.color.Ferrari_Red))
             } else {
-                duration.text = String.format("%s", durationFormatter(transaction.time))
+                duration.text = String.format("+ %s", durationFormatter(transaction.time))
                 duration.setTextColor(ContextCompat.getColor(context,R.color.Green_Apple))
             }
         }
