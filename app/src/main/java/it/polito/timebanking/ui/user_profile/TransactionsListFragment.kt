@@ -33,9 +33,11 @@ class TransactionsListFragment : Fragment() {
         binding.transactionListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.transactionListRecycler.adapter = transactionListAdapter
 
-
-        transactionVM.getTransactions(FirebaseAuth.getInstance().uid!!).observe(viewLifecycleOwner){
+        transactionVM.getTransactions(FirebaseAuth.getInstance().uid!!).observe(viewLifecycleOwner) {
             transactionListAdapter.setTransactions(it.toMutableList())
+            if (it.isNotEmpty()) {
+                binding.nothingToShow.visibility = View.GONE
+            }
         }
     }
 

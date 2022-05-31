@@ -7,13 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
-import it.polito.timebanking.model.chat.JobData
-import it.polito.timebanking.model.chat.toJobData
-import it.polito.timebanking.model.profile.toUserProfileData
-import it.polito.timebanking.model.timeslot.toTimeslotData
 import it.polito.timebanking.model.transaction.TransactionData
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,8 +26,8 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setTransactions(chats: MutableList<TransactionData>) {
-        allTransactions = chats.sortedByDescending { it.transactionTime }.toMutableList()
+    fun setTransactions(transactions: MutableList<TransactionData>) {
+        allTransactions = transactions.sortedByDescending { it.transactionTime }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -43,16 +37,17 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val time = v.findViewById<TextView>(R.id.time)
         private val date = v.findViewById<TextView>(R.id.date)
-        private val value = v.findViewById<TextView>(R.id.value)
+        private val duration = v.findViewById<TextView>(R.id.duration)
 
         fun bind(transaction: TransactionData) {
+            Log.d("test", "transaction : $transaction")
             timeslotTitle.text = transaction.jobTitle
             time.text = timeFormatter(transaction.transactionTime)
             date.text = dateFormatter(transaction.transactionTime)
-            if (transaction.time < 0){
-                value.text = String.format("%s Lost", durationFormatter(-transaction.time))
+            if (transaction.time < 0) {
+                duration.text = String.format("%s Lost", durationFormatter(-transaction.time))
             } else {
-                value.text = String.format("%s Gained", durationFormatter(transaction.time))
+                duration.text = String.format("%s Gained", durationFormatter(transaction.time))
             }
         }
 
