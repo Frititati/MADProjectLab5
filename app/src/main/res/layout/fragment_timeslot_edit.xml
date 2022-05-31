@@ -19,9 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <TextView
-
                 android:id="@+id/TitleTooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,9 +152,20 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:backgroundTint="@color/Green_Snake"
                     android:text="@string/activate"
                     android:textColor="@color/White" />
+
+                <Button
+                    android:id="@+id/loadingButton"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    android:backgroundTint="#00FF0000" />
 
                 <Button
                     android:id="@+id/deactivateButton"
@@ -165,7 +174,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/Gray"
+                    android:backgroundTint="@color/Dark_Orchid"
                     android:text="@string/deactivate"
                     android:textColor="@color/White"
                     android:visibility="gone" />

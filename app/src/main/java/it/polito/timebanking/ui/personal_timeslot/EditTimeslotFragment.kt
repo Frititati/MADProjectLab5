@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import java.time.ZoneOffset
 import java.util.*
 import kotlin.concurrent.thread
 
+@Suppress("DEPRECATION")
 class EditTimeslotFragment : Fragment() {
     private var _binding: FragmentTimeslotEditBinding? = null
     private val binding get() = _binding!!
@@ -66,8 +68,11 @@ class EditTimeslotFragment : Fragment() {
 
             editableSkillListAdapter.setTimeslotSkills(idTimeslot, it.skills.map { l -> l.toString() })
 
-            binding.activateButton.visibility = if (it.available) View.GONE else View.VISIBLE
-            binding.deactivateButton.visibility = if (it.available) View.VISIBLE else View.GONE
+            Handler().postDelayed({
+                binding.loadingButton.visibility = View.GONE
+                binding.activateButton.visibility = if (it.available) View.GONE else View.VISIBLE
+                binding.deactivateButton.visibility = if (it.available) View.VISIBLE else View.GONE
+            },500)
         }
 
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
@@ -113,6 +118,7 @@ class EditTimeslotFragment : Fragment() {
                             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                                 Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
                                 binding.activateButton.visibility = View.GONE
+                                binding.loadingButton.visibility = View.VISIBLE
                             }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
                         }
                     }
@@ -138,6 +144,7 @@ class EditTimeslotFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", false).addOnSuccessListener {
                 Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
                 binding.deactivateButton.visibility = View.GONE
+                binding.loadingButton.visibility = View.VISIBLE
             }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
         }
 
