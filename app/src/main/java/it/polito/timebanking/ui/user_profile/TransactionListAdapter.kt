@@ -14,11 +14,12 @@ import it.polito.timebanking.model.chat.JobData
 import it.polito.timebanking.model.chat.toJobData
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.timeslot.toTimeslotData
+import it.polito.timebanking.model.transaction.TransactionData
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.TransactionViewHolder>() {
-    private var allTransactions = mutableListOf<Pair<String, JobData>>()
+    private var allTransactions = mutableListOf<TransactionData>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -27,12 +28,12 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(allTransactions[position].first, allTransactions[position].second)
+        holder.bind(allTransactions[position])
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setTransactions(chats: MutableList<Pair<String, JobData>>) {
-        allTransactions = chats.sortedByDescending { it.second.lastUpdate }.toMutableList()
+    fun setTransactions(chats: MutableList<TransactionData>) {
+        allTransactions = chats.sortedByDescending { it.transactionTime }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -41,29 +42,19 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
     }
 
     class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val userName = v.findViewById<TextView>(R.id.chatMember)
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)
         private val time = v.findViewById<TextView>(R.id.time)
         private val date = v.findViewById<TextView>(R.id.date)
         private val value = v.findViewById<TextView>(R.id.value)
 
-        fun bind(jobID: String, job: JobData) {
-            val isPlus = job.userProducerID == FirebaseAuth.getInstance().uid!!
-
-            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener {
-                val tData = it.toTimeslotData()
-                timeslotTitle.text = tData.title
-                if (isPlus) {
-                    value.text = String.format("%s Gained", durationFormatter(tData.duration))
-                } else {
-                    value.text = String.format("%s Lost", durationFormatter(tData.duration))
-                }
-            }
-
-            FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
-                val jData = it.toJobData()
-                time.text = timeFormatter(jData.lastUpdate)
-                date.text = dateFormatter(jData.lastUpdate)
+        fun bind(transaction: TransactionData) {
+            timeslotTitle.text = transaction.jobTitle
+            time.text = timeFormatter(transaction.transactionTime)
+            date.text = dateFormatter(transaction.transactionTime)
+            if (transaction.time < 0){
+                value.text = String.format("%s Lost", durationFormatter(-transaction.time))
+            } else {
+                value.text = String.format("%s Gained", durationFormatter(transaction.time))
             }
         }
 

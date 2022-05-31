@@ -29,6 +29,7 @@ import it.polito.timebanking.model.profile.ProfileData
 import it.polito.timebanking.model.profile.ProfileViewModel
 import it.polito.timebanking.model.timeslot.TimeslotData
 import it.polito.timebanking.model.timeslot.TimeslotViewModel
+import it.polito.timebanking.model.transaction.TransactionData
 
 class MessageListFragment : Fragment() {
     private var _binding: FragmentMessagesBinding? = null
@@ -93,8 +94,7 @@ class MessageListFragment : Fragment() {
             if (message.isNotEmpty()) {
                 vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), false)
                 binding.writeMessage.setText("")
-            }
-            else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate", System.currentTimeMillis())
         }
 
@@ -109,8 +109,7 @@ class MessageListFragment : Fragment() {
                         if (enoughTime(it.getLong("time") ?: 0)) updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
                         else Toast.makeText(context, "Sorry, you don't have enough time", Toast.LENGTH_SHORT).show()
                     }
-                }
-                else {
+                } else {
                     Snackbar.make(binding.root, "The timeslot is temporarily unavailable. Please try again later", Snackbar.LENGTH_SHORT).show()
                 }
             }
@@ -125,13 +124,14 @@ class MessageListFragment : Fragment() {
                             timeslot.available = false
                             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available", false).addOnSuccessListener {
                                 updateJobStatus(JobStatus.ACCEPTED, "Job was ACCEPTED")
+                                addTransaction(timeslot.title, job.userProducerID, timeslot.duration)
+                                addTransaction(timeslot.title, job.userConsumerID, -timeslot.duration)
                                 if (userIsProducer)
                                     Snackbar.make(binding.root, "You received: ${timeFormatter(timeslot.duration)}", Snackbar.LENGTH_SHORT).show()
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(context, "Couldn't accept. Consumer is out of time", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -146,7 +146,7 @@ class MessageListFragment : Fragment() {
             updateJobStatus(JobStatus.STARTED, "Job was STARTED")
         }
         binding.buttonJobEnd.setOnClickListener {
-            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available",true).addOnSuccessListener {
+            FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available", true).addOnSuccessListener {
                 updateJobStatus(JobStatus.DONE, "Job was DONE")
             }
         }
@@ -166,8 +166,7 @@ class MessageListFragment : Fragment() {
                         FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRatedAsConsumer", FieldValue.increment(1), "scoreAsConsumer", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
                     }
-                }
-                else {
+                } else {
                     val rate = RateData(rating, comment, timeslot.title, job.userConsumerID, job.userProducerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRatedAsProducer", FieldValue.increment(1), "scoreAsProducer", FieldValue.increment(rating))
@@ -182,8 +181,7 @@ class MessageListFragment : Fragment() {
                         vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by producer)", System.currentTimeMillis(), true)
                         updateJobStatus(JobStatus.COMPLETED, "Job was CONCLUDED")
                     }
-                }
-                else {
+                } else {
                     if (job.jobStatus == JobStatus.DONE)
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
@@ -217,16 +215,14 @@ class MessageListFragment : Fragment() {
             JobStatus.INIT -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
-                }
-                else {
+                } else {
                     updateButtonStatus(requested = true, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }
             JobStatus.REQUESTED -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = true, reject = true, start = false, end = false, rate = false)
-                }
-                else {
+                } else {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }
@@ -267,5 +263,18 @@ class MessageListFragment : Fragment() {
         else "${time % 60L} minutes"
         return if (h == "0 hours") m
         else "$h, $m"
+    }
+
+    private fun addTransaction(jobTitle: String, userID: String, time: Long) {
+        val transaction = TransactionData(
+            jobTitle,
+            userID,
+            time,
+            false,
+            System.currentTimeMillis()
+        )
+        FirebaseFirestore.getInstance().collection("transactions").add(transaction).addOnSuccessListener {
+
+        }
     }
 }

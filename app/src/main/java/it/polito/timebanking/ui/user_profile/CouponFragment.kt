@@ -15,6 +15,7 @@ import it.polito.timebanking.databinding.FragmentCouponBinding
 import it.polito.timebanking.model.coupon.CouponData
 import it.polito.timebanking.model.coupon.CouponViewModel
 import it.polito.timebanking.model.coupon.toCouponData
+import it.polito.timebanking.model.transaction.TransactionData
 
 class CouponFragment : Fragment() {
     private var _binding: FragmentCouponBinding? = null
@@ -42,7 +43,7 @@ class CouponFragment : Fragment() {
         }
 
         binding.addCoupon.setOnClickListener {
-            val tempCouponName = binding.couponSubmit.text.toString().toUpperCase()
+            val tempCouponName = binding.couponSubmit.text.toString().uppercase()
             // find if the coupon actually exists
             FirebaseFirestore.getInstance().collection("coupons").whereEqualTo("name", tempCouponName).get().addOnSuccessListener {
                 if (!it.isEmpty) {
@@ -56,6 +57,7 @@ class CouponFragment : Fragment() {
                         userEdit["usedCoupons"] = FieldValue.arrayUnion(it.first().id)
                         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!)
                             .update(userEdit).addOnSuccessListener {
+                                addTransaction(String.format("Coupon %s", coupon.name), FirebaseAuth.getInstance().uid!!, coupon.value)
                                 Snackbar.make(view, "Coupon Accepted", 1500).show()
                                 binding.couponSubmit.text.clear()
                             }
@@ -70,6 +72,19 @@ class CouponFragment : Fragment() {
                     binding.couponSubmit.text.clear()
                 }
             }
+        }
+    }
+
+    private fun addTransaction(jobTitle: String, userID: String, time: Long) {
+        val transaction = TransactionData(
+            jobTitle,
+            userID,
+            time,
+            true,
+            System.currentTimeMillis()
+        )
+        FirebaseFirestore.getInstance().collection("transactions").add(transaction).addOnSuccessListener {
+
         }
     }
 }

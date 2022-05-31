@@ -33,6 +33,5 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         FirebaseFirestore.getInstance().collection("messages").add(messageData).addOnSuccessListener {
                 FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("messagesList", FieldValue.arrayUnion(it.id), "lastMessage", System.currentTimeMillis())
             }
-
     }
 }

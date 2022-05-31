@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.personalTimeslotListFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment
+                R.id.personalTimeslotListFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment, R.id.transactionsListFragment
             ), binding.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
