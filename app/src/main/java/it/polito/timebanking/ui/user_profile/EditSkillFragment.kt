@@ -27,7 +27,7 @@ class EditSkillFragment : Fragment() {
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private val vm by viewModels<SkillViewModel>()
     private var editableSkillListAdapter = EditSkillAdapter()
-    private val allSkills = mutableListOf<SkillData>()
+    private var allSkills = mutableListOf<SkillData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -39,6 +39,7 @@ class EditSkillFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        updateAllSkills()
         binding.buttonAdd.useCompatPadding = false
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = editableSkillListAdapter
@@ -93,7 +94,7 @@ class EditSkillFragment : Fragment() {
         dialogConfirm.setView(dialogConfirmView)
 
         dialog.setPositiveButton("Done") { _, _ ->
-            val newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.toString().trim()
+            val newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.trim().toString().uppercase()
             if (newSkill.isEmpty()) {
                 Toast.makeText(context, "Cannot create empty skill", Toast.LENGTH_SHORT).show()
                 updateAllSkills()
@@ -135,7 +136,7 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun isUnique(list: List<SkillData>, skill: String): Boolean {
-        return list.any { it.title.lowercase() == skill.lowercase().replace("\\s".toRegex(), "") }
+        return list.any { it.title.lowercase() == skill.lowercase().trim()}
     }
 
     private fun lockMatch(s: String, t: String): Int {

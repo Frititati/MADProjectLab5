@@ -90,10 +90,10 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonSend.setOnClickListener {
-            val message = binding.writeMessage.text.toString()
+            val message = binding.writeMessage.text.trim().toString()
             if (message.isNotEmpty()) {
                 vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), false)
-                binding.writeMessage.setText("")
+                binding.writeMessage.text.clear()
             } else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate", System.currentTimeMillis())
         }
