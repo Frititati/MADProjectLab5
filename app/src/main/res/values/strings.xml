@@ -65,7 +65,8 @@
     <string name="jobRequest">Job Requests</string>
     <string name="jobStart">Job Start</string>
     <string name="jobStatus">Status</string>
-    <string name="loading">Loading data…</string>
+    <string name="loading_data">Loading data…</string>
+    <string name="loading">Loading</string>
     <string name="location">Your location</string>
     <string name="locationTooltip">Location</string>
     <string name="login_welcome">Welcome, please login</string>

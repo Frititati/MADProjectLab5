@@ -20,7 +20,7 @@
         android:id="@+id/nothingToShow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/loading"
+        android:text="@string/loading_data"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
