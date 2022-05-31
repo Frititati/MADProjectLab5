@@ -55,9 +55,7 @@ class MessageListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    override fun getItemCount(): Int {
-        return messageList.size
-    }
+    override fun getItemCount() = messageList.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun setMessages(list: MutableList<MessageData>) {

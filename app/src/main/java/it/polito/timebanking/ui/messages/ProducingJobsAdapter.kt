@@ -42,9 +42,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return allJobs.size
-    }
+    override fun getItemCount() = allJobs.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun filterBy(jobs: MutableList<Pair<String, JobData>>, status: JobStatus): Int {

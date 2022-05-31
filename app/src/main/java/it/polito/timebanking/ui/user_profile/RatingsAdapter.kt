@@ -83,9 +83,7 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         return allRates.size
     }
 
-    override fun getItemCount(): Int {
-        return allRates.size
-    }
+    override fun getItemCount() = allRates.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun sortByRate(higher: Boolean) {

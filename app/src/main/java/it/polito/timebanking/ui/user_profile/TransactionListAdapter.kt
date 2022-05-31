@@ -37,9 +37,7 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return allTransactions.size
-    }
+    override fun getItemCount() = allTransactions.size
 
     class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val timeslotTitle = v.findViewById<TextView>(R.id.timeslotTitle)

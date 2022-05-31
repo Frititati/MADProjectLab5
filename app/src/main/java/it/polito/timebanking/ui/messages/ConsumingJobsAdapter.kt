@@ -49,9 +49,7 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
         return allJobs.size
     }
 
-    override fun getItemCount(): Int {
-        return allJobs.size
-    }
+    override fun getItemCount() = allJobs.size
 
     class ChatListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val userName = v.findViewById<TextView>(R.id.chatMember)
