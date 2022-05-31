@@ -60,7 +60,7 @@ class AllSkillsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.skillListRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+        binding.skillListRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.skillListRecycler.adapter = skillListAdapter
         vm.get().observe(viewLifecycleOwner) {
             skillListAdapter.setSkills(it as MutableList<Pair<String, SkillData>>)
