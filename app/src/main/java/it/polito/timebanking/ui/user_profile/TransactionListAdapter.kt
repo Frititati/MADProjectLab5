@@ -1,11 +1,13 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import it.polito.timebanking.R
 import it.polito.timebanking.model.transaction.TransactionData
@@ -22,7 +24,7 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(allTransactions[position])
+        holder.bind(allTransactions[position], holder.itemView.context)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -39,15 +41,17 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         private val date = v.findViewById<TextView>(R.id.date)
         private val duration = v.findViewById<TextView>(R.id.duration)
 
-        fun bind(transaction: TransactionData) {
+        fun bind(transaction: TransactionData,context: Context) {
             Log.d("test", "transaction : $transaction")
             timeslotTitle.text = transaction.jobTitle
             time.text = timeFormatter(transaction.transactionTime)
             date.text = dateFormatter(transaction.transactionTime)
             if (transaction.time < 0) {
-                duration.text = String.format("%s Lost", durationFormatter(-transaction.time))
+                duration.text = String.format("%s", durationFormatter(-transaction.time))
+                duration.setTextColor(ContextCompat.getColor(context,R.color.Ferrari_Red))
             } else {
-                duration.text = String.format("%s Gained", durationFormatter(transaction.time))
+                duration.text = String.format("%s", durationFormatter(transaction.time))
+                duration.setTextColor(ContextCompat.getColor(context,R.color.Green_Apple))
             }
         }
 
@@ -70,7 +74,6 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
             val m = if (time % 60L == 1L) "1 min"
             else "${time % 60L} min"
             val mEmpty = (time.toInt() % 60) == 0
-            Log.d("test", "'$h' $hEmpty and '$m' $mEmpty")
             return when {
                 hEmpty -> m
                 mEmpty -> h

@@ -38,6 +38,7 @@ class ConsumingJobsFragment : Fragment() {
 
         jobVM.getConsumingJobs(firebaseUserID).observe(viewLifecycleOwner) {
             jobsListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
+            allJobs = it
             binding.nothingToShow.isVisible = it.isEmpty()
         }
     }

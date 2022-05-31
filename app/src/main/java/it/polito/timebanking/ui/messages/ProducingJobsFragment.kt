@@ -37,8 +37,7 @@ class ProducingJobsFragment : Fragment() {
         binding.chatListRecycler.adapter = jobsListAdapter
         binding.nothingToShow.text = resources.getString(R.string.no_producing_jobs)
 
-        vm.getProducingJobs(firebaseUserID)
-            .observe(viewLifecycleOwner) {
+        vm.getProducingJobs(firebaseUserID).observe(viewLifecycleOwner) {
                 jobsListAdapter.setChats(it as MutableList<Pair<String, JobData>>)
                 allJobs = it
                 binding.nothingToShow.isVisible = it.isEmpty()
