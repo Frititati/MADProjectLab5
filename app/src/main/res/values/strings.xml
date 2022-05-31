@@ -24,7 +24,7 @@
     <string name="delete">Delete</string>
     <string name="delete_skill">Delete a skill</string>
     <string name="delete_timeslot">Delete Timeslot</string>
-    <string name="delete_timeslot_confirm">Do you really want to delete %s?</string>
+    <string name="delete_timeslot_confirm">Do you really want to delete your timeslot %s?</string>
     <string name="description">Your description</string>
     <string name="descriptionTooltip">Description</string>
     <string name="duration">Duration</string>
