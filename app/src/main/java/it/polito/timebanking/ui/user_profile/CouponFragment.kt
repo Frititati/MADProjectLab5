@@ -62,8 +62,8 @@ class CouponFragment : Fragment() {
                             }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
                     }
                 }
-            }.addOnFailureListener { e -> Log.w("warn", "Error with coupons $e") }
             binding.couponSubmit.text.clear()
+            }.addOnFailureListener { e -> Log.w("warn", "Error with coupons $e") }
         }
     }
 

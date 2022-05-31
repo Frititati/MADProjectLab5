@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val defaultAge = 0L
-    private val startingTime = 0L
+    private val startingTime = 60L
     private val profileVM by viewModels<ProfileViewModel>()
     private val firebaseUserID = FirebaseAuth.getInstance().uid!!
 

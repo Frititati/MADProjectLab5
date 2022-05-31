@@ -17,6 +17,7 @@ class TransactionsListFragment : Fragment() {
     private var _binding: FragmentTransactionsListBinding? = null
     private val binding get() = _binding!!
     private var transactionListAdapter = TransactionListAdapter()
+    private val firebaseUserID = FirebaseAuth.getInstance().uid!!
     private val transactionVM by viewModels<TransactionViewModel>()
 
     override fun onCreateView(
@@ -33,7 +34,7 @@ class TransactionsListFragment : Fragment() {
         binding.transactionListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.transactionListRecycler.adapter = transactionListAdapter
 
-        transactionVM.getTransactions(FirebaseAuth.getInstance().uid!!).observe(viewLifecycleOwner) {
+        transactionVM.getTransactions(firebaseUserID).observe(viewLifecycleOwner) {
             transactionListAdapter.setTransactions(it.toMutableList())
             if (it.isNotEmpty()) {
                 binding.nothingToShow.visibility = View.GONE
