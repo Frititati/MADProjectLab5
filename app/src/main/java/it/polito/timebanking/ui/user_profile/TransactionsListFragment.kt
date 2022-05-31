@@ -21,7 +21,7 @@ class TransactionsListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTransactionsListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,14 +39,5 @@ class TransactionsListFragment : Fragment() {
                 binding.nothingToShow.visibility = View.GONE
             }
         }
-    }
-
-    private fun timeFormatter(time: Long): String {
-        val h = if (time / 60L == 1L) "1 hour"
-        else "${time / 60L} hours"
-        val m = if (time % 60L == 1L) "1 min"
-        else "${time % 60L} min"
-        return if (h == "0 hours") m
-        else "$h, $m"
     }
 }

@@ -137,7 +137,7 @@
                     android:id="@+id/buttonSkill"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/holo_blue_dark"
+                    android:backgroundTint="@color/Blue_Lotus"
                     android:text="@string/all_skills"
                     tools:ignore="ImageContrastCheck,ImageContrastCheck" />
             </LinearLayout>

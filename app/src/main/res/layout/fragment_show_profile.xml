@@ -210,7 +210,7 @@
                     android:id="@+id/buttonRate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/holo_blue_bright"
+                    android:backgroundTint="@color/Blue_Orchid"
                     android:text="@string/all_ratings"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/RatingConsumerTooltip"

@@ -3,6 +3,7 @@ package it.polito.timebanking.ui.messages
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
     }
 
     override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
-        holder.bind(allJobs[position].first, allJobs[position].second,holder.itemView.context)
+        holder.bind(allJobs[position].first, allJobs[position].second, holder.itemView.context)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -59,35 +60,35 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
         private val date = v.findViewById<TextView>(R.id.date)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
-        fun bind(jobID: String, job: JobData,context: Context) {
+        fun bind(jobID: String, job: JobData, context: Context) {
             val firebaseUserID = FirebaseAuth.getInstance().uid!!
             val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
             else job.userProducerID
 
             FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { otherUser ->
-                    userName.text = otherUser.toUserProfileData().fullName
-                    if (otherUser != null) {
-                        Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic,otherUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
-                                image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                            }
-                    }
+                userName.text = otherUser.toUserProfileData().fullName
+                if (otherUser != null) {
+                    Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic, otherUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
+                        image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
+                    }.addOnFailureListener { e -> Log.w("warn", "Error retrieving image $e") }
                 }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
 
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener {
-                    timeslotTitle.text = it.toTimeslotData().title
-                }
+                timeslotTitle.text = it.toTimeslotData().title
+            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
                 val jData = it.toJobData()
                 time.text = timeFormatter(jData.lastUpdate)
                 date.text = dateFormatter(jData.lastUpdate)
                 jobStatus.text = jobStatusFormatter(jData.jobStatus)
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with jobs $e") }
 
             rootView.setOnClickListener {
                 rootView.findNavController().navigate(R.id.consuming_to_job, bundleOf(
-                        "otherUserName" to userName.text,
-                        "jobID" to jobID,
-                    ))
+                    "otherUserName" to userName.text,
+                    "jobID" to jobID,
+                ))
             }
         }
 
@@ -96,6 +97,7 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
             calendar.timeInMillis = time
             return SimpleDateFormat("hh:mm a", Locale.ITALIAN).format(calendar.time)
         }
+
         private fun dateFormatter(time: Long): String {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = time

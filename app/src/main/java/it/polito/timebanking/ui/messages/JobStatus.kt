@@ -5,7 +5,7 @@ enum class JobStatus {
 }
 
 fun jobStatusFormatter(jobStatus: JobStatus): String {
-    return when(jobStatus){
+    return when (jobStatus) {
         JobStatus.INIT -> ""
         JobStatus.REQUESTED -> "Requested"
         JobStatus.ACCEPTED -> "Accepted"

@@ -2,6 +2,7 @@ package it.polito.timebanking.ui.messages
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,7 +95,8 @@ class MessageListFragment : Fragment() {
             if (message.isNotEmpty()) {
                 vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), false)
                 binding.writeMessage.text.clear()
-            } else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
+            }
+            else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate", System.currentTimeMillis())
         }
 
@@ -108,11 +110,12 @@ class MessageListFragment : Fragment() {
                     FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get().addOnSuccessListener {
                         if (enoughTime(it.getLong("time") ?: 0)) updateJobStatus(JobStatus.REQUESTED, "Job was REQUESTED")
                         else Toast.makeText(context, "Sorry, you don't have enough time", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
+                }
+                else {
                     Snackbar.make(binding.root, "The timeslot is temporarily unavailable. Please try again later", Snackbar.LENGTH_SHORT).show()
                 }
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
         }
 
         binding.buttonAccept.setOnClickListener {
@@ -128,13 +131,14 @@ class MessageListFragment : Fragment() {
                                 addTransaction(timeslot.title, job.userConsumerID, -timeslot.duration)
                                 if (userIsProducer)
                                     Snackbar.make(binding.root, "You received: ${timeFormatter(timeslot.duration)}", Snackbar.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                } else {
+                            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
+                        }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
+                }
+                else {
                     Toast.makeText(context, "Couldn't accept. Consumer is out of time", Toast.LENGTH_SHORT).show()
                 }
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
         }
 
         binding.buttonReject.setOnClickListener {
@@ -148,7 +152,7 @@ class MessageListFragment : Fragment() {
         binding.buttonJobEnd.setOnClickListener {
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).update("available", true).addOnSuccessListener {
                 updateJobStatus(JobStatus.DONE, "Job was DONE")
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
         }
 
         binding.buttonRate.setOnClickListener {
@@ -165,13 +169,14 @@ class MessageListFragment : Fragment() {
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("jobsRatedAsConsumer", FieldValue.increment(1), "scoreAsConsumer", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
-                    }
-                } else {
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with jobs $e") }
+                }
+                else {
                     val rate = RateData(rating, comment, timeslot.title, job.userConsumerID, job.userProducerID)
                     FirebaseFirestore.getInstance().collection("ratings").add(rate).addOnSuccessListener {
                         FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("jobsRatedAsProducer", FieldValue.increment(1), "scoreAsProducer", FieldValue.increment(rating))
                         Snackbar.make(binding.root, "Rated successfully", Snackbar.LENGTH_SHORT).show()
-                    }
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with ratings $e") }
                 }
 
                 if (userIsProducer) {
@@ -181,7 +186,8 @@ class MessageListFragment : Fragment() {
                         vmMessages.addMessage(firebaseUserID, jobID, "Job was RATED (by producer)", System.currentTimeMillis(), true)
                         updateJobStatus(JobStatus.COMPLETED, "Job was CONCLUDED")
                     }
-                } else {
+                }
+                else {
                     if (job.jobStatus == JobStatus.DONE)
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
@@ -207,7 +213,7 @@ class MessageListFragment : Fragment() {
     private fun updateJobStatus(status: JobStatus, message: String) {
         FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("jobStatus", status, "lastUpdate", System.currentTimeMillis()).addOnSuccessListener {
             vmMessages.addMessage(firebaseUserID, jobID, message, System.currentTimeMillis(), true)
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with ratings $e") }
     }
 
     private fun updateButtons() {
@@ -215,14 +221,16 @@ class MessageListFragment : Fragment() {
             JobStatus.INIT -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
-                } else {
+                }
+                else {
                     updateButtonStatus(requested = true, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }
             JobStatus.REQUESTED -> {
                 if (userIsProducer) {
                     updateButtonStatus(requested = false, accept = true, reject = true, start = false, end = false, rate = false)
-                } else {
+                }
+                else {
                     updateButtonStatus(requested = false, accept = false, reject = false, start = false, end = false, rate = false)
                 }
             }
@@ -274,7 +282,6 @@ class MessageListFragment : Fragment() {
             System.currentTimeMillis()
         )
         FirebaseFirestore.getInstance().collection("transactions").add(transaction).addOnSuccessListener {
-
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with transactions $e") }
     }
 }

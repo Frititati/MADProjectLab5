@@ -79,7 +79,7 @@ class OffersListAdapter : RecyclerView.Adapter<OffersListAdapter.OfferListViewHo
         @SuppressLint("NotifyDataSetChanged")
         override fun publishResults(p0: CharSequence?, results: FilterResults) {
             timeslots.clear()
-            timeslots.addAll(results.values as MutableList<Pair<String,TimeslotData>>)
+            timeslots.addAll(results.values as MutableList<Pair<String, TimeslotData>>)
             notifyDataSetChanged()
         }
     }

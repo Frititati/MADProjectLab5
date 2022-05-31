@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.TextView
@@ -80,13 +81,13 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
             if (!res.exists()) {
                 Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseDefaultPic))).getBytes(1024 * 1024).addOnSuccessListener {
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).putBytes(it)
-                }
+                }.addOnFailureListener { e -> Log.w("warn", "Error with login $e") }
                 FirebaseFirestore.getInstance().collection("users").document(firebaseUserID)
                     .set(ProfileData("", "", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "", listOf<String>(), listOf<String>(), "", startingTime, .0, 0, .0, 0, listOf<String>()))
             } else {
                 updateIMG(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID)))
             }
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with login $e") }
         profileVM.get(firebaseUserID).observe(this) {
             updateTime(it.time)
             updateFName(fullNameFormatter(it.fullName, false))
@@ -142,7 +143,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
     override fun updateIMG(url: String) {
         Firebase.storage.getReferenceFromUrl(url).getBytes(1024 * 1024).addOnSuccessListener {
             binding.navView.getHeaderView(0).findViewById<ShapeableImageView>(R.id.userImageOnDrawer).setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with login $e") }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

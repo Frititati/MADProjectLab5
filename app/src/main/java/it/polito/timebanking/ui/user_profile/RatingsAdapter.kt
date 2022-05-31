@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,13 +38,13 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
         fun bind(rating: RateData, context: Context) {
             score.text = rating.score.toString()
             cardView.setCardBackgroundColor(ContextCompat.getColor(context, chooseColorForRate(rating.score)))
-            val userIDToShow = if(rating.receiverID == firebaseUserID) rating.senderID else rating.receiverID
+            val userIDToShow = if (rating.receiverID == firebaseUserID) rating.senderID else rating.receiverID
             FirebaseFirestore.getInstance().collection("users").document(userIDToShow).get().addOnSuccessListener {
                 name.text = it.toUserProfileData().fullName
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
             Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic, userIDToShow))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                 image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
 
             rootView.setOnClickListener {
                 val dialog = AlertDialog.Builder(context)
@@ -58,11 +59,11 @@ class RatingsAdapter : RecyclerView.Adapter<RatingsAdapter.RatingsViewHolder>() 
 
         private fun chooseColorForRate(score: Double): Int {
             return if (score < 1.0) R.color.Ruby_Red
-            else if   (score < 2.0) R.color.Bean_Red
-            else if   (score < 3.0) R.color.Bee_Yellow
-            else if   (score < 4.0) R.color.Sun_Yellow
-            else if   (score < 5.0) R.color.Stoplight_Go_Green
-            else if   (score == 5.0)R.color.Yellow_Green
+            else if (score < 2.0) R.color.Bean_Red
+            else if (score < 3.0) R.color.Bee_Yellow
+            else if (score < 4.0) R.color.Sun_Yellow
+            else if (score < 5.0) R.color.Stoplight_Go_Green
+            else if (score == 5.0) R.color.Yellow_Green
             else R.color.ColorBlue
         }
     }

@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.user_profile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,10 +59,10 @@ class CouponFragment : Fragment() {
                             .update("time", FieldValue.increment(coupon.toCouponData().value), "usedCoupons", FieldValue.arrayUnion(coupon.id)).addOnSuccessListener {
                                 addTransaction(String.format("Coupon %s", coupon.toCouponData().name), firebaseUserID, coupon.toCouponData().value)
                                 Snackbar.make(view, "Coupon Accepted", 1500).show()
-                            }
+                            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
                     }
                 }
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with coupons $e") }
             binding.couponSubmit.text.clear()
         }
     }
@@ -75,7 +76,6 @@ class CouponFragment : Fragment() {
             System.currentTimeMillis()
         )
         FirebaseFirestore.getInstance().collection("transactions").add(transaction).addOnSuccessListener {
-
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with transactions $e") }
     }
 }

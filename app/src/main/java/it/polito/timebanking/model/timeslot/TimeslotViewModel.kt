@@ -76,10 +76,10 @@ class TimeslotViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun delete(id: String) {
-        FirebaseFirestore.getInstance().collection("timeslots").document(id).delete().addOnSuccessListener { }.addOnFailureListener { e -> Log.w("test", "Error deleting document", e) }
+        FirebaseFirestore.getInstance().collection("timeslots").document(id).delete().addOnSuccessListener { }.addOnFailureListener { e -> Log.w("test", "Error deleting document $e") }
     }
 
     fun deleteUserTimeslot(id: String) {
-        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("timeslots", FieldValue.arrayRemove(id)).addOnSuccessListener {}
+        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("timeslots", FieldValue.arrayRemove(id)).addOnFailureListener { e -> Log.w("test", "Error deleting document $e") }
     }
 }

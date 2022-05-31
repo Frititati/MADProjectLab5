@@ -18,7 +18,8 @@ class EntryPointActivity : AppCompatActivity() {
         if (FirebaseAuth.getInstance().currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
-        } else {
+        }
+        else {
             startActivity(Intent(this, MainActivity::class.java))
         }
     }

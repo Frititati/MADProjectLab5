@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +48,7 @@ class EditTimeslotFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("NewApi")
+    @SuppressLint("NewApi", "InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,7 +73,7 @@ class EditTimeslotFragment : Fragment() {
         FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().uid!!).get().addOnSuccessListener { userIt ->
             val user = userIt.toUserProfileData()
             editableSkillListAdapter.setAvailableSkills(user.skills.map { it.toString() })
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
 
         val cal = Calendar.getInstance()
         binding.editDateButton.setOnClickListener {
@@ -112,10 +113,10 @@ class EditTimeslotFragment : Fragment() {
                             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                                 Snackbar.make(binding.root, "Timeslot now active", Snackbar.LENGTH_SHORT).show()
                                 binding.activateButton.visibility = View.GONE
-                            }
+                            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
                         }
                     }
-                }
+                }.addOnFailureListener { e -> Log.w("warn", "Error with jobs $e") }
             }
             else {
                 val dialog = AlertDialog.Builder(context)
@@ -126,7 +127,7 @@ class EditTimeslotFragment : Fragment() {
                     binding.editDate.text = dateFormatter(dateMilli)
                     FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", true).addOnSuccessListener {
                         Snackbar.make(binding.root, "Timeslot now active", 1500).show()
-                    }
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
                 }
                 dialog.setNegativeButton("No") { _, _ -> }
                 dialog.create().show()
@@ -137,7 +138,7 @@ class EditTimeslotFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("timeslots").document(idTimeslot).update("available", false).addOnSuccessListener {
                 Snackbar.make(binding.root, "Timeslot now not active", 1500).show()
                 binding.deactivateButton.visibility = View.GONE
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
         }
 
         binding.deleteButton.setOnClickListener {
@@ -164,7 +165,7 @@ class EditTimeslotFragment : Fragment() {
                         dialog.create().show()
                     }
                 }
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with timeslots $e") }
         }
     }
 

@@ -20,7 +20,6 @@ import it.polito.timebanking.databinding.FragmentEditSkillBinding
 import it.polito.timebanking.model.profile.toUserProfileData
 import it.polito.timebanking.model.skill.SkillViewModel
 import it.polito.timebanking.model.skill.SkillData
-import it.polito.timebanking.model.skill.toSkillData
 
 
 class EditSkillFragment : Fragment() {
@@ -54,7 +53,7 @@ class EditSkillFragment : Fragment() {
                     allSkills = it.map { t -> t.second }.toMutableList()
                     binding.nothingToShow.isVisible = it.isEmpty()
                     editableSkillListAdapter.setSkills(it.sortedBy { t -> t.second.title.lowercase() } as MutableList<Pair<String, SkillData>>)
-                }
+                }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
             }
         }
 
@@ -69,7 +68,7 @@ class EditSkillFragment : Fragment() {
 
     }
 
-    private fun updateAllSkills() {
+    /*private fun updateAllSkills() {
         FirebaseFirestore.getInstance().collection("skills").get().addOnSuccessListener { documents ->
             val map = mutableListOf<Pair<String, SkillData>>()
             for (document in documents) {
@@ -85,7 +84,7 @@ class EditSkillFragment : Fragment() {
                 editableSkillListAdapter.setUserSkills(myList.map { it.toString() })
             }
         }
-    }
+    }*/
 
     private fun createDialog() {
 //        editableSkillListAdapter.setEmptyLists()
@@ -132,9 +131,7 @@ class EditSkillFragment : Fragment() {
         FirebaseFirestore.getInstance().collection("skills").add(SkillData(newSkill)).addOnSuccessListener {
 //            updateAllSkills()
             Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Snackbar.make(binding.root, "Problems with skill, please retry", Snackbar.LENGTH_SHORT).show()
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with skills $e") }
     }
 
     private fun isUnique(list: List<SkillData>, skill: String): Boolean {

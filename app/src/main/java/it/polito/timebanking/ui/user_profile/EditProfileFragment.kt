@@ -59,7 +59,7 @@ class EditProfileFragment : Fragment() {
             binding.description.hint = descriptionFormatterProfile(it.description, true)
             Firebase.storage.getReferenceFromUrl(userProfilePath).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                 binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
         }
 
         binding.userImage.setOnClickListener {
@@ -78,7 +78,7 @@ class EditProfileFragment : Fragment() {
         thread {
             vm.update(firebaseUserID, binding.fullName.text.toString().trim().trim(), binding.nickName.text.toString().trim(), binding.age.text.toString().toLongOrNull(), binding.email.text.toString().trim(), binding.location.text.toString().trim(), binding.description.text.toString().trim())
         }
-//        if (binding.fullName.text.toString().isNotEmpty()) listenerNavBar.updateFName(binding.fullName.text.toString())
+        //        if (binding.fullName.text.toString().isNotEmpty()) listenerNavBar.updateFName(binding.fullName.text.toString())
     }
 
     override fun onDestroyView() {
@@ -144,7 +144,7 @@ class EditProfileFragment : Fragment() {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, b)
             Firebase.storage.getReferenceFromUrl(userProfilePath).putBytes(b.toByteArray()).addOnSuccessListener {
                 listenerNavBar.updateIMG(userProfilePath)
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
         }
     }
 }

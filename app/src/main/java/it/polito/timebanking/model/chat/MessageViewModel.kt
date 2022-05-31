@@ -1,6 +1,7 @@
 package it.polito.timebanking.model.chat
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,6 +33,6 @@ class MessageViewModel(application: Application) : AndroidViewModel(application)
         val messageData = MessageData(senderID, jobID, message, time, system)
         FirebaseFirestore.getInstance().collection("messages").add(messageData).addOnSuccessListener {
                 FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("messagesList", FieldValue.arrayUnion(it.id), "lastMessage", System.currentTimeMillis())
-            }
+            }.addOnFailureListener { e -> Log.w("message","Problem sending messages $e") }
     }
 }

@@ -92,15 +92,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun fireBaseAuthWithGoogle(account: GoogleSignInAccount) {
         mAuth.signInWithCredential(GoogleAuthProvider.getCredential(account.idToken, null)).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Welcome back, ${mAuth.currentUser!!.displayName}", Toast.LENGTH_LONG).show()
-                    getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).edit().putString("email", account.email).apply()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    progressDialog.visibility = View.GONE
-                    finish()
-                } else {
-                    Log.w("warn", "Sign in failed")
-                }
+            if (task.isSuccessful) {
+                Toast.makeText(this, "Welcome back, ${mAuth.currentUser!!.displayName}", Toast.LENGTH_LONG).show()
+                getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).edit().putString("email", account.email).apply()
+                startActivity(Intent(this, MainActivity::class.java))
+                progressDialog.visibility = View.GONE
+                finish()
             }
+            else {
+                Log.w("warn", "Sign in failed")
+            }
+        }
     }
 }

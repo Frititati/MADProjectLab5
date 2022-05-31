@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,10 +61,8 @@ class TimeslotListFragment : Fragment() {
 
     private fun addEmptyTimeslot() {
         FirebaseFirestore.getInstance().collection("timeslots").add(TimeslotData(System.currentTimeMillis(), System.currentTimeMillis(), "", "", System.currentTimeMillis(), 0, "", firebaseUserID, available = false, listOf<String>())).addOnSuccessListener {
-                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("timeslots", FieldValue.arrayUnion(it.id))
-                Snackbar.make(binding.root, "Time Slot Created", Snackbar.LENGTH_SHORT).show()
-            }.addOnFailureListener {
-                Snackbar.make(binding.root, "Time Slot BAD", Snackbar.LENGTH_SHORT).show()
-            }
+            FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("timeslots", FieldValue.arrayUnion(it.id))
+            Snackbar.make(binding.root, "Time Slot Created", Snackbar.LENGTH_SHORT).show()
+        }.addOnFailureListener { e -> Log.w("warn","Error with timeslots $e") }
     }
 }

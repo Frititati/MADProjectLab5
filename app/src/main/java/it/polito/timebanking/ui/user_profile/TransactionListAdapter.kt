@@ -40,16 +40,17 @@ class TransactionListAdapter : RecyclerView.Adapter<TransactionListAdapter.Trans
         private val date = v.findViewById<TextView>(R.id.date)
         private val duration = v.findViewById<TextView>(R.id.duration)
 
-        fun bind(transaction: TransactionData,context: Context) {
+        fun bind(transaction: TransactionData, context: Context) {
             timeslotTitle.text = transaction.jobTitle
             time.text = timeFormatter(transaction.transactionTime)
             date.text = dateFormatter(transaction.transactionTime)
             if (transaction.time < 0) {
                 duration.text = String.format("- %s", durationFormatter(-transaction.time))
-                duration.setTextColor(ContextCompat.getColor(context,R.color.Ferrari_Red))
-            } else {
+                duration.setTextColor(ContextCompat.getColor(context, R.color.Ferrari_Red))
+            }
+            else {
                 duration.text = String.format("+ %s", durationFormatter(transaction.time))
-                duration.setTextColor(ContextCompat.getColor(context,R.color.Green_Apple))
+                duration.setTextColor(ContextCompat.getColor(context, R.color.Green_Apple))
             }
         }
 

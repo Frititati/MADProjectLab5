@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.offers
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -55,7 +56,7 @@ class OfferDetailFragment : Fragment() {
                 binding.Duration.text = durationMinuteFormatter(it.duration)
                 binding.Location.text = locationFormatter(it.location)
             }
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
 
         binding.chatStartButton.isVisible = firebaseUserID != otherUserID
 
@@ -71,12 +72,13 @@ class OfferDetailFragment : Fragment() {
                     val jobData = JobData(idTimeslot, emptyList<String>(), System.currentTimeMillis(), otherUserID, firebaseUserID, listOf(otherUserID, firebaseUserID), JobStatus.INIT, "", "")
                     FirebaseFirestore.getInstance().collection("jobs").add(jobData).addOnSuccessListener {
                         findNavController().navigate(R.id.offer_to_job, bundleOf("otherUserName" to binding.UserFullName.text, "jobID" to it.id))
-                    }
-                } else {
+                    }.addOnFailureListener { e -> Log.w("warn", "Error with jobs $e") }
+                }
+                else {
                     val chat = ext.first()
                     findNavController().navigate(R.id.offer_to_job, bundleOf("otherUserName" to binding.UserFullName.text, "jobID" to chat.id))
                 }
-            }
+            }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
         }
     }
 

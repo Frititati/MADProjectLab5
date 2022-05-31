@@ -1,6 +1,7 @@
 package it.polito.timebanking.ui.personal_timeslot
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,13 +47,14 @@ class EditTimeslotSkillAdapter : RecyclerView.Adapter<EditTimeslotSkillAdapter.S
 
         fun bind(skillID: String, timeslotID: String, is_selected: Boolean) {
             FirebaseFirestore.getInstance().collection("skills").document(skillID).get().addOnSuccessListener {
-                    checkBox.text = it.toSkillData().title
-                }
+                checkBox.text = it.toSkillData().title
+            }.addOnFailureListener { e -> Log.w("warn", "Error with skills $e") }
             checkBox.isChecked = is_selected
             checkBox.setOnClickListener {
                 if (checkBox.isChecked) {
                     addSkillTimeslot(skillID, timeslotID)
-                } else {
+                }
+                else {
                     removeSkillTimeslot(skillID, timeslotID)
                 }
             }

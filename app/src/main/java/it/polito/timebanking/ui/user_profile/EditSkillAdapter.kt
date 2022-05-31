@@ -42,11 +42,6 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
         notifyDataSetChanged()
     }
 
-    fun setEmptyLists() {
-        allSkills.clear()
-        userSkills.clear()
-    }
-
     class SkillListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val checkBox = v.findViewById<CheckBox>(R.id.checkBox)
 
@@ -58,7 +53,8 @@ class EditSkillAdapter : RecyclerView.Adapter<EditSkillAdapter.SkillListViewHold
             checkBox.setOnClickListener {
                 if (checkBox.isChecked) {
                     addSkillUser(id)
-                } else {
+                }
+                else {
                     removeSkillUser(id)
                 }
             }

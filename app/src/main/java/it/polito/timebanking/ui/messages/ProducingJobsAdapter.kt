@@ -3,6 +3,7 @@ package it.polito.timebanking.ui.messages
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,19 +70,19 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
                     if (otherUser != null) {
                         Firebase.storage.getReferenceFromUrl(String.format(context.getString(R.string.firebaseUserPic,otherUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                                 image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                            }
+                            }.addOnFailureListener { e -> Log.w("warn","Error with users $e") }
                     }
-                }
+                }.addOnFailureListener { e -> Log.w("warn","Error with users $e") }
 
             FirebaseFirestore.getInstance().collection("timeslots").document(job.timeslotID).get().addOnSuccessListener { timeslot ->
                     timeslotTitle.text = timeslot.toTimeslotData().title
-                }
+                }.addOnFailureListener { e -> Log.w("warn","Error with timeslots $e") }
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).get().addOnSuccessListener {
                 val jData = it.toJobData()
                 time.text = timeFormatter(jData.lastUpdate)
                 date.text = dateFormatter(jData.lastUpdate)
                 jobStatus.text = jobStatusFormatter(jData.jobStatus)
-            }
+            }.addOnFailureListener { e -> Log.w("warn","Error with jobs $e") }
 
             rootView.setOnClickListener {
                 rootView.findNavController().navigate(R.id.producing_to_job, bundleOf(

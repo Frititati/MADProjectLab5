@@ -4,7 +4,6 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -57,15 +56,13 @@ class ShowProfileFragment : Fragment() {
                 }
                 Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).getBytes(1024 * 1024).addOnSuccessListener { pic ->
                     binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.size))
-                }
+                }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
                 binding.skillView.layoutManager = LinearLayoutManager(activity)
                 binding.skillView.adapter = skillsListAdapter
                 skillsListAdapter.setUserSkills(it.skills.map { s -> s.toString() })
                 binding.skillView.isNestedScrollingEnabled = false
             }
-        }.addOnFailureListener {
-            Toast.makeText(context, "Unexpected error", Toast.LENGTH_LONG).show()
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with users $e") }
         updateAllSkills()
 
         binding.buttonRate.setOnClickListener {
@@ -109,7 +106,7 @@ class ShowProfileFragment : Fragment() {
 
             it.forEach { d -> map[d.id] = d.toSkillData() }
             skillsListAdapter.setAllSkills(map)
-        }
+        }.addOnFailureListener { e -> Log.w("warn", "Error with skills $e") }
     }
 
 
