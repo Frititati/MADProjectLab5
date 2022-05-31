@@ -22,9 +22,19 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@color/white"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/userImage" />
+                android:contentDescription="@string/userImage"
+                android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/timeslotTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="70dp"
+            android:text="@string/title"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/chatMember"
@@ -32,18 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="70dp"
+            android:layout_marginTop="25dp"
             android:text="@string/user"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/timeslotTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="45dp"
-            android:text="@string/title"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
@@ -53,6 +55,7 @@
             android:text="@string/hour"
             android:textSize="18sp"
             android:textStyle="italic" />
+
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
@@ -62,6 +65,7 @@
             android:text="@string/date"
             android:textSize="18sp"
             android:textStyle="italic" />
+
         <TextView
             android:id="@+id/jobStatus"
             android:layout_width="wrap_content"

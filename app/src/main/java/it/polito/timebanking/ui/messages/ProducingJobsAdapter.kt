@@ -80,7 +80,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
                 val jData = it.toJobData()
                 time.text = timeFormatter(jData.lastUpdate)
                 date.text = dateFormatter(jData.lastUpdate)
-                jobStatus.text = jData.jobStatus.toString()
+                jobStatus.text = jobStatusFormatter(jData.jobStatus)
             }
 
             rootView.setOnClickListener {
