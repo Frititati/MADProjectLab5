@@ -39,17 +39,19 @@ class EditSkillFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateAllSkills()
         binding.buttonAdd.useCompatPadding = false
         binding.skillListRecycler.layoutManager = LinearLayoutManager(activity)
         binding.skillListRecycler.adapter = editableSkillListAdapter
         vm.get().observe(viewLifecycleOwner) {
-            FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
-                if (r != null) {
-                    val myList = r.toUserProfileData().skills
-                    editableSkillListAdapter.setUserSkills(myList.map { t -> t.toString() })
+            if (it.isNotEmpty()) {
+                FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).get().addOnSuccessListener { r ->
+                    if (r != null) {
+                        val myList = r.toUserProfileData().skills
+                        editableSkillListAdapter.setUserSkills(myList.map { t -> t.toString() })
+                    }
+                    allSkills = it.map { t -> t.second }.toMutableList()
+                    editableSkillListAdapter.setSkills(it.sortedBy { t -> t.second.title.lowercase() } as MutableList<Pair<String, SkillData>>)
                 }
-                editableSkillListAdapter.setSkills(it.sortedBy { t -> t.second.title.lowercase() } as MutableList<Pair<String, SkillData>>)
             }
         }
 
@@ -83,7 +85,7 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun createDialog() {
-        editableSkillListAdapter.setEmptyLists()
+//        editableSkillListAdapter.setEmptyLists()
         val dialog = AlertDialog.Builder(context)
         val dialogConfirm = AlertDialog.Builder(context)
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_skill, null)
@@ -97,30 +99,27 @@ class EditSkillFragment : Fragment() {
             val newSkill = dialogView.findViewById<EditText>(R.id.skillName).text.trim().toString().uppercase()
             if (newSkill.isEmpty()) {
                 Toast.makeText(context, "Cannot create empty skill", Toast.LENGTH_SHORT).show()
-                updateAllSkills()
-            }
-            else if (isUnique(allSkills, newSkill)) {
+//                updateAllSkills()
+            } else if (isUnique(allSkills, newSkill)) {
                 Toast.makeText(context, "$newSkill already exist!", Toast.LENGTH_SHORT).show()
-                updateAllSkills()
-            }
-            else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
+//                updateAllSkills()
+            } else if (allSkills.any { lockMatch(it.title, newSkill) >= 0.1 }) {
                 dialogConfirm.setPositiveButton("Yes") { _, _ ->
                     createNewSkill(newSkill)
                 }
                 dialogConfirm.setNegativeButton("No") { _, _ ->
-                    updateAllSkills()
+//                    updateAllSkills()
                 }
                 dialogConfirm.create().show()
-            }
-            else {
+            } else {
                 createNewSkill(newSkill)
             }
         }
         dialog.setNegativeButton("Cancel") { _, _ ->
-            updateAllSkills()
+//            updateAllSkills()
         }
         dialog.setOnCancelListener {
-            updateAllSkills()
+//            updateAllSkills()
         }
         dialog.create().show()
 
@@ -128,7 +127,7 @@ class EditSkillFragment : Fragment() {
 
     private fun createNewSkill(newSkill: String) {
         FirebaseFirestore.getInstance().collection("skills").add(SkillData(newSkill)).addOnSuccessListener {
-            updateAllSkills()
+//            updateAllSkills()
             Snackbar.make(binding.root, "New Skill Created", Snackbar.LENGTH_SHORT).show()
         }.addOnFailureListener {
             Snackbar.make(binding.root, "Problems with skill, please retry", Snackbar.LENGTH_SHORT).show()
@@ -136,7 +135,7 @@ class EditSkillFragment : Fragment() {
     }
 
     private fun isUnique(list: List<SkillData>, skill: String): Boolean {
-        return list.any { it.title.lowercase() == skill.lowercase().trim()}
+        return list.any { it.title.lowercase() == skill.lowercase().trim() }
     }
 
     private fun lockMatch(s: String, t: String): Int {
@@ -148,19 +147,15 @@ class EditSkillFragment : Fragment() {
             for (i in 1..totalWord) {
                 gotW = if (simpleMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 10) / total + gotW
-                }
-                else if (frontFullMatch(splitString(s, i), t) == 1) {
+                } else if (frontFullMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 20) / total + gotW
-                }
-                else if (anywhereMatch(splitString(s, i), t) == 1) {
+                } else if (anywhereMatch(splitString(s, i), t) == 1) {
                     perWord * (total - 30) / total + gotW
-                }
-                else {
+                } else {
                     perWord * smartMatch(splitString(s, i), t) / total + gotW
                 }
             }
-        }
-        else {
+        } else {
             gotW = 100
         }
         return gotW
@@ -245,14 +240,12 @@ class EditSkillFragment : Fragment() {
         var x = 0
         if (s.size > t.size) {
             return x
-        }
-        else {
+        } else {
             for (i in 0..z) {
                 for (j in s.indices) {
                     if (s[j] == t[j + i]) {
                         x = 1
-                    }
-                    else {
+                    } else {
                         x = 0
                         break
                     }
@@ -290,8 +283,7 @@ class EditSkillFragment : Fragment() {
         str = str.trim { it <= ' ' }
         if (str.isEmpty()) {
             x = 0
-        }
-        else {
+        } else {
             if (str.contains(" ")) {
                 while (true) {
                     x++
