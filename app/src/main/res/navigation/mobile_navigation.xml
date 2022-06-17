@@ -161,7 +161,7 @@
             app:popExitAnim="@android:animator/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/producingJobFragment"
+        android:id="@+id/producingJobsFragment"
         android:name="it.polito.timebanking.ui.messages.ProducingJobsFragment"
         android:label="Your Job Requests"
         tools:layout="@layout/fragment_producing_jobs">

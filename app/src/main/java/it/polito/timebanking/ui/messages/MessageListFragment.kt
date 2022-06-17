@@ -98,6 +98,11 @@ class MessageListFragment : Fragment() {
             }
             else Toast.makeText(context, "Cannot send empty message", Toast.LENGTH_SHORT).show()
             FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("lastUpdate", System.currentTimeMillis())
+            if(userIsProducer)
+                FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("seenByConsumer",false)
+            else
+                FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("seenByProducer",false)
+
         }
 
         binding.buttonOffer.setOnClickListener {
@@ -119,7 +124,6 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonAccept.setOnClickListener {
-
             FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).get().addOnSuccessListener {
                 if (enoughTime(it.getLong("time") ?: 0L)) {
                     FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("time", FieldValue.increment(timeslot.duration)).addOnSuccessListener {
@@ -142,6 +146,8 @@ class MessageListFragment : Fragment() {
         }
 
         binding.buttonReject.setOnClickListener {
+            FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("activeProducingJobs",FieldValue.increment(-1))
+            FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("activeConsumingJobs",FieldValue.increment(-1))
             updateJobStatus(JobStatus.REJECTED, "Job was REJECTED")
         }
 
@@ -180,6 +186,7 @@ class MessageListFragment : Fragment() {
                 }
 
                 if (userIsProducer) {
+                    FirebaseFirestore.getInstance().collection("users").document(job.userProducerID).update("activeProducingJobs",FieldValue.increment(-1))
                     if (job.jobStatus == JobStatus.DONE)
                         updateJobStatus(JobStatus.RATED_BY_PRODUCER, "Job was RATED (by producer)")
                     else {
@@ -188,6 +195,7 @@ class MessageListFragment : Fragment() {
                     }
                 }
                 else {
+                    FirebaseFirestore.getInstance().collection("users").document(job.userConsumerID).update("activeConsumingJobs",FieldValue.increment(-1))
                     if (job.jobStatus == JobStatus.DONE)
                         updateJobStatus(JobStatus.RATED_BY_CONSUMER, "Job was RATED (by consumer)")
                     else {
@@ -283,5 +291,15 @@ class MessageListFragment : Fragment() {
         )
         FirebaseFirestore.getInstance().collection("transactions").add(transaction).addOnSuccessListener {
         }.addOnFailureListener { e -> Log.w("warn", "Error with transactions $e") }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(userIsProducer)
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("seenByProducer",true)
+        else
+            FirebaseFirestore.getInstance().collection("jobs").document(jobID).update("seenByConsumer",true)
+
+
     }
 }

@@ -1,7 +1,6 @@
 package it.polito.timebanking.model.profile
 
 import com.google.firebase.firestore.DocumentSnapshot
-import it.polito.timebanking.R
 
 data class ProfileData(
     var fullName: String,
@@ -13,6 +12,8 @@ data class ProfileData(
     var timeslots: List<*>,
     var description: String,
     var time: Long,
+    var activeConsumingJobs: Long,
+    var activeProducingJobs: Long,
     var scoreAsProducer: Double,
     var jobsRatedAsProducer: Long,
     var scoreAsConsumer: Double,
@@ -31,6 +32,8 @@ fun DocumentSnapshot.toUserProfileData(): ProfileData {
         this.get("timeslots") as List<*>? ?: emptyList<String>(),
         this.getString("description") ?: "",
         this.getLong("time") ?: 0,
+        this.getLong("activeConsumingJobs") ?: 0,
+        this.getLong("activeProducingJobs") ?: 0,
         this.getDouble("scoreAsProducer") ?: .0,
         this.getLong("jobsRatedAsProducer") ?: 0,
         this.getDouble("scoreAsConsumer") ?: .0,

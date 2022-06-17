@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.personalTimeslotListFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobFragment, R.id.couponFragment, R.id.transactionsListFragment
+                R.id.personalTimeslotListFragment, R.id.allSkillFragment, R.id.consumingJobsFragment, R.id.producingJobsFragment, R.id.couponFragment, R.id.transactionsListFragment
             ), binding.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
                     Firebase.storage.getReferenceFromUrl(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID))).putBytes(it)
                 }.addOnFailureListener { e -> Log.w("warn", "Error with login $e") }
                 FirebaseFirestore.getInstance().collection("users").document(firebaseUserID)
-                    .set(ProfileData("", "", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "", listOf<String>(), listOf<String>(), "", startingTime, .0, 0, .0, 0, listOf<String>()))
+                    .set(ProfileData("", "", getSharedPreferences("group21.lab5.PREFERENCES", MODE_PRIVATE).getString("email", "unknown email")!!, defaultAge, "", listOf<String>(), listOf<String>(), "", startingTime,0,0, .0, 0, .0, 0, listOf<String>()))
             } else {
                 updateIMG(String.format(resources.getString(R.string.firebaseUserPic, firebaseUserID)))
             }
@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
         profileVM.get(firebaseUserID).observe(this) {
             updateTime(it.time)
             updateFName(fullNameFormatter(it.fullName, false))
+            updateActiveJobs(it.activeConsumingJobs,it.activeProducingJobs)
         }
 
         /*
@@ -112,6 +113,11 @@ class MainActivity : AppCompatActivity(), NavBarUpdater {
 
     override fun setNavBarTitle(title: String?) {
         supportActionBar!!.title = title
+    }
+
+    override fun updateActiveJobs(consuming: Long, producing: Long) {
+        binding.navView.menu.findItem(R.id.producingJobsFragment).title = String.format(resources.getString(R.string.jobRequests,producing))
+        binding.navView.menu.findItem(R.id.consumingJobsFragment).title = String.format(resources.getString(R.string.requestedJobs,consuming))
     }
 
     override fun updateTime(time: Long) {

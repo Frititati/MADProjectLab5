@@ -62,7 +62,7 @@
     <string name="interestedJobs">Interested Jobs</string>
     <string name="job">Job:</string>
     <string name="jobEnd">Job End</string>
-    <string name="jobRequest">Job Requests</string>
+    <string name="jobRequests">Job Requests (%d)</string>
     <string name="jobStart">Job Start</string>
     <string name="jobStatus">Status</string>
     <string name="loading_data">Loading data…</string>
@@ -95,7 +95,7 @@
     <string name="rating_producer">Rating as producer</string>
     <string name="reject">Reject</string>
     <string name="request">Request</string>
-    <string name="requestedJobs">Requested Jobs</string>
+    <string name="requestedJobs">Requested Jobs (%d)</string>
     <string name="save">Save</string>
     <string name="search">Search</string>
     <string name="see_more">See more</string>
@@ -124,4 +124,5 @@
     <string name="fragment_coupon">Coupons</string>
     <string name="fragment_transactions">Transactions List</string>
     <string name="no_transactions">No Transactions</string>
+    <string name="newMessage">Unseen messages</string>
 </resources>

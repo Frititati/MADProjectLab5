@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -58,6 +59,7 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
         private val time = v.findViewById<TextView>(R.id.time)
         private val date = v.findViewById<TextView>(R.id.date)
         private val jobStatus = v.findViewById<TextView>(R.id.jobStatus)
+        private val newMessage = v.findViewById<TextView>(R.id.newMessage)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
         fun bind(jobID: String, job: JobData,context: Context) {
@@ -65,6 +67,18 @@ class ProducingJobsAdapter : RecyclerView.Adapter<ProducingJobsAdapter.Producing
             val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
             else job.userProducerID
 
+            if(firebaseUserID == job.userProducerID){
+                if(!job.seenByProducer)
+                    newMessage.visibility = View.VISIBLE
+                else
+                    newMessage.visibility = View.GONE
+            }
+            else{
+                if(!job.seenByConsumer)
+                    newMessage.visibility = View.VISIBLE
+                else
+                    newMessage.visibility = View.GONE
+            }
             FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { otherUser ->
                     userName.text = otherUser.toUserProfileData().fullName
                     if (otherUser != null) {

@@ -17,9 +17,9 @@
             android:icon="@drawable/ic_requested_job"
             android:title="@string/requestedJobs" />
         <item
-            android:id="@+id/producingJobFragment"
+            android:id="@+id/producingJobsFragment"
             android:icon="@drawable/ic_job_request"
-            android:title="@string/jobRequest" />
+            android:title="@string/jobRequests" />
         <item
             android:id="@+id/transactionsListFragment"
             android:icon="@drawable/ic_transactions"

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import it.polito.timebanking.R
 import it.polito.timebanking.databinding.FragmentOfferDetailBinding
@@ -64,13 +65,15 @@ class OfferDetailFragment : Fragment() {
             var jobExists = false
             FirebaseFirestore.getInstance().collection("jobs").whereEqualTo("timeslotID", idTimeslot).whereArrayContains("users", firebaseUserID).get().addOnSuccessListener { ext ->
                 ext.forEach {
-                    if (it.getString("jobStatus") != JobStatus.COMPLETED.toString()) {
+                    if (it.getString("jobStatus") != JobStatus.COMPLETED.toString() && it.getString("jobStatus") != JobStatus.REJECTED.toString()) {
                         jobExists = true
                     }
                 }
                 if (!jobExists) {
-                    val jobData = JobData(idTimeslot, emptyList<String>(), System.currentTimeMillis(), otherUserID, firebaseUserID, listOf(otherUserID, firebaseUserID), JobStatus.INIT, "", "")
+                    val jobData = JobData(idTimeslot, emptyList<String>(), System.currentTimeMillis(), otherUserID, firebaseUserID, listOf(otherUserID, firebaseUserID), JobStatus.INIT, "", "",false,false)
                     FirebaseFirestore.getInstance().collection("jobs").add(jobData).addOnSuccessListener {
+                        FirebaseFirestore.getInstance().collection("users").document(otherUserID).update("activeProducingJobs",FieldValue.increment(1))
+                        FirebaseFirestore.getInstance().collection("users").document(firebaseUserID).update("activeConsumingJobs",FieldValue.increment(1))
                         findNavController().navigate(R.id.offer_to_job, bundleOf("otherUserName" to binding.UserFullName.text, "jobID" to it.id))
                     }.addOnFailureListener { e -> Log.w("warn", "Error with jobs $e") }
                 }

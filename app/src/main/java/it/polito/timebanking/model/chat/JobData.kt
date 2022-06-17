@@ -12,7 +12,9 @@ data class JobData(
     var users: List<*>,
     var jobStatus: JobStatus,
     var ratingProducer: String,
-    var ratingConsumer: String
+    var ratingConsumer: String,
+    var seenByProducer: Boolean,
+    var seenByConsumer: Boolean
 )
 
 fun DocumentSnapshot.toJobData(): JobData {
@@ -25,6 +27,8 @@ fun DocumentSnapshot.toJobData(): JobData {
         this.get("users") as List<*>? ?: emptyList<String>(),
         JobStatus.valueOf(this.getString("jobStatus") ?: "INIT"),
         this.getString("ratingProducer") ?: "",
-        this.getString("ratingConsumer") ?: ""
+        this.getString("ratingConsumer") ?: "",
+        this.getBoolean("seenByProducer") ?: false,
+        this.getBoolean("seenByConsumer") ?: false
     )
 }

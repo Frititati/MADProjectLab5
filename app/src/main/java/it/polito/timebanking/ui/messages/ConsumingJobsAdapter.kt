@@ -58,6 +58,7 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
         private val jobStatus = v.findViewById<TextView>(R.id.jobStatus)
         private val time = v.findViewById<TextView>(R.id.time)
         private val date = v.findViewById<TextView>(R.id.date)
+        private val newMessage = v.findViewById<TextView>(R.id.newMessage)
         private val image = v.findViewById<ImageView>(R.id.userImageOnChat)
         private val rootView = v
         fun bind(jobID: String, job: JobData, context: Context) {
@@ -65,6 +66,18 @@ class ConsumingJobsAdapter : RecyclerView.Adapter<ConsumingJobsAdapter.ChatListV
             val otherUserID = if (job.userProducerID == firebaseUserID) job.userConsumerID
             else job.userProducerID
 
+            if(firebaseUserID == job.userProducerID){
+                if(!job.seenByProducer)
+                    newMessage.visibility = View.VISIBLE
+                else
+                    newMessage.visibility = View.GONE
+            }
+            else{
+                if(!job.seenByConsumer)
+                    newMessage.visibility = View.VISIBLE
+                else
+                    newMessage.visibility = View.GONE
+            }
             FirebaseFirestore.getInstance().collection("users").document(otherUserID).get().addOnSuccessListener { otherUser ->
                 userName.text = otherUser.toUserProfileData().fullName
                 if (otherUser != null) {
